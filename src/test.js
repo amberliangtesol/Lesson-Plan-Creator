@@ -2,29 +2,22 @@ import React from "react";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "./firebaseApp";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  serverTimestamp,
-  setDoc,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
+import { auth, db } from "./utils/firebaseApp";
+import { setDoc, doc } from "firebase/firestore";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
-  const handleSubmit = () => {
+  const handleRegister = (e) => {
+    e.preventDefault();
     console.log(email, password);
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         // const user = userCredential.user;
         setDoc(doc(db, "users", email), {
-          // name: "",
+          name: name,
           account: email,
           password: password,
         }).then(console.log("註冊成功"));
@@ -41,7 +34,6 @@ function Login() {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         // const user = userCredential.user;
         // ...
       })
@@ -56,11 +48,7 @@ function Login() {
   return (
     <div>
       <form>
-        <p>身份</p>
-        <input type="radio" value="teacher" />
-        <label>老師</label>
-        <input type="radio" value="student" />
-        <label>學生</label>
+        <p>登入</p>
         <p>帳號</p>
         <input type="text" onChange={(e) => setEmail(e.target.value)}></input>
         <p>密碼</p>
@@ -75,13 +63,8 @@ function Login() {
 
       <p>註冊</p>
       <form>
-        <p>身份</p>
-        <input type="radio" value="teacher" />
-        <label>老師</label>
-        <input type="radio" value="student" />
-        <label>學生</label>
         <p>姓名</p>
-        <input type="text"></input>
+        <input type="text" onChange={(e) => setName(e.target.value)}></input>
         <p>帳號</p>
         <input type="text" onChange={(e) => setEmail(e.target.value)}></input>
         <p>密碼</p>
@@ -89,7 +72,7 @@ function Login() {
           type="password"
           onChange={(e) => setPassword(e.target.value)}
         ></input>
-        <button type="button" onClick={handleSubmit}>
+        <button type="button" onClick={handleRegister}>
           送出
         </button>
       </form>

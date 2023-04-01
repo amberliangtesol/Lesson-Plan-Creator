@@ -1,14 +1,33 @@
 import React from "react";
-// import YouTubeWithQuestion from "./YouTubeWithQuestion";
-import Login from "./Login";
+import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
 
+import { createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  #root {
+    min-height: 100vh;
+    position: relative;
+    @media screen and (max-width: 1200px) {
+    }
+  }
+`;
 
 function App() {
   return (
-    <div className="App">
-      {/* <YouTubeWithQuestion /> */}
-      <Login />
-    </div>
+    <>
+      <GlobalStyle />
+      {/* <Login />
+      <Register /> */}
+      <YouTubeWithQuestion />
+    </>
   );
 }
 

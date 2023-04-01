@@ -1,14 +1,19 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-
-
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import App from "./App";
+import Register from "./pages/Register/Register";
+import Login from "./pages/Login/Login";
 
-const rootElement = document.getElementById("root");
-const root = createRoot(rootElement);
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />}>
+        <Route path="register" element={<Register />} />
+        <Route path="login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  </BrowserRouter>
 );
