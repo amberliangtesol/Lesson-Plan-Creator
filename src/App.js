@@ -1,5 +1,7 @@
 import React from "react";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
+import VideoWithQuestion from "./components/VideoWithQuestion";
+
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 
@@ -26,7 +28,8 @@ function App() {
       <GlobalStyle />
       {/* <Login />
       <Register /> */}
-      <YouTubeWithQuestion />
+      {/* <YouTubeWithQuestion /> */}
+      <VideoWithQuestion/>
     </>
   );
 }
