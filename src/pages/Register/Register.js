@@ -30,6 +30,8 @@ function Register() {
           name: name,
           account: email,
           password: password,
+          role: "teacher",
+          classes: [],
         }).then(console.log("註冊成功"));
         console.log(userCredential);
       })
