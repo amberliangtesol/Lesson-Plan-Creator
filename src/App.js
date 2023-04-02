@@ -5,7 +5,7 @@ import { createGlobalStyle } from "styled-components";
 import VideoWithQuestion from "./components/VideoWithQuestion";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
 import GameMode from "./components/GameMode";
-import Matching from "./components/Matching";
+import Matching from "./components/Matching/Matching";
 import MultipleChoice from "./components/MultipleChoice";
 import Sorting from "./components/Sorting";
 import Badge from "./pages/Badge/Badge";

@@ -10,7 +10,7 @@ const YouTubeWithQuestions = () => {
       id: 1,
       time: 5,
       type: "muliple-choice",
-      questionText: "AppWorks School最帥ㄉ前端導師是誰?",
+      question: "AppWorks School最帥ㄉ前端導師是誰?",
       options: [
         { text: "谷哥", correct: true },
         { text: "子華", correct: false },
@@ -23,7 +23,7 @@ const YouTubeWithQuestions = () => {
       // answered: true,
       time: 10,
       type: "muliple-choice",
-      questionText: "AppWorks Schoolㄉ校長是誰?",
+      question: "AppWorks Schoolㄉ校長是誰?",
       options: [
         { text: "Shirney", correct: true },
         { text: "Tiffany", correct: false },
@@ -121,7 +121,7 @@ const YouTubeWithQuestions = () => {
       {currentQuestion && (
         <div>
           <h3>Question {currentQuestion.id}:</h3>
-          <p>{currentQuestion.questionText}</p>
+          <p>{currentQuestion.question}</p>
           <div>
             {currentQuestion.options.map((option, index) => (
               <button key={index} onClick={() => handleAnswerClick(option)}>

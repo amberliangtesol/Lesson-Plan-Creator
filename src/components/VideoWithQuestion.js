@@ -31,7 +31,7 @@ const VideoWithQuestions = () => {
     {
       id: 2,
       // answered: true,
-      time: 10,
+      time: 7,
       // type: "muliple-choice",
       question: "AppWorks Schoolㄉ校長是誰?",
       options: [
