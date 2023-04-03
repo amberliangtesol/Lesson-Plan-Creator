@@ -15,7 +15,6 @@ function CreateUnit() {
   const [timeStamp, setTimeStamp] = useState("");
   const [question, setQuestion] = useState("");
   const [explanation, setExplanation] = useState("");
-  const [gameMode, setGameMode] = useState("");
   const [optionsState, setOptionsState] = useState("");
   const [optionContent, setOptionContent] = useState({
     correct: false,
@@ -25,41 +24,37 @@ function CreateUnit() {
   const [totalTestArray, setTotalTestArray] = useState([
     { type: "", data: {} },
   ]);
-
   const [testArray, setTestArray] = useState([{ correct: false, text: "" }]);
 
   const handleCreate = () => {
-    const newTest = {
-      type: "multiple-choice",
-      data: {
-        time: timeStamp,
-        question: question,
-        explanation: explanation,
-        gameMode: gameMode,
-        options: testArray,
-      },
-    };
-    setTotalTestArray([...totalTestArray, newTest]);
+    //setDoc
+  };
 
-    // 重置相关的状态变量
-    setTimeStamp("");
-    setQuestion("");
-    setExplanation("");
-    setGameMode("");
-    setTestArray([{ correct: false, text: "" }]);
+  // function convertToSeconds(timeStamp) {
+  //   const [hours, minutes, seconds] = timeStamp.split(":").map(parseFloat);
+  //   if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+  //     return NaN;
+  //   }
+  //   const totalSeconds = hours * 60 * 60 + minutes * 60 + seconds;
+  //   return totalSeconds;
+  // }
+
+  // function handleChange(event) {
+  //   const input = event.target.value;
+  //   setTimeStamp(input);
+  //   console.log(input);
+  //   setTotalSeconds(convertToSeconds(input));
+  // }
+  console.log({ totalTestArray });
+
+  const handleAddOption = (e) => {
+    e.preventDefault();
+    setTestArray([...testArray, { correct: false, text: "" }]);
   };
 
   const handleAddTest = (e) => {
     setTotalTestArray([...totalTestArray, { type: "", data: {} }]);
     e.preventDefault();
-  };
-
-  console.log("totalTestArray", { totalTestArray });
-  console.log("testArray", { testArray });
-
-  const handleAddOption = (e) => {
-    e.preventDefault();
-    setTestArray([...testArray, { correct: false, text: "" }]);
   };
 
   return (
@@ -94,16 +89,14 @@ function CreateUnit() {
         <div id="video-preview">
           {videoSource && (
             <iframe
-              title="Video Preview"
               width="560"
               height="315"
               src={videoSource}
-              // frameBorder="0"
+              frameBorder="0"
               allowFullScreen
             ></iframe>
           )}
         </div>
-
         {/* YT預覽有問題 */}
 
         <p>單元小標</p>
@@ -122,7 +115,7 @@ function CreateUnit() {
         <Splict></Splict>
 
         {totalTestArray.map((item, index) => (
-          <div key={index}>
+          <div>
             <p>選擇題型</p>
             <select
               value={item.type}
@@ -148,7 +141,7 @@ function CreateUnit() {
                   onChange={(e) => {
                     let timeArray = [...totalTestArray];
                     timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray); // 更新totalTestArray而不是timeStamp
+                    setTimeStamp(timeArray);
                   }}
                 />
                 <p>對戰模式</p>
@@ -157,7 +150,7 @@ function CreateUnit() {
                   onChange={(e) => {
                     let gameModeArray = [...totalTestArray];
                     gameModeArray[index].data.gameMode = e.target.value;
-                    setTotalTestArray(gameModeArray);
+                    setTotalTestArray(gameModeArray); 
                   }}
                 >
                   <option value="true">開啟</option>
@@ -170,7 +163,7 @@ function CreateUnit() {
                   onChange={(e) => {
                     let questionArray = [...totalTestArray];
                     questionArray[index].data.question = e.target.value;
-                    setTotalTestArray(questionArray);
+                    setQuestion(e.target.value)
                   }}
                 ></input>
                 <p>詳解</p>
@@ -179,11 +172,11 @@ function CreateUnit() {
                   onChange={(e) => {
                     let explanationArray = [...totalTestArray];
                     explanationArray[index].data.explanation = e.target.value;
-                    setTotalTestArray(explanationArray);
+                    setExplanation(e.target.value)
                   }}
                 ></input>
                 <p>選項</p>
-                <label for="ans">解答</label>
+                <label for="correctAns">解答</label>
                 {testArray.map((item, index) => (
                   <div>
                     <input
@@ -211,78 +204,7 @@ function CreateUnit() {
               </div>
             )}
 
-            {item.type === "matching" && (
-              <div>
-                '翻翻牌'
-                <p>插入時間</p>
-                <input
-                  type="text"
-                  value={item.data.time}
-                  onChange={(e) => {
-                    let timeArray = [...totalTestArray];
-                    timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray); // 更新totalTestArray而不是timeStamp
-                  }}
-                />
-                <p>對戰模式</p>
-                <select
-                  value={item.data.gameMode}
-                  onChange={(e) => {
-                    let gameModeArray = [...totalTestArray];
-                    gameModeArray[index].data.gameMode = e.target.value;
-                    setTotalTestArray(gameModeArray);
-                  }}
-                >
-                  <option value="true">開啟</option>
-                  <option value="false">關閉</option>
-                </select>
-                <p>問題</p>
-                <input
-                  type="text"
-                  value={item.data.question}
-                  onChange={(e) => {
-                    let questionArray = [...totalTestArray];
-                    questionArray[index].data.question = e.target.value;
-                    setTotalTestArray(questionArray);
-                  }}
-                ></input>
-                <p>詳解</p>
-                <input
-                  type="text"
-                  onChange={(e) => {
-                    let explanationArray = [...totalTestArray];
-                    explanationArray[index].data.explanation = e.target.value;
-                    setTotalTestArray(explanationArray);
-                  }}
-                ></input>
-                <p>選項</p>
-                <label for="ans">解答</label>
-                {testArray.map((item, index) => (
-                  <div>
-                    <input
-                      type="checkbox"
-                      checked={item.correct}
-                      value="true"
-                      onChange={(e) => {
-                        let updateArray = [...testArray];
-                        updateArray[index].correct = e.target.checked;
-                        setTestArray(updateArray);
-                      }}
-                    />
-                    <input
-                      type="text"
-                      value={item.text}
-                      onChange={(e) => {
-                        let updateArray = [...testArray];
-                        updateArray[index].text = e.target.value;
-                        setTestArray(updateArray);
-                      }}
-                    />
-                  </div>
-                ))}
-                <button onClick={handleAddOption}>再加一個選項</button>
-              </div>
-            )}
+            {item.type === "matching" && "翻翻牌"}
 
             {item.type === "sorting" && "排序題"}
           </div>
