@@ -13,8 +13,8 @@ const SingleBox = styled.div`
   cursor: pointer;
 `;
 
-function Sorting() {
-  const correctOrder = ["1", "2", "3"];
+function Sorting(props) {
+  const correctOrder = props.sorted || [];
   const [dragId, setDragId] = useState();
   const [boxes, setBoxes] = useState(
     correctOrder.map((id) => ({
@@ -58,6 +58,7 @@ function Sorting() {
 
     if (checkWin(newBoxState)) {
       alert("you win!");
+      props.onWin();
     }
   };
 

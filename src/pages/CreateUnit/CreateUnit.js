@@ -1,11 +1,30 @@
 import React from "react";
 import { useState } from "react";
 import styled from "styled-components/macro";
+import { addDoc, doc, collection } from "firebase/firestore";
+import { auth, db } from "../../utils/firebaseApp";
+
 
 const Splict = styled.div`
   width: 500px;
   border-top: 1px solid;
 `;
+
+function chunk(array, chunk) {
+  let result = [];
+  for (let i = 0; i < array.length; i += chunk) {
+      result.push(array.slice(i, i + chunk));
+  }
+  return result;
+}
+
+// [{},{},{},{}]
+// [[{},{}], [{},{}]]
+// 0 0 => 0
+// 0 1 => 1
+// 1 0 => 2
+// 1 1 => 3
+// 2 0 => 4
 
 function CreateUnit() {
   const [unitName, setUnitName] = useState("");
@@ -21,6 +40,35 @@ function CreateUnit() {
     correct: false,
     text: "",
   });
+  const createTest = (type) => {
+    const init = {
+      explanation: '',
+      gameMode: '',
+      time: '',
+      question: '',
+    }
+    switch (type) {
+      case 'matching':
+        return {
+          ...init,
+          cards: [{ id: 1, text: '' }, { id: 1, text: '' }],
+        };
+      case 'multiple-choice':
+        return {
+          ...init,
+          options: [{ correct: false, text: "" }],
+        };
+      case 'sorting':
+        return {
+          ...init,
+          sorted: [''],
+        }
+      default:
+        return {
+          ...init 
+        };
+    }
+  };
 
   const [totalTestArray, setTotalTestArray] = useState([
     { type: "", data: {} },
@@ -29,37 +77,60 @@ function CreateUnit() {
   const [testArray, setTestArray] = useState([{ correct: false, text: "" }]);
 
   const handleCreate = () => {
-    const newTest = {
-      type: "multiple-choice",
-      data: {
-        time: timeStamp,
-        question: question,
-        explanation: explanation,
-        gameMode: gameMode,
-        options: testArray,
-      },
-    };
-    setTotalTestArray([...totalTestArray, newTest]);
-
-    // 重置相关的状态变量
-    setTimeStamp("");
-    setQuestion("");
-    setExplanation("");
-    setGameMode("");
-    setTestArray([{ correct: false, text: "" }]);
+    addDoc(collection(db, "lessons/WYWRlNtyxAKM0b3IT1gY/units"), {
+      timestamp: new Date().valueOf(),
+      description: description,
+      subtitle: subTitle,
+      test: totalTestArray.map((item, index) => {
+        return {
+          ...item,
+          data: { ...item.data, id: index }
+        };
+      }),
+      unitName: unitName,
+      video:videoSource 
+    });
   };
 
+
   const handleAddTest = (e) => {
-    setTotalTestArray([...totalTestArray, { type: "", data: {} }]);
+    const newTest = createTest();
+    setTotalTestArray([...totalTestArray, { type: "", data: newTest }]);
     e.preventDefault();
   };
 
   console.log("totalTestArray", { totalTestArray });
-  console.log("testArray", { testArray });
+  // console.log("testArray", { testArray });
 
-  const handleAddOption = (e) => {
-    e.preventDefault();
-    setTestArray([...testArray, { correct: false, text: "" }]);
+  const handleAddOption = (index) => {
+    const newTotalTestArray = [...totalTestArray];
+    const { type, data } = newTotalTestArray[index];
+    
+    if(type==="multiple-choice"){
+      data.options = [ ...data.options, { correct: false, text: ''} ];
+    } else if (type==="sorting"){
+      data.sorted = [ ...data.sorted, ''];
+    } else if (type==="matching"){
+      const idNum = (data.cards.length + 2) / 2
+      data.cards = [ ...data.cards, { id: idNum, text: ''}, { id: idNum, text: ''} ];
+    }
+    newTotalTestArray[index] = { type, data };
+    setTotalTestArray(newTotalTestArray);
+  };
+
+  const handleSelectType = (type, index) => {
+    const test = createTest(type, index);
+    const newTotalTestArray = [...totalTestArray];
+    newTotalTestArray[index] = { type, data: test };
+    setTotalTestArray(newTotalTestArray);
+  };
+
+  const handleChange = (index, key, value) => {
+    const newTotalTestArray = [...totalTestArray];
+    const { type, data } = newTotalTestArray[index];
+    data[key] = value;
+    newTotalTestArray[index] = { type, data };
+    setTotalTestArray(newTotalTestArray);
   };
 
   return (
@@ -122,33 +193,28 @@ function CreateUnit() {
         <Splict></Splict>
 
         {totalTestArray.map((item, index) => (
-          <div key={index}>
+          <div key={`test_${index}`}>
             <p>選擇題型</p>
             <select
               value={item.type}
-              onChange={(e) => {
-                let typeArray = [...totalTestArray];
-                typeArray[index].type = e.target.value;
-                setTotalTestArray(typeArray);
-              }}
+              onChange={(e) => handleSelectType(e.target.value, index)}
             >
               <option value="">選擇題型</option>
               <option value="multiple-choice">選擇題</option>
               <option value="matching">翻翻牌</option>
               <option value="sorting">排序題</option>
             </select>
-
             {item.type === "multiple-choice" && (
               <div>
                 '選擇題'
                 <p>插入時間</p>
                 <input
-                  type="text"
+                  type="number"
                   value={item.data.time}
                   onChange={(e) => {
                     let timeArray = [...totalTestArray];
                     timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray); // 更新totalTestArray而不是timeStamp
+                    setTotalTestArray(timeArray);
                   }}
                 />
                 <p>對戰模式</p>
@@ -184,44 +250,110 @@ function CreateUnit() {
                 ></input>
                 <p>選項</p>
                 <label for="ans">解答</label>
-                {testArray.map((item, index) => (
+                {(item.data.options || []).map((option, idx) => (
                   <div>
                     <input
+                      key={`multiple_choice_checkbox_${idx}`}
                       type="checkbox"
-                      checked={item.correct}
+                      checked={option.correct}
                       value="true"
                       onChange={(e) => {
-                        let updateArray = [...testArray];
-                        updateArray[index].correct = e.target.checked;
-                        setTestArray(updateArray);
+                        const options = [...item.data.options]
+                        options[idx] = { ...options[idx], correct: e.target.value }
+                        handleChange(index, 'options', options);
                       }}
                     />
                     <input
+                      key={`multiple_choice_text_${idx}`}
                       type="text"
-                      value={item.text}
+                      value={option.text}
                       onChange={(e) => {
-                        let updateArray = [...testArray];
-                        updateArray[index].text = e.target.value;
-                        setTestArray(updateArray);
+                        const options = [...item.data.options]
+                        options[idx] = { ...options[idx], text: e.target.value }
+                        handleChange(index, 'options', options);
                       }}
                     />
                   </div>
                 ))}
-                <button onClick={handleAddOption}>再加一個選項</button>
+                <button type="button" onClick={() => handleAddOption(index)}>再加一個選項</button>
               </div>
             )}
-
             {item.type === "matching" && (
               <div>
                 '翻翻牌'
                 <p>插入時間</p>
                 <input
-                  type="text"
+                  type="number"
                   value={item.data.time}
                   onChange={(e) => {
                     let timeArray = [...totalTestArray];
                     timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray); // 更新totalTestArray而不是timeStamp
+                    setTotalTestArray(timeArray);
+                  }}
+                />
+                <p>對戰模式</p>
+                <select
+                  value={item.data.gameMode}
+                  onChange={(e) => {
+                    let gameModeArray = [...totalTestArray];
+                    gameModeArray[index].data.gameMode = e.target.value;
+                    setTotalTestArray(gameModeArray);
+                  }}
+                >
+                  <option value="true">開啟</option>
+                  <option value="false">關閉</option>
+                </select>
+                <p>問題</p>
+                <input
+                  type="text"
+                  value={item.data.question}
+                  onChange={(e) => {
+                    let questionArray = [...totalTestArray];
+                    questionArray[index].data.question = e.target.value;
+                    setTotalTestArray(questionArray);
+                  }}
+                ></input>
+                <p>詳解</p>
+                <input
+                  type="text"
+                  onChange={(e) => {
+                    let explanationArray = [...totalTestArray];
+                    explanationArray[index].data.explanation = e.target.value;
+                    setTotalTestArray(explanationArray);
+                  }}
+                ></input>
+                <p>配對</p>
+                {chunk((item.data.cards || []), 2).map((chunkedCards, idx) => {
+                  return chunkedCards.map((card, iidx) => (
+                    <div>
+                      <input
+                        key={`matching_question_${idx}_${iidx}`}
+                        type="text"
+                        value={card.text}
+                        onChange={(e) => {
+                          const cards = [...item.data.cards]
+                          const current = (idx * 2) + iidx
+                          cards[current] = { ...cards[current], text: e.target.value }
+                          handleChange(index, 'cards', cards);
+                        }}
+                      />
+                    </div>
+                  ))
+                })}
+                <button type="button" onClick={() => handleAddOption(index)}>再加一個選項</button>
+              </div>
+            )}
+            {item.type === "sorting" && (
+              <div>
+                '排序題'
+                <p>插入時間</p>
+                <input
+                  type="number"
+                  value={item.data.time}
+                  onChange={(e) => {
+                    let timeArray = [...totalTestArray];
+                    timeArray[index].data.time = e.target.value;
+                    setTotalTestArray(timeArray);
                   }}
                 />
                 <p>對戰模式</p>
@@ -256,35 +388,23 @@ function CreateUnit() {
                   }}
                 ></input>
                 <p>選項</p>
-                <label for="ans">解答</label>
-                {testArray.map((item, index) => (
+                {(item.data.sorted || []).map((sorted, idx) => (
                   <div>
                     <input
-                      type="checkbox"
-                      checked={item.correct}
-                      value="true"
-                      onChange={(e) => {
-                        let updateArray = [...testArray];
-                        updateArray[index].correct = e.target.checked;
-                        setTestArray(updateArray);
-                      }}
-                    />
-                    <input
+                      key={`sorting_text_${idx}`}
                       type="text"
-                      value={item.text}
+                      value={sorted.text}
                       onChange={(e) => {
-                        let updateArray = [...testArray];
-                        updateArray[index].text = e.target.value;
-                        setTestArray(updateArray);
+                        const sorted = [...item.data.sorted]
+                        sorted[idx] = e.target.value 
+                        handleChange(index, 'sorted', sorted);
                       }}
                     />
                   </div>
                 ))}
-                <button onClick={handleAddOption}>再加一個選項</button>
+                <button type="button" onClick={() => handleAddOption(index)}>再加一個選項</button>
               </div>
-            )}
-
-            {item.type === "sorting" && "排序題"}
+            )}{" "}
           </div>
         ))}
 

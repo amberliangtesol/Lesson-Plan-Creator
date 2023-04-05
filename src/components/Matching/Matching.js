@@ -18,18 +18,8 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
   );
 };
 
-const Matching = () => {
-  const cards = [
-    { id: 1, text: "apple" },
-    { id: 1, text: "蘋果" },
-    { id: 2, text: "banana" },
-    { id: 2, text: "香蕉" },
-    { id: 3, text: "guava" },
-    { id: 3, text: "拔辣" },
-    { id: 4, text: "grape" },
-    { id: 4, text: "葡萄" },
-  ];
-
+const Matching = (props) => {
+  const cards = props.cards || [];
   const shuffle = (array) => {
     let currentIndex = array.length,
       temporaryValue,
