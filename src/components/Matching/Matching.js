@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Matching.css";
 
 const Card = ({ id, name, flipped, matched, clicked }) => {
@@ -101,13 +101,26 @@ const Matching = (props) => {
     setGameOver(done);
   };
 
-  const GameOver = () => {
-    return (
-      <div className="centered">
-        <h1>Congrats!</h1>
-      </div>
-    );
-  };
+  // const GameOver = () => {
+  //   return (
+  //     <div className="centered">
+  //       <h1>Congrats!</h1>
+  //     </div>
+  //   );
+  // };
+
+
+  // const GameOver = () => {
+  //   alert("you win!");
+  //   props.onWin();    
+  // };
+
+  useEffect(() => {
+    if (gameOver) {
+      alert("you win!");
+      props.onWin();
+    }
+  }, [gameOver]);
 
   return (
     <div className="game-board">
@@ -126,7 +139,7 @@ const Matching = (props) => {
             }
           />
         ))}
-      {gameOver && <GameOver />}
+      {gameOver}
     </div>
   );
 };
