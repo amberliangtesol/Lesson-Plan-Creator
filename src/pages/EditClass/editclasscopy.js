@@ -37,6 +37,7 @@ function EditClass() {
   };
 
 
+
   const fileHandler = (event) => {
     let fileObj = event.target.files[0];
 
@@ -58,13 +59,40 @@ function EditClass() {
   // const handleTeacherChange = (e) => {
   //   setSelectedTeacher(e.target.value);
   // };
+  
 
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
   
     // Read the current document
     const classDoc = await getDoc(classDocRef);
-    const classData = classDoc.data();
+    let classData;
+    if (classDoc.exists()) {
+      classData = classDoc.data();
+    } else {
+      // Create a new document if it doesn't exist
+      await setDoc(classDocRef, {
+        teachers: [],
+        students: [],
+        id:selectedClass,
+        name:""
+      });
+      classData = {
+        teachers: [],
+        students: [],
+        id:selectedClass,
+        name:""
+      };
+    }
+  
+    // Check if classData.teachers is defined
+    if (!classData.teachers) {
+      // Initialize the teachers field if it's undefined
+      await updateDoc(classDocRef, {
+        teachers: [],
+      });
+      classData.teachers = [];
+    }
   
     // Update teachers field's array if the teacher is not already in the array
     if (!classData.teachers.includes(selectedTeacher)) {
@@ -109,6 +137,8 @@ function EditClass() {
       <p>選擇班級</p>
       <select value={selectedClass} onChange={handleClassChange}>
         <option value="">選擇班級</option>
+        <option value="classA">classA</option>
+        <option value="classB">classB</option>
         <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
         <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
       </select>

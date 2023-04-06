@@ -109,8 +109,8 @@ function EditClass() {
       <p>選擇班級</p>
       <select value={selectedClass} onChange={handleClassChange}>
         <option value="">選擇班級</option>
-        <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
-        <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
+        <option value="YY2xjjWgMztuSBSKcjB2">YY2xjjWgMztuSBSKcjB2</option>
+        <option value="yGbl0tGwhYIL76Fut2VA">yGbl0tGwhYIL76Fut2VA</option>
       </select>
       <p>指派教師</p>
       <input
