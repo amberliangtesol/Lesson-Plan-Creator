@@ -33,13 +33,13 @@ const Container1 = styled.div`
 
 const Container2 = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 `;
 
-function ManageClass() {
+function TeacherProfile() {
   return (
     <div>
-      <h3>班級管理</h3>
+      <h3>徽章管理</h3>
       <Container>
         <Container1>
           <BtnContainer>
@@ -58,16 +58,14 @@ function ManageClass() {
           </BtnContainer>
         </Container1>
         <Container2 style={{ paddingLeft: "50px" }}>
-          <Btn>
-            <Link to="/AddClass">班級建立</Link>
-          </Btn>
-          <Btn>
-            <Link to="/EditClass">班級編輯</Link>
-          </Btn>
+          <p>姓名</p>
+          <p>帳號</p>
+          <p>班級</p>
+          <p>密碼</p>
         </Container2>
       </Container>
     </div>
   );
 }
 
-export default ManageClass;
+export default TeacherProfile;

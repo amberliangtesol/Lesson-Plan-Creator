@@ -1,0 +1,22 @@
+/* EditClass.css */
+.ExcelTable2007 {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+.ExcelTable2007 th {
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.ExcelTable2007 td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.ExcelTable2007 tr:nth-child(even) {
+  background-color: #f2f2f2;
+}

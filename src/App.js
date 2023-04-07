@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
-
 import VideoWithQuestion from "./components/VideoWithQuestion";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
 import GameMode from "./components/GameMode";
@@ -12,11 +11,13 @@ import Badge from "./pages/Badge/Badge";
 import Course from "./pages/Course/Course";
 import CreateCourse from "./pages/CreateCourse/CreateCourse";
 import CreateUnit from "./pages/CreateUnit/CreateUnit";
+import AddClass from "./pages/AddClass/AddClass";
 import EditClass from "./pages/EditClass/EditClass";
 import Login from "./pages/Login/Login";
 import ManageBadge from "./pages/ManageBadge/ManageBadge";
 import ManageClass from "./pages/ManageClass/ManageClass";
-import Profile from "./pages/Profile/Profile";
+import TeacherProfile from "./pages/TeacherProfile/TeacherProfile";
+import StudentProfile from "./pages/StudentProfile/StudentProfile";
 import Register from "./pages/Register/Register";
 import Score from "./pages/Score/Score";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
@@ -50,13 +51,15 @@ function App() {
         <Route path="/sorting" element={<Sorting />} />
         <Route path="/badge" element={<Badge />} />
         <Route path="/course" element={<Course />} />
-        <Route path="/CreateCourse" element={<CreateCourse />} />
-        <Route path="/CreateUnit" element={<CreateUnit />} />
-        <Route path="/editclass" element={<EditClass />} />
+        <Route path="/createcourse" element={<CreateCourse />} />
+        <Route path="/createunit" element={<CreateUnit />} />
+        <Route path="/addclass" element={<AddClass />} />
+        <Route path="/EditClass" element={<EditClass />} />
         <Route path="/login" element={<Login />} />
         <Route path="/managebadge" element={<ManageBadge />} />
         <Route path="/manageclass" element={<ManageClass />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/teacherprofile" element={<TeacherProfile />} />
+        <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/register" element={<Register />} />
         <Route path="/score" element={<Score />} />
         <Route path="/teachermain" element={<TeacherMain />} />

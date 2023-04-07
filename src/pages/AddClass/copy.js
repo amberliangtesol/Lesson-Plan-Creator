@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import "./EditClass.css";
-import { auth, db } from "../../utils/firebaseApp";
+import "./AddClass.css";
+import { auth,db } from "../../utils/firebaseApp";
 import {
   setDoc,
   getDoc,
@@ -13,43 +13,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import styled from "styled-components/macro";
+// import styled from "styled-components/macro";
 import { AiFillDelete } from "react-icons/ai";
-import { Link } from "react-router-dom";
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Btn = styled.button`
-  cursor: pointer;
-  width: 70px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 
 function EditClass() {
   const [cols, setCols] = useState([]);
@@ -157,7 +122,7 @@ function EditClass() {
               student.email,
               student.email // Using the email as the password, but consider generating a random or default password
             );
-
+  
             // Create user documents for new students
             await setDoc(userDocRef, {
               role: "student",
@@ -214,54 +179,33 @@ function EditClass() {
           </tr>
         </thead>
         <tbody>{renderRows()}</tbody>
+        {rows.length > 0 && <p>預設學生密碼與帳號相同</p>}
       </table>
+      
     );
   };
 
   return (
-    <Container>
-      <Container1>
-        <BtnContainer>
-          <h3>班級建立</h3>
-          <Btn>
-            <Link to="/TeacherMain">課程主頁</Link>
-          </Btn>
-          <Btn>
-            <Link to="/ManageClass">班級管理</Link>
-          </Btn>
-          <Btn>
-            <Link to="/ManageBadge">徽章管理</Link>
-          </Btn>
-          <Btn>
-            <Link to="/Profile">個人設定</Link>
-          </Btn>
-        </BtnContainer>
-      </Container1>
-      <Container2 style={{ paddingLeft: '50px' }}>
-        <p>選擇班級</p>
-        <select value={selectedClass} onChange={handleClassChange}>
-          <option value="">選擇班級</option>
-          <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
-          <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
-        </select>
-        <p>班級教師</p>
-        <p>新增教師</p>
-        <input
-          type="text"
-          value={teacherInput}
-          onChange={handleTeacherInputChange}
-          onBlur={handleTeacherInputBlur}
-          placeholder="輸入教師電子郵件"
-        />
-        <p>現有學生</p>
-
-        <p>新增學生</p>
-
-        <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
-        {renderTable()}
-        <Btn onClick={handleSubmit}>建立帳號</Btn>
-      </Container2>
-    </Container>
+    <div>
+      <p>EditClass</p>
+      <p>選擇班級</p>
+      <select value={selectedClass} onChange={handleClassChange}>
+        <option value="">選擇班級</option>
+        <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
+        <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
+      </select>
+      <p>指派教師</p>
+      <input
+        type="text"
+        value={teacherInput}
+        onChange={handleTeacherInputChange}
+        onBlur={handleTeacherInputBlur}
+        placeholder="輸入教師電子郵件"
+      />
+      <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
+      {renderTable()}
+      <button onClick={handleSubmit}>建立帳號</button>
+    </div>
   );
 }
 

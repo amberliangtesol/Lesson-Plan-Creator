@@ -45,7 +45,7 @@ function Register() {
   return (
     <div>
       <ProfileIcon></ProfileIcon>
-      <p>註冊</p>
+      <p>教師註冊</p>
       <form>
         <p>姓名</p>
         <input type="text" onChange={(e) => setName(e.target.value)}></input>
