@@ -2,7 +2,18 @@ import React, { useState, useEffect } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import "./EditClass.css";
 import { db } from "../../utils/firebaseApp";
-import { setDoc, getDoc, doc, updateDoc, collection, getDocs, query, where  } from "firebase/firestore";
+import {
+  setDoc,
+  getDoc,
+  doc,
+  updateDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+// import styled from "styled-components/macro";
+import { AiFillDelete } from "react-icons/ai";
 
 function EditClass() {
   const [cols, setCols] = useState([]);
@@ -14,11 +25,13 @@ function EditClass() {
 
   useEffect(() => {
     const fetchTeachers = async () => {
-      const teachersQuery = query(collection(db, "users"), where("role", "==", "teacher"));
+      const teachersQuery = query(
+        collection(db, "users"),
+        where("role", "==", "teacher")
+      );
       const querySnapshot = await getDocs(teachersQuery);
       const teacherEmails = querySnapshot.docs.map((doc) => doc.data().account);
       setTeachers(teacherEmails);
-      // console.log("teacherEmails",teacherEmails);
     };
     fetchTeachers();
   }, []);
@@ -36,8 +49,6 @@ function EditClass() {
     }
   };
 
-
-
   const fileHandler = (event) => {
     let fileObj = event.target.files[0];
 
@@ -46,7 +57,10 @@ function EditClass() {
       if (err) {
         console.log(err);
       } else {
-        setCols(resp.cols);
+        let updatedCols = [...resp.cols];
+        updatedCols[0].name = "姓名";
+        updatedCols[1].name = "帳號";
+        setCols(updatedCols);
         setRows(resp.rows);
       }
     });
@@ -56,80 +70,105 @@ function EditClass() {
     setSelectedClass(e.target.value);
   };
 
-  // const handleTeacherChange = (e) => {
-  //   setSelectedTeacher(e.target.value);
-  // };
-  
-
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
-  
+
     // Read the current document
     const classDoc = await getDoc(classDocRef);
-    let classData;
-    if (classDoc.exists()) {
-      classData = classDoc.data();
-    } else {
-      // Create a new document if it doesn't exist
-      await setDoc(classDocRef, {
-        teachers: [],
-        students: [],
-        id:selectedClass,
-        name:""
-      });
-      classData = {
-        teachers: [],
-        students: [],
-        id:selectedClass,
-        name:""
-      };
-    }
-  
-    // Check if classData.teachers is defined
-    if (!classData.teachers) {
-      // Initialize the teachers field if it's undefined
-      await updateDoc(classDocRef, {
-        teachers: [],
-      });
-      classData.teachers = [];
-    }
-  
+    const classData = classDoc.data();
+
     // Update teachers field's array if the teacher is not already in the array
     if (!classData.teachers.includes(selectedTeacher)) {
       await updateDoc(classDocRef, {
         teachers: [...classData.teachers, selectedTeacher],
       });
     }
-  
-    // Extract email and name columns from the rows (assuming email is in the second column and name in the first column)
+
+    // Extract email and name columns from the rows
     const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
-  
+
     // Filter out existing student ids
-    const newStudentsData = studentsData.filter((student) => !classData.students.includes(student.email));
-  
+    const newStudentsData = studentsData.filter(
+      (student) => !classData.students.includes(student.email)
+    );
+
     // Update students field's array if there are new student ids
     if (newStudentsData.length > 0) {
       const newStudentIds = newStudentsData.map((student) => student.email);
-  
+
       await updateDoc(classDocRef, {
         students: [...classData.students, ...newStudentIds],
       });
-  
+
       // Create user documents for new students
       for (const student of newStudentsData) {
         const userDocRef = doc(db, "users", student.email);
-        await setDoc(userDocRef, {
-          role: "student",
-          id: student.email,
-          name: student.name,
-          createdBy: selectedTeacher,
-          class: selectedClass,
-          badge: { collected: [""], outdated: [""] },
-        });
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          // Update the classes field for existing students
+          const userData = userDoc.data();
+          if (!userData.classes.includes(selectedClass)) {
+            await updateDoc(userDocRef, {
+              classes: [...userData.classes, selectedClass],
+            });
+          }
+        } else {
+          // Create user documents for new students
+          await setDoc(userDocRef, {
+            role: "student",
+            id: student.email,
+            name: student.name,
+            createdBy: selectedTeacher,
+            classes: [selectedClass],
+            badge: { collected: [""], outdated: [""] },
+          });
+        }
       }
     }
   };
-  
+
+  const DeleteIcon = ({ onDelete }) => {
+    return (
+      <span onClick={onDelete}>
+        <AiFillDelete />
+      </span>
+    );
+  };
+
+  const renderRows = () => {
+    return rows.map((row, rowIndex) => (
+      <tr key={rowIndex}>
+        {row.map((cell, cellIndex) => (
+          <td key={cellIndex}>{cell}</td>
+        ))}
+        <td>
+          <DeleteIcon
+            onDelete={() => {
+              const updatedRows = rows.filter((_, i) => i !== rowIndex);
+              setRows(updatedRows);
+            }}
+          />
+        </td>
+      </tr>
+    ));
+  };
+
+  const renderTable = () => {
+    return (
+      <table className="ExcelTable2007">
+        <thead>
+          <tr className="heading">
+            {cols.map((col, index) => (
+              <th key={index}>{col.name}</th>
+            ))}
+            {rows.length > 0 && <th>Delete</th>}
+          </tr>
+        </thead>
+        <tbody>{renderRows()}</tbody>
+      </table>
+    );
+  };
 
   return (
     <div>
@@ -137,8 +176,6 @@ function EditClass() {
       <p>選擇班級</p>
       <select value={selectedClass} onChange={handleClassChange}>
         <option value="">選擇班級</option>
-        <option value="classA">classA</option>
-        <option value="classB">classB</option>
         <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
         <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
       </select>
@@ -151,18 +188,10 @@ function EditClass() {
         placeholder="輸入教師電子郵件"
       />
       <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
-      <OutTable
-        data={rows}
-        columns={cols}
-        tableClassName="ExcelTable2007"
-        tableHeaderRowClass="heading"
-      />
+      {renderTable()}
       <button onClick={handleSubmit}>建立帳號</button>
     </div>
   );
 }
 
 export default EditClass;
-
-// users collection > users doc > field role as teacher
-// users collection > email as doc name > set role field as student
