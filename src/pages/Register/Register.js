@@ -5,7 +5,7 @@ import { auth, db } from "../../utils/firebaseApp";
 import { setDoc, doc } from "firebase/firestore";
 import styled from 'styled-components/macro';
 import profile from './profile.png';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const ProfileIcon = styled.div`
@@ -16,6 +16,7 @@ const ProfileIcon = styled.div`
 `;
 
 function Register() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -25,23 +26,31 @@ function Register() {
     console.log(email, password);
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // const user = userCredential.user;
+        // Get the user's unique identifier (UID) from the userCredential object
+        const uid = userCredential.user.uid;
+  
+        // Use the user's UID as the document ID in Firestore
         setDoc(doc(db, "users", email), {
           name: name,
           account: email,
-          password: password,
           role: "teacher",
           classes: [],
-        }).then(console.log("註冊成功"));
-        console.log(userCredential);
-      })
+          uid: uid
+        })        
+        .then(() => {
+          console.log("註冊成功");
+          // Redirect to the login page after successful registration
+          navigate("/login");
+        });
+      console.log(userCredential);
+    })
       .catch((error) => {
         // const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage);
       });
   };
-
+  
   return (
     <div>
       <ProfileIcon></ProfileIcon>

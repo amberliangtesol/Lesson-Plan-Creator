@@ -6,7 +6,7 @@ import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, query, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../utils/firebaseApp";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const UploadLabel = styled.label`
   cursor: pointer;
@@ -59,8 +59,8 @@ const VideoImg = styled.div`
 `;
 
 function CreateCourse() {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startTimestamp, setStartTimestamp] = useState(Date.now());
+  const [endTimestamp, setEndTimestamp] = useState(Date.now());
   const [imageURL, setImageURL] = useState("");
   const [courseName, setCourseName] = useState("");
   const [classChoose, setClassChoose] = useState([]);
@@ -68,11 +68,11 @@ function CreateCourse() {
   const [imageFile, setImageFile] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const now = new Date().toISOString().slice(0, 10);
-    setStartDate(now);
-    setEndDate(now);
-  }, []);
+  // useEffect(() => {
+  //   const now = new Date().toISOString().slice(0, 10);
+  //   setStartTimestamp(now);
+  //   setEndTimestamp(now);
+  // }, []);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -122,11 +122,11 @@ function CreateCourse() {
       const docRef = await addDoc(collection(db, "lessons"), {
         name: courseName,
         img: imageURL,
-        start_date: startDate,
-        end_date: endDate,
+        start_date: startTimestamp,
+        end_date: endTimestamp,
         classes: classChoose,
       });
-      const lessonDocId = docRef.id; 
+      const lessonDocId = docRef.id;
       navigate(`/create-unit/${lessonDocId}`);
 
       console.log("Document created with ID: ", docRef.id);
@@ -196,26 +196,28 @@ function CreateCourse() {
               選擇班級
             </option> */}
             {classList.map((classItem) => (
-              <option key={classItem.id} value={classItem.id}>
-                {classItem.name}{" "}
+              <option key={`${classItem.id}_${classItem.index}`} value={classItem.id}>
+                {classItem.name}
               </option>
             ))}
           </select>
 
           <h4>開始時間</h4>
           <input
-            type="date"
-            value={startDate}
-            min={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          ></input>
+            type="datetime-local"
+            value={new Date(startTimestamp).toISOString().slice(0, 16)}
+            onChange={(e) =>
+              setStartTimestamp(new Date(e.target.value).getTime())
+            }
+          />
           <h4>結束時間</h4>
           <input
-            type="date"
-            value={endDate}
-            min={startDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          ></input>
+            type="datetime-local"
+            value={new Date(endTimestamp).toISOString().slice(0, 16)}
+            onChange={(e) =>
+              setEndTimestamp(new Date(e.target.value).getTime())
+            }
+          />
           <Btn type="button" onClick={handleCreate}>
             <Link to="/CreateUnit">單元建立</Link>
           </Btn>
@@ -226,3 +228,4 @@ function CreateCourse() {
 }
 
 export default CreateCourse;
+
