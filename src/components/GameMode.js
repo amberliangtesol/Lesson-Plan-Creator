@@ -86,7 +86,7 @@ const CountdownWrapper = styled.div`
 
 
 const GameMode = () => {
-  const [gamemode, setGamemode] = useState(false);
+  const [gamemode, setGamemode] = useState(true);
   const [countdown, setCountdown] = useState(null);
   const [npcCountdown, setNpcCountdown] = useState(null);
   const [currentMonster, setCurrentMonster] = useState(monsterImages[0]);
@@ -133,9 +133,9 @@ const GameMode = () => {
 
   return (
    <div>
-      <button onClick={toggleGamemode}>
+      {/* <button onClick={toggleGamemode}>
         {gamemode ? "Disable Gamemode" : "Enable Gamemode"}
-      </button>
+      </button> */}
       {gamemode && (
         <div>
         <CountdownWrapper>

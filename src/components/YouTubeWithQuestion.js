@@ -4,6 +4,7 @@ import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching/Matching";
+import GameMode from "./GameMode";
 
 const YouTubeWithQuestions = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -107,6 +108,7 @@ const YouTubeWithQuestions = () => {
   return (
     <div>
       <div id="player"></div>
+      {currentQuestion && currentQuestion.gameMode && <GameMode />}
       {currentQuestion && currentQuestion.type === "multiple-choice" && (
         <div>
         <MultipleChoice
