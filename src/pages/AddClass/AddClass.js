@@ -178,7 +178,7 @@ function AddClass() {
 
   const DeleteIcon = ({ onDelete }) => {
     return (
-      <span onClick={onDelete}>
+      <span onClick={onDelete} style={{ cursor: "pointer" }}>
         <AiFillDelete />
       </span>
     );

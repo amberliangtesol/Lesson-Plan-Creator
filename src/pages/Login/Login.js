@@ -3,6 +3,7 @@ import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import styled from "styled-components/macro";
 import profile from "./profile.png";
+
 // import { auth, db } from "../../utils/firebaseApp";
 
 const ProfileIcon = styled.div`

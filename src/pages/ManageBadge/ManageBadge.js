@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+import badge from "./badge.png";
+
 
 const Btn = styled.button`
   cursor: pointer;
@@ -36,6 +38,13 @@ const Container2 = styled.div`
   flex-direction: column;
 `;
 
+const Badge = styled.div`
+  width: 86px;
+  height: 86px;
+  background-image: url(${badge});
+  cursor: pointer;
+`;
+
 function ManageBadge() {
   return (
     <div>
@@ -57,7 +66,32 @@ function ManageBadge() {
             </Btn>
           </BtnContainer>
         </Container1>
-        <Container2 style={{ paddingLeft: "50px" }}></Container2>
+        <Container2 style={{ paddingLeft: "50px"}}>
+        <Badge/><p>連續答對三題</p>
+        <p>選擇班級</p>
+        <input></input>
+        <p>選擇學生</p>
+        <input></input>
+        <Btn style={{ marginBottom: "30px"}}>確認兌換</Btn>
+        </Container2>
+
+        <Container2 style={{ paddingLeft: "50px"}}>
+        <Badge/><p>準時完成作業</p>
+        <p>選擇班級</p>
+        <input></input>
+        <p>選擇學生</p>
+        <input></input>
+        <Btn style={{ marginBottom: "30px"}}>確認兌換</Btn>
+        </Container2>
+
+        <Container2 style={{ paddingLeft: "50px"}}>
+        <Badge/><p>挑戰打怪成功</p>
+        <p>選擇班級</p>
+        <input></input>
+        <p>選擇學生</p>
+        <input></input>
+        <Btn style={{ marginBottom: "30px"}}>確認兌換</Btn>
+        </Container2>
       </Container>
     </div>
   );
