@@ -5,6 +5,7 @@ import "./AddClass.css";
 import { auth, db } from "../../utils/firebaseApp";
 import {
   setDoc,
+  addDoc,
   getDoc,
   doc,
   updateDoc,
@@ -76,6 +77,10 @@ function AddClass() {
     setTeacherInput(e.target.value);
   };
 
+  const handleClassNameChange = (e) => {
+    setSelectedClass(e.target.value);
+  };
+
   const handleTeacherInputBlur = () => {
     if (teachers.includes(teacherInput)) {
       setSelectedTeacher(teacherInput);
@@ -102,79 +107,89 @@ function AddClass() {
     });
   };
 
-  const handleClassChange = (e) => {
-    setSelectedClass(e.target.value);
+
+  const createNewClass = async () => {
+    const newClassDocRef = await addDoc(collection(db, "classes"), {
+      name: selectedClass,
+      students: [],
+      teachers: [selectedTeacher],
+    });
+    setSelectedClass(newClassDocRef.id);
+    await updateDoc(newClassDocRef, {
+      id: newClassDocRef.id,
+    });
   };
 
-  const handleSubmit = async () => {
-    const classDocRef = doc(db, "classes", selectedClass);
 
-    // Read the current document
-    const classDoc = await getDoc(classDocRef);
-    const classData = classDoc.data();
+const createOrUpdateClass = async () => {
+  let classDocRef = doc(db, "classes", selectedClass);
+  let classDoc = await getDoc(classDocRef);
 
-    // Update teachers field's array if the teacher is not already in the array
-    if (!classData.teachers.includes(selectedTeacher)) {
-      await updateDoc(classDocRef, {
-        teachers: [...classData.teachers, selectedTeacher],
-      });
-    }
+  if (!classDoc.exists()) {
+    await createNewClass();
+    classDocRef = doc(db, "classes", selectedClass);
+    classDoc = await getDoc(classDocRef);
+  }
 
-    // Extract email and name columns from the rows
-    const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
+  const classData = classDoc.data();
 
-    // Filter out existing student ids
-    const newStudentsData = studentsData.filter(
-      (student) => !classData.students.includes(student.email)
-    );
+  if (!classData.teachers.includes(selectedTeacher)) {
+    await updateDoc(classDocRef, {
+      teachers: [...classData.teachers, selectedTeacher],
+    });
+  }
 
-    // Update students field's array if there are new student ids
-    if (newStudentsData.length > 0) {
-      const newStudentIds = newStudentsData.map((student) => student.email);
+  const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
+  const newStudentsData = studentsData.filter(
+    (student) => !classData.students.includes(student.email)
+  );
 
-      await updateDoc(classDocRef, {
-        students: [...classData.students, ...newStudentIds],
-      });
+  if (newStudentsData.length > 0) {
+    const newStudentIds = newStudentsData.map((student) => student.email);
+    await updateDoc(classDocRef, {
+      students: [...classData.students, ...newStudentIds],
+    });
 
-      // Create user documents for new students
-      for (const student of newStudentsData) {
-        const userDocRef = doc(db, "users", student.email);
-        const userDoc = await getDoc(userDocRef);
+    for (const student of newStudentsData) {
+      const userDocRef = doc(db, "users", student.email);
+      const userDoc = await getDoc(userDocRef);
 
-        if (userDoc.exists()) {
-          // Update the classes field for existing students
-          const userData = userDoc.data();
-          if (!userData.classes.includes(selectedClass)) {
-            await updateDoc(userDocRef, {
-              classes: [...userData.classes, selectedClass],
-            });
-          }
-        } else {
-          // Create a new user account using Firebase Auth
-          try {
-            const { user } = await createUserWithEmailAndPassword(
-              auth,
-              student.email,
-              student.email // Using the email as the password, but consider generating a random or default password
-            );
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (!userData.classes.includes(selectedClass)) {
+          await updateDoc(userDocRef, {
+            classes: [...userData.classes, selectedClass],
+          });
+        }
+      } else {
+        try {
+          const { user } = await createUserWithEmailAndPassword(
+            auth,
+            student.email,
+            student.email
+          );
 
-            // Create user documents for new students
-            await setDoc(userDocRef, {
-              role: "student",
-              account: student.email,
-              uid: user.uid,
-              name: student.name,
-              createdBy: selectedTeacher,
-              classes: [selectedClass],
-              badge: { collected: [""], outdated: [""] },
-            });
-          } catch (error) {
-            console.error(`Error creating user: ${student.email}`, error);
-          }
+          await setDoc(userDocRef, {
+            role: "student",
+            account: student.email,
+            uid: user.uid,
+            name: student.name,
+            createdBy: selectedTeacher,
+            classes: [selectedClass],
+            badge: { collected: [""], outdated: [""] },
+          });
+        } catch (error) {
+          console.error(`Error creating user: ${student.email}`, error);
         }
       }
     }
-  };
+  }
+};
+
+const handleSubmit = async () => {
+  await createOrUpdateClass();
+};
+
 
   const DeleteIcon = ({ onDelete }) => {
     return (
@@ -239,12 +254,12 @@ function AddClass() {
       </Container1>
       <Container2 style={{ paddingLeft: '50px' }}>
         <p>班級名稱</p>
-        <select value={selectedClass} onChange={handleClassChange}>
-          <option value="">選擇班級</option>
-          <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
-          <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
-        </select>
-        <p>指派教師</p>
+        <input
+          type="text"
+          value={selectedClass}
+          onChange={handleClassNameChange}
+          placeholder="輸入班級名稱"
+        />        <p>指派教師</p>
         <input
           type="text"
           value={teacherInput}
@@ -261,3 +276,4 @@ function AddClass() {
 }
 
 export default AddClass;
+

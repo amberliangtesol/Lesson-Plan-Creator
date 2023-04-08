@@ -58,8 +58,32 @@ function EditClass() {
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [teacherInput, setTeacherInput] = useState("");
   const [teachers, setTeachers] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [classTeachers, setClassTeachers] = useState([]);
+  const [classStudents, setClassStudents] = useState([]);
+
+  const fetchClassData = async (classId) => {
+    const classDocRef = doc(db, "classes", classId);
+    const classDoc = await getDoc(classDocRef);
+    const classData = classDoc.data();
+    setClassStudents(classData.students);
+    setClassTeachers(classData.teachers);
+  };
+  
 
   useEffect(() => {
+    const fetchClasses = async () => {
+      const classesQuery = collection(db, "classes");
+      const querySnapshot = await getDocs(classesQuery);
+      const classNames = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+      }));
+      setClasses(classNames);
+    };
+
+    fetchClasses();
+
     const fetchTeachers = async () => {
       const teachersQuery = query(
         collection(db, "users"),
@@ -102,9 +126,16 @@ function EditClass() {
     });
   };
 
-  const handleClassChange = (e) => {
+  const handleClassChange = async (e) => {
     setSelectedClass(e.target.value);
+    if (e.target.value) {
+      fetchClassData(e.target.value);
+    } else {
+      setClassStudents([]);
+      setClassTeachers([]);
+    }
   };
+  
 
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
@@ -237,14 +268,22 @@ function EditClass() {
           </Btn>
         </BtnContainer>
       </Container1>
-      <Container2 style={{ paddingLeft: '50px' }}>
+      <Container2 style={{ paddingLeft: "50px" }}>
         <p>選擇班級</p>
         <select value={selectedClass} onChange={handleClassChange}>
           <option value="">選擇班級</option>
-          <option value="FYscpMbcfftwkaJNUjaJ">FYscpMbcfftwkaJNUjaJ</option>
-          <option value="YuoUco0Vo0iFZiULsmFh">YuoUco0Vo0iFZiULsmFh</option>
+          {classes.map((classOption) => (
+            <option key={classOption.id} value={classOption.id}>
+              {classOption.name}
+            </option>
+          ))}
         </select>
         <p>班級教師</p>
+        <ul>
+          {classTeachers.map((teacher, index) => (
+            <li key={index}>{teacher}</li>
+          ))}
+        </ul>
         <p>新增教師</p>
         <input
           type="text"
@@ -252,14 +291,22 @@ function EditClass() {
           onChange={handleTeacherInputChange}
           onBlur={handleTeacherInputBlur}
           placeholder="輸入教師電子郵件"
-        />
+        ></input>
         <p>現有學生</p>
-
+        <ul>
+          {classStudents.map((student, index) => (
+            <li key={index}>{student}</li>
+          ))}
+        </ul>
         <p>新增學生</p>
 
-        <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
+        <input
+          type="file"
+          onChange={fileHandler}
+          style={{ padding: "10px" }}
+        ></input>
         {renderTable()}
-        <Btn onClick={handleSubmit}>建立帳號</Btn>
+        <Btn onClick={handleSubmit}>確認修改</Btn>
       </Container2>
     </Container>
   );
