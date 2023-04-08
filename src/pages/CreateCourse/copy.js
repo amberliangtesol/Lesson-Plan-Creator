@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, query, onSnapshot, updateDoc, arrayUnion, doc } from "firebase/firestore";
+import { addDoc, collection, query, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 

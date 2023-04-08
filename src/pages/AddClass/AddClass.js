@@ -107,7 +107,6 @@ function AddClass() {
     });
   };
 
-
   const createNewClass = async () => {
     const newClassDocRef = await addDoc(collection(db, "classes"), {
       name: selectedClass,
@@ -120,76 +119,78 @@ function AddClass() {
     });
   };
 
+  const createOrUpdateClass = async () => {
+    let classDocRef = doc(db, "classes", selectedClass);
+    let classDoc = await getDoc(classDocRef);
 
-const createOrUpdateClass = async () => {
-  let classDocRef = doc(db, "classes", selectedClass);
-  let classDoc = await getDoc(classDocRef);
+    if (!classDoc.exists()) {
+      await createNewClass();
+      classDocRef = doc(db, "classes", selectedClass);
+      classDoc = await getDoc(classDocRef);
+    }
 
-  if (!classDoc.exists()) {
-    await createNewClass();
-    classDocRef = doc(db, "classes", selectedClass);
-    classDoc = await getDoc(classDocRef);
-  }
+    if (classDoc.exists) {
+      const classData = classDoc.data();
 
-  const classData = classDoc.data();
+      if (!classData.teachers.includes(selectedTeacher)) {
+        await updateDoc(classDocRef, {
+          teachers: [...classData.teachers, selectedTeacher],
+        });
+      }
 
-  if (!classData.teachers.includes(selectedTeacher)) {
-    await updateDoc(classDocRef, {
-      teachers: [...classData.teachers, selectedTeacher],
-    });
-  }
+      const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
+      const newStudentsData = studentsData.filter(
+        (student) => !classData.students.includes(student.email)
+      );
 
-  const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
-  const newStudentsData = studentsData.filter(
-    (student) => !classData.students.includes(student.email)
-  );
+      if (newStudentsData.length > 0) {
+        const newStudentIds = newStudentsData.map((student) => student.email);
+        await updateDoc(classDocRef, {
+          students: [...classData.students, ...newStudentIds],
+        });
 
-  if (newStudentsData.length > 0) {
-    const newStudentIds = newStudentsData.map((student) => student.email);
-    await updateDoc(classDocRef, {
-      students: [...classData.students, ...newStudentIds],
-    });
+        for (const student of newStudentsData) {
+          const userDocRef = doc(db, "users", student.email);
+          const userDoc = await getDoc(userDocRef);
 
-    for (const student of newStudentsData) {
-      const userDocRef = doc(db, "users", student.email);
-      const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            if (!userData.classes.includes(selectedClass)) {
+              await updateDoc(userDocRef, {
+                classes: [...userData.classes, selectedClass],
+              });
+            }
+          } else {
+            try {
+              const { user } = await createUserWithEmailAndPassword(
+                auth,
+                student.email,
+                student.email
+              );
 
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (!userData.classes.includes(selectedClass)) {
-          await updateDoc(userDocRef, {
-            classes: [...userData.classes, selectedClass],
-          });
-        }
-      } else {
-        try {
-          const { user } = await createUserWithEmailAndPassword(
-            auth,
-            student.email,
-            student.email
-          );
-
-          await setDoc(userDocRef, {
-            role: "student",
-            account: student.email,
-            uid: user.uid,
-            name: student.name,
-            createdBy: selectedTeacher,
-            classes: [selectedClass],
-            badge: { collected: [""], outdated: [""] },
-          });
-        } catch (error) {
-          console.error(`Error creating user: ${student.email}`, error);
+              await setDoc(userDocRef, {
+                role: "student",
+                account: student.email,
+                uid: user.uid,
+                name: student.name,
+                createdBy: selectedTeacher,
+                classes: [selectedClass],
+                badge: { collected: [""], outdated: [""] },
+              });
+            } catch (error) {
+              console.error(`Error creating user: ${student.email}`, error);
+            }
+          }
         }
       }
+    } else {
+      console.error("Error: Class document does not exist.");
     }
-  }
-};
+  };
 
-const handleSubmit = async () => {
-  await createOrUpdateClass();
-};
-
+  const handleSubmit = async () => {
+    await createOrUpdateClass();
+  };
 
   const DeleteIcon = ({ onDelete }) => {
     return (
@@ -237,7 +238,7 @@ const handleSubmit = async () => {
     <Container>
       <Container1>
         <BtnContainer>
-        <h3>班級建立</h3>
+          <h3>班級建立</h3>
           <Btn>
             <Link to="/TeacherMain">課程主頁</Link>
           </Btn>
@@ -252,14 +253,15 @@ const handleSubmit = async () => {
           </Btn>
         </BtnContainer>
       </Container1>
-      <Container2 style={{ paddingLeft: '50px' }}>
+      <Container2 style={{ paddingLeft: "50px" }}>
         <p>班級名稱</p>
         <input
           type="text"
           value={selectedClass}
           onChange={handleClassNameChange}
           placeholder="輸入班級名稱"
-        />        <p>指派教師</p>
+        />{" "}
+        <p>指派教師</p>
         <input
           type="text"
           value={teacherInput}
@@ -276,4 +278,3 @@ const handleSubmit = async () => {
 }
 
 export default AddClass;
-

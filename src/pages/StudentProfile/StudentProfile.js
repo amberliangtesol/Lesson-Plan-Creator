@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
-import { useState} from "react";
+import { onAuthStateChanged } from 'firebase/auth';
+import { ref, onValue } from 'firebase/database';
+import { auth, db } from "../../utils/firebaseApp";
 
 const Btn = styled.button`
   cursor: pointer;
@@ -61,6 +63,31 @@ const UploadLabel = styled.label`
 
 function StudentProfile() {
   const [imageURL, setImageURL] = useState("");
+  const [name, setName] = useState('');
+  const [account, setAccount] = useState('');
+  const [classes, setClasses] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const userId = user.uid;
+          const userRef = ref(db, `user/${userId}`);
+
+          onValue(userRef, (snapshot) => {
+            const userData = snapshot.val();
+            setName(userData.name);
+            setAccount(userData.account);
+            setClasses(userData.classes);
+            setPassword(userData.password);
+          });
+        }
+      });
+    };
+
+    fetchUserData();
+  }, []);
 
   const UploadIcon = () => {
     return (
@@ -115,10 +142,10 @@ function StudentProfile() {
             onChange={handleImageUpload}
             style={{ display: "none" }}
           ></input>
-          <p>姓名</p>
-          <p>帳號</p>
-          <p>班級</p>
-          <p>密碼</p>
+          <p>姓名{name}</p>
+          <p>帳號{account}</p>
+          <p>班級{classes}</p>
+          <p>密碼{password}</p>
           <Btn>確認修改</Btn>
           <Btn>登出</Btn>
         </Container2>

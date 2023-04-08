@@ -2,36 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
+import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching/Matching";
-
 
 const YouTubeWithQuestions = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  // const questions = useRef([
-  //   {
-  //     id: 1,
-      // time: 5,
-  //     type: "muliple-choice",
-  //     question: "AppWorks School最帥ㄉ前端導師是誰?",
-  //     options: [
-  //       { text: "谷哥", correct: true },
-  //       { text: "子華", correct: false },
-  //       { text: "小賴", correct: false },
-  //     ],
-  //     explanation: "詳解",
-  //   },
-  // ]);
   const questions = useRef([]);
   const interval = useRef(null);
   const playerRef = useRef(null);
 
   const onPlayerReady = (event) => {
-    // const savedTimestamp = 0;
-    // event.target.seekTo(savedTimestamp);
-    // event.target.playVideo();
-
     if (questions.current.length === 0) {
-      const docRef = doc(db, "lessons/jy18UZ2iaa7Tcmdi8Zmt/units/unit1");
+      const docRef = doc(db, "lessons/WYWRlNtyxAKM0b3IT1gY/units/qzjMGhoCcUvuHEyVDzIh");
       getDoc(docRef).then((docSnap) => {
         questions.current = docSnap.data().test.map((question) => {
           return {
@@ -117,7 +99,7 @@ const YouTubeWithQuestions = () => {
       alert("Congratulations! Correct answer.");
       updatedQuestions(currentQuestion.id);
     } else {
-      alert("Aww, try again!");
+      alert(currentQuestion.explanation);
       updatedQuestions(currentQuestion.id);
     }
   };
@@ -127,16 +109,10 @@ const YouTubeWithQuestions = () => {
       <div id="player"></div>
       {currentQuestion && currentQuestion.type === "multiple-choice" && (
         <div>
-          <h3>Question {currentQuestion.id}:</h3>
-          <p>{currentQuestion.question}</p>
-          <div>
-            {(currentQuestion.options).map((option, index) => (
-              <button key={index} onClick={() => handleAnswerClick(option)}>
-                {option.text}
-              </button>
-            ))}
-            <button>submit</button>
-          </div>
+        <MultipleChoice
+          questionData={currentQuestion}
+          onAnswerClick={handleAnswerClick}
+        />
         </div>
       )}
       {currentQuestion && currentQuestion.type === "sorting" && (
@@ -147,9 +123,12 @@ const YouTubeWithQuestions = () => {
           />
         </div>
       )}
-      {currentQuestion && currentQuestion.type === "matching" &&  (
+      {currentQuestion && currentQuestion.type === "matching" && (
         <div>
-          <Matching cards={currentQuestion.cards} />
+          <Matching
+            cards={currentQuestion.cards}
+            onWin={() => updatedQuestions(currentQuestion.id)}
+          />
         </div>
       )}
     </div>
