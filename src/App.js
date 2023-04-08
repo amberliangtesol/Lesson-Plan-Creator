@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { createGlobalStyle } from "styled-components";
 import VideoWithQuestion from "./components/VideoWithQuestion";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
@@ -28,7 +28,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
     body {
-    font-family: 'Noto Sans TC', sans-serif;
+    font-family: 'Noto Sans TC';
   }
     #root {
     min-height: 100vh;
@@ -52,7 +52,7 @@ function App() {
         <Route path="/badge" element={<Badge />} />
         <Route path="/course" element={<Course />} />
         <Route path="/createcourse" element={<CreateCourse />} />
-        <Route path="/createunit" element={<CreateUnit />} />
+        <Route path="/create-unit/:lessonDocId" element={<CreateUnit />} />
         <Route path="/addclass" element={<AddClass />} />
         <Route path="/EditClass" element={<EditClass />} />
         <Route path="/login" element={<Login />} />

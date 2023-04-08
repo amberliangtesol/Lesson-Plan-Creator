@@ -3,6 +3,7 @@ import { useState } from "react";
 import styled from "styled-components/macro";
 import { addDoc, doc, collection } from "firebase/firestore";
 import { auth, db } from "../../utils/firebaseApp";
+import { useParams } from 'react-router-dom';
 
 const Splict = styled.div`
   width: 500px;
@@ -18,6 +19,8 @@ function chunk(array, chunk) {
 }
 
 function CreateUnit() {
+  const { lessonDocId } = useParams();
+
   const [unitName, setUnitName] = useState("");
   const [videoSource, setVideoSource] = useState("");
   const [subTitle, setSubTitle] = useState("");
@@ -72,7 +75,7 @@ function CreateUnit() {
   ]);
 
   const handleCreate = () => {
-    addDoc(collection(db, "lessons/WYWRlNtyxAKM0b3IT1gY/units"), {
+    addDoc(collection(db, `lessons/${lessonDocId}/units`), {
       timestamp: new Date().valueOf(),
       description: description,
       subtitle: subTitle,
