@@ -29,7 +29,7 @@ function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const db = getFirestore();
-      const userDocRef = doc(db, "users", user.uid);
+      const userDocRef = doc(db, "users", user.email);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
