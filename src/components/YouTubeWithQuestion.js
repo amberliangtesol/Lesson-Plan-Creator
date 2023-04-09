@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
-
+import { useParams } from "react-router-dom";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
@@ -9,13 +9,15 @@ import Matching from "./Matching/Matching";
 import GameMode from "./GameMode";
 
 const YouTubeWithQuestions = () => {
+  const { lessonId } = useParams();
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const { user, setUser } = useContext(UserContext);
-  const [studentAnswered, setStudentAnswered] = useState([]);
   const questions = useRef([]);
   const interval = useRef(null);
   const playerRef = useRef(null);
-  const unitDocPath = "lessons/jy18UZ2iaa7Tcmdi8Zmt/units/unit1";
+  // const unitDocPath = `lessons/${lessonId}/units/unit1`;
+  const unitDocPath = `lessons/jy18UZ2iaa7Tcmdi8Zmt/units/unit1`;
+
 
   const onPlayerReady = (event) => {
     if (questions.current.length === 0) {

@@ -44,8 +44,8 @@ function Login() {
       if (userDoc.exists()) {
         setUser(userDoc.data());
         if (role === "student" && userDoc.data().role === "student") {
-          // navigate("/studentmain");
-          navigate("/youTubeWithQuestion");
+          navigate("/studentmain");
+          // navigate("/youTubeWithQuestion");
         } else if (role === "teacher" && userDoc.data().role === "teacher") {
           navigate("/teachermain");
         } else {
@@ -64,31 +64,6 @@ function Login() {
       alert("錯誤的帳號或密碼");
     }
   };
-
-  //   useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     onAuthStateChanged(auth, (user) => {
-  //       console.log(auth);
-  //       if (user) {
-  //         const userId = user.uid;
-  //         const userRef = ref(db, `user/${userId}`);
-  //         onValue(userRef, (snapshot) => {
-            
-  //           const userData = snapshot.val();
-  //           setName(userData.name);
-  //           setAccount(userData.account);
-  //           setClasses(userData.classes);
-  //           setPassword(userData.password);
-  //           console.log(userData);
-  //           console.log("hi");
-  //         });
-  //       }
-  //     });
-  //   };
-
-  //   fetchUserData();
-  // }, []);
-  
 
 
   return (

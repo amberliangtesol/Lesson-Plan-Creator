@@ -4,6 +4,7 @@ import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getAuth, signOut } from "firebase/auth";
 import { UserContext } from "../../UserInfoProvider";
+import { useNavigate } from "react-router-dom";
 
 const Btn = styled.button`
   cursor: pointer;
@@ -63,6 +64,7 @@ const UploadLabel = styled.label`
 function StudentProfile() {
   const [imageURL, setImageURL] = useState("");
   const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const UploadIcon = () => {
     return (
@@ -88,10 +90,11 @@ function StudentProfile() {
     signOut(auth)
       .then(() => {console.log(" Sign-out successful")})
       .then(() => {setUser({})})
+      .then(() => {navigate("/login")})
       .catch((error) => {
         console.log(error);      
       });
-  }
+  };
 
 
   return (
@@ -128,10 +131,10 @@ function StudentProfile() {
             onChange={handleImageUpload}
             style={{ display: "none" }}
           ></input>
-          <p>姓名{user.name || ""}</p>
-          <p>帳號{user.account || ""}</p>
-          <p>班級{user.classes || []}</p>
-          <p>密碼{user.password || ""}</p>
+          <p>姓名: {user.name || ""}</p>
+          <p>帳號: {user.account || ""}</p>
+          <p>班級: {user.classes || []}</p>
+          <p>密碼: {user.password || ""}</p>
           <Btn>確認修改</Btn>
           <Btn onClick={logOut}
 >登出</Btn>

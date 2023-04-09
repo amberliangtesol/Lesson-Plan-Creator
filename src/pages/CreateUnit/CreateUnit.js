@@ -3,7 +3,8 @@ import { useState } from "react";
 import styled from "styled-components/macro";
 import { addDoc, doc, collection } from "firebase/firestore";
 import { auth, db } from "../../utils/firebaseApp";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Splict = styled.div`
   width: 500px;
@@ -87,7 +88,7 @@ function CreateUnit() {
       }),
       unitName: unitName,
       video: videoId,
-      explanation: explanation
+      explanation: explanation,
     });
   };
 
@@ -147,9 +148,11 @@ function CreateUnit() {
 
   return (
     <div>
-      <button type="button" onClick={handleCreate}>
-        完成送出
-      </button>
+      <Link to="/TeacherMain">
+        <button type="button" onClick={handleCreate}>
+          完成送出
+        </button>
+      </Link>
       <form>
         <p>單元名稱</p>
         <input
@@ -171,7 +174,9 @@ function CreateUnit() {
           onChange={handleInputChange}
           placeholder="請貼上YouTube連結"
         ></input>
-        <button type="button" onClick={extractVideoId}>確認連結</button>
+        <button type="button" onClick={extractVideoId}>
+          確認連結
+        </button>
         {/* {videoId && <p>Video ID: {videoId}</p>} */}
         {/* <div id="video-preview">
           {videoSource && (

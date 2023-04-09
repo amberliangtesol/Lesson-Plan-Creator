@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { createGlobalStyle } from "styled-components";
-import VideoWithQuestion from "./components/VideoWithQuestion";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
 import GameMode from "./components/GameMode";
 import Matching from "./components/Matching/Matching";
@@ -44,7 +43,6 @@ function App() {
     <UserInfoProvider>
       <GlobalStyle />
       <Routes>
-        <Route path="/videowithquestion" element={<VideoWithQuestion />} />
         <Route path="/youtubewithquestion" element={<YouTubeWithQuestion />} />
         <Route path="/gamemode" element={<GameMode />} />
         <Route path="/matching" element={<Matching />} />

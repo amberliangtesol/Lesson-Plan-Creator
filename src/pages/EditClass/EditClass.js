@@ -69,7 +69,6 @@ function EditClass() {
     setClassStudents(classData.students);
     setClassTeachers(classData.teachers);
   };
-  
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -135,7 +134,6 @@ function EditClass() {
       setClassTeachers([]);
     }
   };
-  
 
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
@@ -306,7 +304,10 @@ function EditClass() {
           style={{ padding: "10px" }}
         ></input>
         {renderTable()}
-        <Btn onClick={handleSubmit}>確認修改</Btn>
+
+        <Link to="/ManageClass">
+          <Btn onClick={handleSubmit}>確認修改</Btn>
+        </Link>
       </Container2>
     </Container>
   );

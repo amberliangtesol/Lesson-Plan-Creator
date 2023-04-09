@@ -271,7 +271,9 @@ function AddClass() {
         />
         <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
         {renderTable()}
-        <Btn onClick={handleSubmit}>建立帳號</Btn>
+        {/* <Link to="/ManageClass"> */}
+          <Btn onClick={handleSubmit}>建立帳號</Btn>
+        {/* </Link> */}
       </Container2>
     </Container>
   );

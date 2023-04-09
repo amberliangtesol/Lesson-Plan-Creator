@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
-import { useState } from "react";
+import { getAuth, signOut } from "firebase/auth";
+import { UserContext } from "../../UserInfoProvider";
+import { useNavigate } from "react-router-dom";
+
 
 const Btn = styled.button`
   cursor: pointer;
@@ -61,6 +64,8 @@ const UploadLabel = styled.label`
 
 function TeacherProfile() {
   const [imageURL, setImageURL] = useState("");
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const UploadIcon = () => {
     return (
@@ -79,6 +84,17 @@ function TeacherProfile() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  function logOut (){
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {console.log(" Sign-out successful")})
+      .then(() => {setUser({})})
+      .then(() => {navigate("/login")})
+      .catch((error) => {
+        console.log(error);      
+      });
   };
 
   return (
@@ -118,12 +134,12 @@ function TeacherProfile() {
             onChange={handleImageUpload}
             style={{ display: "none" }}
           ></input>
-          <p>姓名</p>
-          <p>帳號</p>
-          <p>班級</p>
-          <p>密碼</p>
+          <p>姓名: {user.name || ""}</p>
+          <p>帳號: {user.account || ""}</p>
+          <p>班級: {user.classes || []}</p>
+          <p>密碼: {user.password || ""}</p>
           <Btn>確認修改</Btn>
-          <Btn>登出</Btn>
+          <Btn onClick={logOut}>登出</Btn>
         </Container2>
       </Container>
     </div>
