@@ -1,10 +1,14 @@
-import React from "react";
-import { useState } from "react";
+import React, { useContext } from "react";
+import { useState, useEffect } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc} from "firebase/firestore";
+import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 import profile from "./profile.png";
+import { UserContext } from "../../UserInfoProvider";
+// import { onAuthStateChanged } from 'firebase/auth';
+// import { ref, onValue } from 'firebase/database';
 
 const ProfileIcon = styled.div`
   width: 120px;
@@ -17,7 +21,12 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  // const [name, setName] = useState('');
+  // const [account, setAccount] = useState('');
+  // const [classes, setClasses] = useState('');
+
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
@@ -33,8 +42,10 @@ function Login() {
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
+        setUser(userDoc.data());
         if (role === "student" && userDoc.data().role === "student") {
-          navigate("/studentmain");
+          // navigate("/studentmain");
+          navigate("/youTubeWithQuestion");
         } else if (role === "teacher" && userDoc.data().role === "teacher") {
           navigate("/teachermain");
         } else {
@@ -54,7 +65,31 @@ function Login() {
     }
   };
 
+  //   useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     onAuthStateChanged(auth, (user) => {
+  //       console.log(auth);
+  //       if (user) {
+  //         const userId = user.uid;
+  //         const userRef = ref(db, `user/${userId}`);
+  //         onValue(userRef, (snapshot) => {
+            
+  //           const userData = snapshot.val();
+  //           setName(userData.name);
+  //           setAccount(userData.account);
+  //           setClasses(userData.classes);
+  //           setPassword(userData.password);
+  //           console.log(userData);
+  //           console.log("hi");
+  //         });
+  //       }
+  //     });
+  //   };
+
+  //   fetchUserData();
+  // }, []);
   
+
 
   return (
     <div>

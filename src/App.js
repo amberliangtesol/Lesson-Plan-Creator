@@ -22,6 +22,7 @@ import Register from "./pages/Register/Register";
 import Score from "./pages/Score/Score";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
+import UserInfoProvider from "./UserInfoProvider";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -40,7 +41,7 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
   return (
-    <>
+    <UserInfoProvider>
       <GlobalStyle />
       <Routes>
         <Route path="/videowithquestion" element={<VideoWithQuestion />} />
@@ -65,7 +66,7 @@ function App() {
         <Route path="/teachermain" element={<TeacherMain />} />
         <Route path="/studentmain" element={<StudentMain />} />
       </Routes>
-    </>
+    </UserInfoProvider>
   );
 }
 

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+import { UserContext } from "../../UserInfoProvider";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../utils/firebaseApp";
 
 const Btn = styled.button`
   cursor: pointer;
@@ -37,6 +40,26 @@ const Container2 = styled.div`
 `;
 
 function StudentMain() {
+  const { user, setUser } = useContext(UserContext);
+  const [classes, setClasses] = useState([]);
+  const [className, setclassName] = useState("");
+  const [courseName, setCourseName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [courseStatus, setCourseStatus] = useState("")
+
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      const lessonsRef = collection(db, "lessons");
+      const q = await query(lessonsRef, where("classes", "array-contains-any", user.classes));
+      const results = await getDocs(q);
+      setClasses(results.docs.map((d) => d.data()));
+    }
+    if (user.classes) {
+      fetchClasses();
+    }
+  }, [user.classes]);
 
 
   return (

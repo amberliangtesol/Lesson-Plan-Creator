@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { UserContext } from "../UserInfoProvider";
+
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
@@ -8,13 +10,16 @@ import GameMode from "./GameMode";
 
 const YouTubeWithQuestions = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
+  const { user, setUser } = useContext(UserContext);
+  const [studentAnswered, setStudentAnswered] = useState([]);
   const questions = useRef([]);
   const interval = useRef(null);
   const playerRef = useRef(null);
+  const unitDocPath = "lessons/jy18UZ2iaa7Tcmdi8Zmt/units/unit1";
 
   const onPlayerReady = (event) => {
     if (questions.current.length === 0) {
-      const docRef = doc(db, "lessons/YsTuXVUSGYaJ34htKfcB/units/LZ1eGwz8u4J4kC5nmHl7");
+      const docRef = doc(db, unitDocPath);
       getDoc(docRef).then((docSnap) => {
         questions.current = docSnap.data().test.map((question) => {
           return {
@@ -87,21 +92,27 @@ const YouTubeWithQuestions = () => {
     return () => {};
   }, []);
 
-  const updatedQuestions = (id) => {
+  const updatedQuestions = (id, isCorrect) => {
     const updated = questions.current.map((q) =>
       q.id === id ? { ...q, answered: true } : q
     );
     questions.current = updated;
+    const unitDocRef = doc(db, `${unitDocPath}/students_submission`, user.account);
+    setDoc(unitDocRef, {
+      "answered": {
+        [currentQuestion.type]: isCorrect,
+      },
+    }, { merge: true });
     setCurrentQuestion(null);
   };
 
   const handleAnswerClick = (option) => {
     if (option.correct) {
       alert("Congratulations! Correct answer.");
-      updatedQuestions(currentQuestion.id);
+      updatedQuestions(currentQuestion.id, true);
     } else {
       alert(currentQuestion.explanation);
-      updatedQuestions(currentQuestion.id);
+      updatedQuestions(currentQuestion.id, false);
     }
   };
 
@@ -121,7 +132,7 @@ const YouTubeWithQuestions = () => {
         <div>
           <Sorting
             sorted={currentQuestion.sorted}
-            onWin={() => updatedQuestions(currentQuestion.id)}
+            onWin={() => updatedQuestions(currentQuestion.id, true)}
           />
         </div>
       )}
@@ -129,7 +140,7 @@ const YouTubeWithQuestions = () => {
         <div>
           <Matching
             cards={currentQuestion.cards}
-            onWin={() => updatedQuestions(currentQuestion.id)}
+            onWin={() => updatedQuestions(currentQuestion.id, true)}
           />
         </div>
       )}
