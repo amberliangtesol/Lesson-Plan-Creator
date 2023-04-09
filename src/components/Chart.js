@@ -5,7 +5,7 @@ import styled from "styled-components/macro";
 
 const StyledTable = styled.table`
   border-collapse: collapse;
-  width: 100%;
+  width: 80%;
   margin-bottom: 2rem;
 
   th,
@@ -26,7 +26,7 @@ const DonutChartsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 100%;
+  width: 80%;
 `;
 
 const DonutChartContainer = styled.div`
@@ -138,7 +138,7 @@ const processDonutData = (data) => {
           ],
         },
       ],
-      labels: ["未完成者", "正確率低於50者", "未作答者"],
+      labels: ["未完成者", "正確率低於50者", "其他"],
     },
   ];
 };
@@ -175,22 +175,32 @@ const Chart = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {students.map((student) => (
-            <tr key={student}>
-              <td>{student}</td>
-              {data[student] &&
-                data[student].map((q, i) => (
-                  <td key={`answer-${i}`}>
-                    {Object.values(q)[0] === true
-                      ? "True"
-                      : Object.values(q)[0] === false
-                      ? "False"
-                      : ""}
-                  </td>
-                ))}
-            </tr>
+    {students.map((student) => (
+      <tr key={student}>
+        <td>{student}</td>
+        {data[student] &&
+          data[student].map((q, i) => (
+            <td
+              key={`answer-${i}`}
+              style={{
+                color:
+                  Object.values(q)[0] === true
+                    ? "black"
+                    : Object.values(q)[0] === false
+                    ? "red"
+                    : "lightgray",
+              }}
+            >
+              {Object.values(q)[0] === true
+                ? "答對"
+                : Object.values(q)[0] === false
+                ? "答錯"
+                : "未答"}
+            </td>
           ))}
-        </tbody>
+      </tr>
+    ))}
+  </tbody>
       </StyledTable>
     );
   };
