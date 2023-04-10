@@ -64,6 +64,8 @@ function TeacherMain() {
   const { user, setUser } = useContext(UserContext);
   const [classes, setClasses] = useState([]);
 
+  console.log("teachermain_user",user)
+
   useEffect(() => {
     const fetchClasses = async () => {
       const lessonsRef = collection(db, "lessons");
@@ -78,6 +80,7 @@ function TeacherMain() {
       });
 
       setClasses(lessons);
+
     };
     if (user.classes) {
       fetchClasses();
@@ -85,6 +88,7 @@ function TeacherMain() {
   }, [user.classes]);
 
   console.log(classes);
+
 
   return (
     <div>

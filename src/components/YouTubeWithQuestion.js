@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
@@ -94,17 +94,28 @@ const YouTubeWithQuestions = () => {
     return () => {};
   }, []);
 
-  const updatedQuestions = (id, isCorrect) => {
+  const updatedQuestions = async (id, isCorrect) => {
     const updated = questions.current.map((q) =>
       q.id === id ? { ...q, answered: true } : q
     );
     questions.current = updated;
     const unitDocRef = doc(db, `${unitDocPath}/students_submission`, user.account);
-    setDoc(unitDocRef, {
-      "answered": {
-        [currentQuestion.type]: isCorrect,
-      },
-    }, { merge: true });
+  
+    // Check if the document exists
+    const docSnap = await getDoc(unitDocRef);
+  
+    if (docSnap.exists()) {
+      // Update the existing document
+      await updateDoc(unitDocRef, {
+        "answered": arrayUnion({ [currentQuestion.type]: isCorrect }),
+      });
+    } else {
+      // Create a new document
+      await setDoc(unitDocRef, {
+        "answered": [{ [currentQuestion.type]: isCorrect }],
+      });
+    }
+  
     setCurrentQuestion(null);
   };
 

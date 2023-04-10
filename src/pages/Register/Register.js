@@ -24,7 +24,7 @@ function Register() {
   const handleRegister = (e) => {
     e.preventDefault();
     console.log(email, password);
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, email, password, name)
       .then((userCredential) => {
         // Get the user's unique identifier (UID) from the userCredential object
         const uid = userCredential.user.uid;
@@ -32,6 +32,7 @@ function Register() {
         // Use the user's UID as the document ID in Firestore
         setDoc(doc(db, "users", email), {
           name: name,
+          image: "",
           account: email,
           role: "teacher",
           classes: [],

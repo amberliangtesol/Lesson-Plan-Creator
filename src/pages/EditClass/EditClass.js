@@ -149,6 +149,16 @@ function EditClass() {
       });
     }
 
+    const teacherDocRef = doc(db, "users", selectedTeacher);
+    const teacherDoc = await getDoc(teacherDocRef);
+    const teacherData = teacherDoc.data();
+
+    if (!teacherData.classes.includes(selectedClass)) {
+      await updateDoc(teacherDocRef, {
+        classes: [...teacherData.classes, selectedClass],
+      });
+    }
+    
     // Extract email and name columns from the rows
     const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
 
@@ -191,6 +201,7 @@ function EditClass() {
             await setDoc(userDocRef, {
               role: "student",
               account: student.email,
+              image: "",
               uid: user.uid,
               name: student.name,
               createdBy: selectedTeacher,
@@ -262,7 +273,7 @@ function EditClass() {
             <Link to="/ManageBadge">徽章管理</Link>
           </Btn>
           <Btn>
-            <Link to="/Profile">個人設定</Link>
+            <Link to="/TeacherProfile">個人設定</Link>
           </Btn>
         </BtnContainer>
       </Container1>
