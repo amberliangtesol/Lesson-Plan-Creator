@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { UserContext } from "../../UserInfoProvider";
 import { useNavigate } from "react-router-dom";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -70,8 +70,9 @@ function TeacherProfile() {
   const [name, setName] = useState("");
   const [classes, setClasses] = useState("");
   const [account, setAccount] = useState("");
-
   const { user, setUser } = useContext(UserContext);
+  const [classNames, setClassNames] = useState([]);
+
   console.log(user.uid);
 
   const navigate = useNavigate();
@@ -128,51 +129,29 @@ function TeacherProfile() {
   };
 
   useEffect(() => {
-    if (user) {
-      setName(user.name || "");
-      setAccount(user.account || "");
-      setClasses(user.classes || []);
-      setImageURL(user.image || "");
+    async function fetchUserData() {
+      const docRef = doc(db, "users", user.account);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setImageURL(userData.image || "");
+        setName(userData.name || "");
+        setAccount(userData.account || "");
+        setClasses(userData.classes || []);
+
+        // Fetch class names
+        const classNames = await Promise.all(
+          userData.classes.map(async (classId) => {
+            const classDoc = await getDoc(doc(db, "classes", classId));
+            return classDoc.data().name;
+          })
+        );
+        setClassNames(classNames);
+      }
     }
+
+    fetchUserData();
   }, [user]);
-
-  // const fetchUserData = async (email) => {
-  //   try {
-  //     console.log("here");
-
-  //     const userDocRef = doc(db, "users", email);
-  //     const userDocSnapshot = await getDoc(userDocRef);
-  
-  //     if (userDocSnapshot.exists()) {
-  //       const userData = userDocSnapshot.data();
-  //       const uid = userData.uid;
-
-  //       if (uid) {
-  //         const uidDocRef = doc(db, "users", uid);
-  //         const uidDocSnapshot = await getDoc(uidDocRef);
-  
-  //         if (uidDocSnapshot.exists()) {
-  //           const uidData = uidDocSnapshot.data();
-  //           setName(uidData.name || "");
-  //           setAccount(uidData.account || "");
-  //           setClasses(uidData.classes || []);
-  //           setImageURL(uidData.image || "");
-  //         }
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // };
-  
-  
-  // useEffect(() => {
-  //   if (user && user.email) {
-  //     fetchUserData(user.email);
-  //   }
-  // }, [user]);
-  
-  
 
   function logOut() {
     const auth = getAuth();
@@ -190,6 +169,17 @@ function TeacherProfile() {
         console.log(error);
       });
   }
+
+  const handleResetPassword = () => {
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, user.account)
+      .then(() => {
+        console.log("Password reset email sent");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div>
@@ -228,31 +218,10 @@ function TeacherProfile() {
             onChange={handleImageUpload}
             style={{ display: "none" }}
           ></input>
-          <p>
-            姓名:{" "}
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </p>
-          <p>
-            帳號:{" "}
-            <input
-              type="text"
-              value={account}
-              onChange={(e) => setAccount(e.target.value)}
-            />
-          </p>
-          <p>
-            班級:{" "}
-            <input
-              type="text"
-              value={classes}
-              onChange={(e) => setClasses(e.target.value)}
-            />
-          </p>
-          <p>密碼: {user.password || ""}</p>
+          <p>姓名: {name}</p>
+          <p>帳號: {account}</p>
+          <p>班級: {classNames.join(", ")}</p>
+          <Btn onClick={handleResetPassword}>密碼變更</Btn>
           <Btn type="button" onClick={handleChange}>
             確認修改
           </Btn>

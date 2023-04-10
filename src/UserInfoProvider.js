@@ -12,6 +12,7 @@ const UserInfoProvider = ({ children }) => {
       console.log("usecontext_user",user)
       if (user) {
         const data = {
+          name: user.name || "",
           account: user.email || "",
           image: user.photoURL || "",
           uid: user.uid || "",

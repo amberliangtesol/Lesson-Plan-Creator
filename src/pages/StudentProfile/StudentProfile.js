@@ -2,9 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { UserContext } from "../../UserInfoProvider";
 import { useNavigate } from "react-router-dom";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "../../utils/firebaseApp";
 
 const Btn = styled.button`
   cursor: pointer;
@@ -63,7 +66,15 @@ const UploadLabel = styled.label`
 
 function StudentProfile() {
   const [imageURL, setImageURL] = useState("");
+  const [imageFile, setImageFile] = useState("");
+  const [name, setName] = useState("");
+  const [classes, setClasses] = useState("");
+  const [account, setAccount] = useState("");
   const { user, setUser } = useContext(UserContext);
+  const [classNames, setClassNames] = useState([]);
+
+  console.log(user.uid);
+
   const navigate = useNavigate();
 
   const UploadIcon = () => {
@@ -74,28 +85,103 @@ function StudentProfile() {
     );
   };
 
+  const handleChange = async () => {
+    try {
+      // Upload the image to Firebase Storage and get its URL
+      const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
+
+      // Create the document in Firestore with the image URL
+      await updateDoc(doc(db, "users", user.account), {
+        name: name,
+        account: account,
+        classes: classes,
+        image: imageURL,
+      });
+      console.log("修改成功");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImageURL(reader.result);
+        setImageFile(file);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  function logOut (){
-    const auth = getAuth();
-    signOut(auth)
-      .then(() => {console.log(" Sign-out successful")})
-      .then(() => {setUser({})})
-      .then(() => {navigate("/login")})
-      .catch((error) => {
-        console.log(error);      
-      });
+  const uploadImageAndGetURL = async (imageFile) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `images/${imageFile.name}`);
+
+    // Upload the image to Firebase Storage
+    await uploadBytes(storageRef, imageFile);
+
+    // Get the download URL
+    const imageURL = await getDownloadURL(storageRef);
+
+    return imageURL;
   };
 
+  useEffect(() => {
+    async function fetchUserData() {
+      const docRef = doc(db, "users", user.account);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setImageURL(userData.image || "");
+        setName(userData.name || "");
+        setAccount(userData.account || "");
+        setClasses(userData.classes || []);
+  
+        // Fetch class names
+        const classNames = await Promise.all(
+          userData.classes.map(async (classId) => {
+            const classDoc = await getDoc(doc(db, "classes", classId));
+            return classDoc.data().name;
+          })
+        );
+        setClassNames(classNames);
+      }
+    }
+  
+    fetchUserData();
+  }, [user]);
+  
+
+
+  function logOut() {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
+        console.log(" Sign-out successful");
+      })
+      .then(() => {
+        setUser({});
+      })
+      .then(() => {
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  const handleResetPassword = () => {
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, user.account)
+      .then(() => {
+        console.log("Password reset email sent");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div>
@@ -131,13 +217,14 @@ function StudentProfile() {
             onChange={handleImageUpload}
             style={{ display: "none" }}
           ></input>
-          <p>姓名: {user.name || ""}</p>
-          <p>帳號: {user.account || ""}</p>
-          <p>班級: {user.classes || []}</p>
-          <p>密碼: {user.password || ""}</p>
-          <Btn>確認修改</Btn>
-          <Btn onClick={logOut}
->登出</Btn>
+          <p>姓名: {name}</p>
+          <p>帳號: {account}</p>
+          <p>班級: {classNames.join(", ")}</p>
+          <Btn onClick={handleResetPassword}>密碼變更</Btn>
+          <Btn type="button" onClick={handleChange}>
+            確認修改
+          </Btn>
+          <Btn onClick={logOut}>登出</Btn>
         </Container2>
       </Container>
     </div>
