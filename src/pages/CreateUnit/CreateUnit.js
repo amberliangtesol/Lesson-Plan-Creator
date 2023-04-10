@@ -6,6 +6,21 @@ import { auth, db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+const Btn = styled.button`
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
 const Splict = styled.div`
   width: 500px;
   border-top: 1px solid;
@@ -153,7 +168,9 @@ function CreateUnit() {
           完成送出
         </button>
       </Link>
-      <form>
+      <Link to="/TeacherMain">
+        <Btn>回首頁</Btn>
+      </Link>      <form>
         <p>單元名稱</p>
         <input
           type="text"

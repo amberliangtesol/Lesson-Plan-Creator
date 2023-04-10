@@ -122,7 +122,9 @@ function TeacherMain() {
               <Link to="/YouTubeWithQuestion">
                 <Btn>進入課程</Btn>
               </Link>
-              <Btn>編輯課程</Btn>
+              <Link to="/Score">
+              <Btn>答題狀況</Btn>
+              </Link>
             </div>
           ))}
         </Container2>

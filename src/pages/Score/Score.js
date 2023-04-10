@@ -1,6 +1,23 @@
 import Chart from "../../components/Chart";
 import React from "react";
 import useFirestoreData from "./useFirestoreData";
+import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
 
 function Score() {
   const collectionName = "students_submission";
@@ -29,6 +46,9 @@ function Score() {
       ) : (
         <div>Invalid data, please check your Firestore data structure.</div>
       )}
+      <Link to="/TeacherMain">
+        <Btn>回首頁</Btn>
+      </Link>
     </div>
   );
 }
