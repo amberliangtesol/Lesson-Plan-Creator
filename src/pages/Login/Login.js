@@ -1,14 +1,13 @@
 import React, { useContext } from "react";
 import { useState, useEffect } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, getDoc} from "firebase/firestore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 import profile from "./profile.png";
 import { UserContext } from "../../UserInfoProvider";
-// import { onAuthStateChanged } from 'firebase/auth';
-// import { ref, onValue } from 'firebase/database';
+import { Link } from "react-router-dom";
 
 const ProfileIcon = styled.div`
   width: 120px;
@@ -23,10 +22,6 @@ function Login() {
   const [role, setRole] = useState("student");
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  // const [name, setName] = useState('');
-  // const [account, setAccount] = useState('');
-  // const [classes, setClasses] = useState('');
-
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
@@ -35,7 +30,11 @@ function Login() {
   const handleLogin = async () => {
     const auth = getAuth();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
       const db = getFirestore();
       const userDocRef = doc(db, "users", user.email);
@@ -45,7 +44,6 @@ function Login() {
         setUser(userDoc.data());
         if (role === "student" && userDoc.data().role === "student") {
           navigate("/studentmain");
-          // navigate("/youTubeWithQuestion");
         } else if (role === "teacher" && userDoc.data().role === "teacher") {
           navigate("/teachermain");
         } else {
@@ -65,7 +63,6 @@ function Login() {
     }
   };
 
-
   return (
     <div>
       <ProfileIcon></ProfileIcon>
@@ -83,12 +80,32 @@ function Login() {
           type="password"
           onChange={(e) => setPassword(e.target.value)}
         ></input>
-        <button type="button" onClick={handleLogin}>
-          送出
-        </button>
+        <div>
+          <Btn type="button" onClick={handleLogin}>
+            登入
+          </Btn>
+          <Btn type="button">
+            <Link to="/Register">註冊</Link>
+          </Btn>
+        </div>
       </form>
     </div>
   );
 }
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
 
 export default Login;
