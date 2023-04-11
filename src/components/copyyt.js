@@ -1,19 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { UserContext } from "../UserInfoProvider";
+import { useParams } from "react-router-dom";
+import { collection, query, orderBy, limit, onSnapshot, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching/Matching";
+import GameMode from "./GameMode";
+import { useNavigate } from "react-router-dom";
+
 
 const YouTubeWithQuestions = () => {
+  const { lessonId } = useParams();
   const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [showNextButton, setShowNextButton] = useState(false);
+  const { user, setUser } = useContext(UserContext);
   const questions = useRef([]);
   const interval = useRef(null);
   const playerRef = useRef(null);
+  const navigate = useNavigate();
+  // const unitDocPath = `lessons/${lessonId}/units/unit1`;
+  const unitDocPath = `lessons/TupTZ1oEYEs4y583piqh/units/xXuWMEvkcTMgrwLe7HiE`;
+
 
   const onPlayerReady = (event) => {
     if (questions.current.length === 0) {
-      const docRef = doc(db, "lessons/WYWRlNtyxAKM0b3IT1gY/units/qzjMGhoCcUvuHEyVDzIh");
+      const docRef = doc(db, unitDocPath);
       getDoc(docRef).then((docSnap) => {
         questions.current = docSnap.data().test.map((question) => {
           return {
@@ -44,6 +56,8 @@ const YouTubeWithQuestions = () => {
             }
           }
         }, 500);
+      } else if (event.target.getPlayerState() === window.YT.PlayerState.ENDED) {
+        setShowNextButton(true);
       }
     };
 
@@ -86,27 +100,73 @@ const YouTubeWithQuestions = () => {
     return () => {};
   }, []);
 
-  const updatedQuestions = (id) => {
+  const updatedQuestions = async (id, isCorrect) => {
     const updated = questions.current.map((q) =>
       q.id === id ? { ...q, answered: true } : q
     );
     questions.current = updated;
+    const unitDocRef = doc(db, `${unitDocPath}/students_submission`, user.account);
+  
+    // Check if the document exists
+    const docSnap = await getDoc(unitDocRef);
+  
+    if (docSnap.exists()) {
+      // Update the existing document
+      await updateDoc(unitDocRef, {
+        "answered": arrayUnion({ [currentQuestion.type]: isCorrect }),
+      });
+    } else {
+      // Create a new document
+      await setDoc(unitDocRef, {
+        "answered": [{ [currentQuestion.type]: isCorrect }],
+      });
+    }
+  
     setCurrentQuestion(null);
   };
 
   const handleAnswerClick = (option) => {
     if (option.correct) {
       alert("Congratulations! Correct answer.");
-      updatedQuestions(currentQuestion.id);
+      updatedQuestions(currentQuestion.id, true);
     } else {
       alert(currentQuestion.explanation);
-      updatedQuestions(currentQuestion.id);
+      updatedQuestions(currentQuestion.id, false);
     }
   };
+
+  const handleNextUnitClick = async () => {
+    // Construct the query for the next unit in the units subcollection
+    const unitsCollection = collection(db, `lessons/TupTZ1oEYEs4y583piqh/units`);
+    const nextUnitQuery = query(unitsCollection, orderBy("timestamp", "asc"), limit(1));
+  
+    // Listen to the query's result and navigate to the next unit
+    const unsubscribe = onSnapshot(nextUnitQuery, (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const nextUnit = querySnapshot.docs[0];
+        const nextUnitId = nextUnit.id;
+        navigate(`/lessons/TupTZ1oEYEs4y583piqh/units/${nextUnitId}`);
+      } else {
+        alert("No more units available.");
+      }
+    });
+  
+    // Clean up the listener
+    return () => {
+      unsubscribe();
+    };
+  };
+  
+
+  console.log(currentQuestion);
 
   return (
     <div>
       <div id="player"></div>
+      {showNextButton && (
+      <button onClick={handleNextUnitClick}>Go to next unit</button>
+    )}
+      {currentQuestion && currentQuestion.gameMode && <GameMode />}
       {currentQuestion && currentQuestion.type === "multiple-choice" && (
         <div>
         <MultipleChoice
@@ -119,7 +179,7 @@ const YouTubeWithQuestions = () => {
         <div>
           <Sorting
             sorted={currentQuestion.sorted}
-            onWin={() => updatedQuestions(currentQuestion.id)}
+            onWin={() => updatedQuestions(currentQuestion.id, true)}
           />
         </div>
       )}
@@ -127,7 +187,7 @@ const YouTubeWithQuestions = () => {
         <div>
           <Matching
             cards={currentQuestion.cards}
-            onWin={() => updatedQuestions(currentQuestion.id)}
+            onWin={() => updatedQuestions(currentQuestion.id, true)}
           />
         </div>
       )}

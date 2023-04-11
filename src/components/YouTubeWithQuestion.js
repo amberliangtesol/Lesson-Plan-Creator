@@ -1,22 +1,24 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
-import { useParams } from "react-router-dom";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { where, collection, query, orderBy, limit, onSnapshot, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching/Matching";
 import GameMode from "./GameMode";
 
+
 const YouTubeWithQuestions = () => {
-  const { lessonId } = useParams();
   const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [currentUnitId, setCurrentUnitId] = useState("xXuWMEvkcTMgrwLe7HiE"); 
+  const [showNextButton, setShowNextButton] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const questions = useRef([]);
   const interval = useRef(null);
   const playerRef = useRef(null);
-  // const unitDocPath = `lessons/${lessonId}/units/unit1`;
-  const unitDocPath = `lessons/jy18UZ2iaa7Tcmdi8Zmt/units/unit1`;
+  const lessonId = "TupTZ1oEYEs4y583piqh";
+  const unitDocPath = `lessons/${lessonId}/units/${currentUnitId}`;
+  const [unsubscribeNextUnit, setUnsubscribeNextUnit] = useState(null);
 
 
   const onPlayerReady = (event) => {
@@ -52,6 +54,8 @@ const YouTubeWithQuestions = () => {
             }
           }
         }, 500);
+      } else if (event.target.getPlayerState() === window.YT.PlayerState.ENDED) {
+        setShowNextButton(true);
       }
     };
 
@@ -129,9 +133,57 @@ const YouTubeWithQuestions = () => {
     }
   };
 
+  const handleNextUnitClick = async () => {
+    // Fetch the current unit's timestamp
+    const currentUnitRef = doc(db, unitDocPath);
+    const currentUnitSnap = await getDoc(currentUnitRef);
+    const currentUnitTimestamp = currentUnitSnap.data().timestamp;
+  
+    // Construct the query for the next unit in the units subcollection
+    const unitsCollection = collection(db, `lessons/${lessonId}/units`);
+    const nextUnitQuery = query(unitsCollection, orderBy("timestamp", "asc"));
+  
+    // Listen to the query's result and set the currentUnitId to the next unit
+    const unsubscribe = onSnapshot(nextUnitQuery, (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const nextUnitDoc = querySnapshot.docs.find(
+          (doc) => doc.data().timestamp > currentUnitTimestamp
+        );
+  
+        if (nextUnitDoc) {
+          const nextUnitId = nextUnitDoc.id;
+          setCurrentUnitId(nextUnitId);
+          console.log("nextUnitId", nextUnitId);
+        } else {
+          alert("No more units available.");
+        }
+      } else {
+        alert("No more units available.");
+      }
+    });
+  
+    // Set the unsubscribe function
+    setUnsubscribeNextUnit(() => unsubscribe);
+  };
+  
+  
+  useEffect(() => {
+    return () => {
+      if (unsubscribeNextUnit) {
+        unsubscribeNextUnit();
+      }
+    };
+  }, [unsubscribeNextUnit]);
+  
+
+  console.log(currentQuestion);
+
   return (
     <div>
       <div id="player"></div>
+      {showNextButton && (
+      <button onClick={handleNextUnitClick}>Go to next unit</button>
+    )}
       {currentQuestion && currentQuestion.gameMode && <GameMode />}
       {currentQuestion && currentQuestion.type === "multiple-choice" && (
         <div>

@@ -16,6 +16,7 @@ const UserInfoProvider = ({ children }) => {
           account: user.email || "",
           image: user.photoURL || "",
           uid: user.uid || "",
+          classes: user.classes || [],
         };
         setUser(data);        
         setIsLogin(true);

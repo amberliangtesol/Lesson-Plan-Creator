@@ -66,6 +66,7 @@ function TeacherMain() {
 
   console.log("teachermain_user",user)
 
+  
   useEffect(() => {
     const fetchClasses = async () => {
       const lessonsRef = collection(db, "lessons");
