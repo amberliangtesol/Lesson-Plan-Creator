@@ -1,16 +1,33 @@
+//更新存擋後才能render下一個單元
+//更新存擋後才能render下一個單元
+
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
-import { where, collection, query, orderBy, limit, onSnapshot, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  where,
+  collection,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching/Matching";
 import GameMode from "./GameMode";
-
+import styled from "styled-components/macro";
+import { Link } from "react-router-dom";
 
 const YouTubeWithQuestions = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [currentUnitId, setCurrentUnitId] = useState("xXuWMEvkcTMgrwLe7HiE"); 
+  const [currentUnitId, setCurrentUnitId] = useState("xXuWMEvkcTMgrwLe7HiE");
   const [showNextButton, setShowNextButton] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const questions = useRef([]);
@@ -19,25 +36,52 @@ const YouTubeWithQuestions = () => {
   const lessonId = "TupTZ1oEYEs4y583piqh";
   const unitDocPath = `lessons/${lessonId}/units/${currentUnitId}`;
   const [unsubscribeNextUnit, setUnsubscribeNextUnit] = useState(null);
+  const [playerReady, setPlayerReady] = useState(false);
+  const [sortedUnits, setSortedUnits] = useState([]);
 
+  useEffect(() => {
+    const fetchSortedUnits = async () => {
+      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(unitsQuery);
+      const units = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setSortedUnits(units);
+    };
 
-  const onPlayerReady = (event) => {
-    if (questions.current.length === 0) {
-      const docRef = doc(db, unitDocPath);
-      getDoc(docRef).then((docSnap) => {
-        questions.current = docSnap.data().test.map((question) => {
-          return {
-            ...question.data,
-            type: question.type,
-          };
-        });
-        console.log(docSnap.data());
-        // https://developers.google.com/youtube/iframe_api_reference?hl=zh-tw
-        playerRef.current.loadVideoById({ videoId: docSnap.data().video });
-        playerRef.current.playVideo();
-      });
+    fetchSortedUnits();
+  }, []);
+
+  useEffect(() => {
+    if (currentUnitId) {
+      const fetchUnitData = async () => {
+        const docRef = doc(db, `lessons/${lessonId}/units/${currentUnitId}`);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const unitData = docSnap.data();
+          questions.current = unitData.test.map((question) => {
+            return {
+              ...question.data,
+              type: question.type,
+            };
+          });
+
+          console.log(unitData);
+          console.log("Video ID:", unitData.video);
+
+          if (playerRef.current && playerReady) {
+            playerRef.current.cueVideoById({ videoId: unitData.video });
+            playerRef.current.playVideo();
+          }
+        }
+      };
+
+      fetchUnitData();
     }
-  };
+  }, [currentUnitId]);
 
   useEffect(() => {
     const onPlayerStateChange = (event) => {
@@ -54,18 +98,35 @@ const YouTubeWithQuestions = () => {
             }
           }
         }, 500);
-      } else if (event.target.getPlayerState() === window.YT.PlayerState.ENDED) {
+      } else if (
+        event.target.getPlayerState() === window.YT.PlayerState.ENDED
+      ) {
         setShowNextButton(true);
       }
     };
 
     window.onYouTubeIframeAPIReady = () => {
+      const onYouTubeIframeAPIReady = () => {
+        console.log("YouTube Iframe API Ready");
+      };
+
+      if (window.YT && window.YT.Player) {
+        onYouTubeIframeAPIReady();
+      } else {
+        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+      }
+
       playerRef.current = new window.YT.Player("player", {
         height: "360",
         width: "640",
         events: {
-          onReady: onPlayerReady,
+          onReady: () => {
+            setPlayerReady(true);
+          },
           onStateChange: onPlayerStateChange,
+          onError: (event) => {
+            console.error("YouTube Player Error:", event.data);
+          },
         },
       });
     };
@@ -103,23 +164,27 @@ const YouTubeWithQuestions = () => {
       q.id === id ? { ...q, answered: true } : q
     );
     questions.current = updated;
-    const unitDocRef = doc(db, `${unitDocPath}/students_submission`, user.account);
-  
+    const unitDocRef = doc(
+      db,
+      `${unitDocPath}/students_submission`,
+      user.account
+    );
+
     // Check if the document exists
     const docSnap = await getDoc(unitDocRef);
-  
+
     if (docSnap.exists()) {
       // Update the existing document
       await updateDoc(unitDocRef, {
-        "answered": arrayUnion({ [currentQuestion.type]: isCorrect }),
+        answered: arrayUnion({ [currentQuestion.type]: isCorrect }),
       });
     } else {
       // Create a new document
       await setDoc(unitDocRef, {
-        "answered": [{ [currentQuestion.type]: isCorrect }],
+        answered: [{ [currentQuestion.type]: isCorrect }],
       });
     }
-  
+
     setCurrentQuestion(null);
   };
 
@@ -134,22 +199,23 @@ const YouTubeWithQuestions = () => {
   };
 
   const handleNextUnitClick = async () => {
+    setShowNextButton(false); // Add this line to hide the button when clicked
     // Fetch the current unit's timestamp
     const currentUnitRef = doc(db, unitDocPath);
     const currentUnitSnap = await getDoc(currentUnitRef);
     const currentUnitTimestamp = currentUnitSnap.data().timestamp;
-  
+
     // Construct the query for the next unit in the units subcollection
     const unitsCollection = collection(db, `lessons/${lessonId}/units`);
     const nextUnitQuery = query(unitsCollection, orderBy("timestamp", "asc"));
-  
+
     // Listen to the query's result and set the currentUnitId to the next unit
     const unsubscribe = onSnapshot(nextUnitQuery, (querySnapshot) => {
       if (!querySnapshot.empty) {
         const nextUnitDoc = querySnapshot.docs.find(
           (doc) => doc.data().timestamp > currentUnitTimestamp
         );
-  
+
         if (nextUnitDoc) {
           const nextUnitId = nextUnitDoc.id;
           setCurrentUnitId(nextUnitId);
@@ -161,12 +227,11 @@ const YouTubeWithQuestions = () => {
         alert("No more units available.");
       }
     });
-  
+
     // Set the unsubscribe function
     setUnsubscribeNextUnit(() => unsubscribe);
   };
-  
-  
+
   useEffect(() => {
     return () => {
       if (unsubscribeNextUnit) {
@@ -174,43 +239,100 @@ const YouTubeWithQuestions = () => {
       }
     };
   }, [unsubscribeNextUnit]);
-  
 
-  console.log(currentQuestion);
+  console.log("currentQuestion", currentQuestion);
 
   return (
     <div>
-      <div id="player"></div>
-      {showNextButton && (
-      <button onClick={handleNextUnitClick}>Go to next unit</button>
-    )}
-      {currentQuestion && currentQuestion.gameMode && <GameMode />}
-      {currentQuestion && currentQuestion.type === "multiple-choice" && (
-        <div>
-        <MultipleChoice
-          questionData={currentQuestion}
-          onAnswerClick={handleAnswerClick}
-        />
-        </div>
-      )}
-      {currentQuestion && currentQuestion.type === "sorting" && (
-        <div>
-          <Sorting
-            sorted={currentQuestion.sorted}
-            onWin={() => updatedQuestions(currentQuestion.id, true)}
-          />
-        </div>
-      )}
-      {currentQuestion && currentQuestion.type === "matching" && (
-        <div>
-          <Matching
-            cards={currentQuestion.cards}
-            onWin={() => updatedQuestions(currentQuestion.id, true)}
-          />
-        </div>
-      )}
+      <h3>課程畫面</h3>
+      <Container>
+        <Container1>
+          <BtnContainer>
+            <h4>單元列表</h4>
+            {sortedUnits.map((unit, index) => (
+              <p key={unit.id}
+                  style={{
+      color: unit.id === currentUnitId ? "red" : "black",
+    }}>
+                Unit {index + 1}: {unit.data.unitName}
+              </p>
+            ))}
+            <Btn>
+              <Link to="/StudentMain">回課程主頁</Link>
+            </Btn>
+          </BtnContainer>
+        </Container1>
+        <Container2 style={{ paddingLeft: "50px" }}>
+          <div id="player"></div>
+          {showNextButton && (
+            <button onClick={handleNextUnitClick}>Go to next unit</button>
+          )}
+          {currentQuestion && currentQuestion.gameMode && <GameMode />}
+          {currentQuestion && currentQuestion.type === "multiple-choice" && (
+            <div>
+              <MultipleChoice
+                questionData={currentQuestion}
+                onAnswerClick={handleAnswerClick}
+              />
+            </div>
+          )}
+          {currentQuestion && currentQuestion.type === "sorting" && (
+            <div>
+              <Sorting
+                sorted={currentQuestion.sorted}
+                onWin={() => updatedQuestions(currentQuestion.id, true)}
+              />
+            </div>
+          )}
+          {currentQuestion && currentQuestion.type === "matching" && (
+            <div>
+              <Matching
+                cards={currentQuestion.cards}
+                onWin={() => updatedQuestions(currentQuestion.id, true)}
+              />
+            </div>
+          )}
+        </Container2>
+      </Container>
     </div>
   );
 };
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 100px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  select {
+    pointer-events: auto;
+  }
+`;
 
 export default YouTubeWithQuestions;

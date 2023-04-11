@@ -8,55 +8,7 @@ import { addDoc, collection, query, onSnapshot, updateDoc, arrayUnion, doc } fro
 import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 
-const UploadLabel = styled.label`
-  cursor: pointer;
-`;
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
-  select {
-    pointer-events: auto;
-  }
-`;
-
-const VideoImg = styled.div`
-  width: 300px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-`;
 
 function CreateCourse() {
   const [startTimestamp, setStartTimestamp] = useState(Date.now());
@@ -226,6 +178,56 @@ function CreateCourse() {
     </div>
   );
 }
+
+const UploadLabel = styled.label`
+  cursor: pointer;
+`;
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 100px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  select {
+    pointer-events: auto;
+  }
+`;
+
+const VideoImg = styled.div`
+  width: 300px;
+  height: 150px;
+  border: 1px solid black;
+  background-image: url(${(props) => props.imageURL});
+  background-size: cover;
+  background-position: center;
+`;
 
 export default CreateCourse;
 
