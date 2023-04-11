@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import "./AddClass.css";
@@ -17,48 +17,17 @@ import {
 import styled from "styled-components/macro";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Btn = styled.button`
-  cursor: pointer;
-  width: 70px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+import { UserContext } from "../../UserInfoProvider";
 
 function AddClass() {
+  const { user, setUser } = useContext(UserContext);
   const [cols, setCols] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [teacherInput, setTeacherInput] = useState("");
   const [teachers, setTeachers] = useState([]);
+  const [useLoggedInUserEmail, setUseLoggedInUserEmail] = useState(false);
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -147,7 +116,7 @@ function AddClass() {
           classes: [...teacherData.classes, selectedClass],
         });
       }
-    
+
       const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
       const newStudentsData = studentsData.filter(
         (student) => !classData.students.includes(student.email)
@@ -245,6 +214,15 @@ function AddClass() {
     );
   };
 
+  const handleCheckboxChange = (e) => {
+    setUseLoggedInUserEmail(e.target.checked);
+    if (e.target.checked) {
+      setTeacherInput(user.account); // Replace loggedInUserEmail with the actual email of the logged-in user
+    } else {
+      setTeacherInput("");
+    }
+  };
+
   return (
     <Container>
       <Container1>
@@ -273,6 +251,14 @@ function AddClass() {
           placeholder="輸入班級名稱"
         />{" "}
         <p>指派教師</p>
+        <p>
+          <input
+            type="checkbox"
+            checked={useLoggedInUserEmail}
+            onChange={handleCheckboxChange}
+          />
+          指派自己為教師
+        </p>{" "}
         <input
           type="text"
           value={teacherInput}
@@ -283,11 +269,45 @@ function AddClass() {
         <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
         {renderTable()}
         {/* <Link to="/ManageClass"> */}
-          <Btn onClick={handleSubmit}>建立帳號</Btn>
+        <Btn onClick={handleSubmit}>建立帳號</Btn>
         {/* </Link> */}
       </Container2>
     </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default AddClass;

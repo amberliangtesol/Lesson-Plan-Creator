@@ -78,6 +78,9 @@ function CreateCourse() {
         end_date: endTimestamp,
         classes: classChoose,
       });
+      await updateDoc(docRef, {
+        id: docRef.id,
+      });
       const lessonDocId = docRef.id;
       navigate(`/create-unit/${lessonDocId}`);
 

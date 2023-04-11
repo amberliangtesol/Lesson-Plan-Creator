@@ -70,7 +70,6 @@ function StudentMain() {
           return doc.data();
         });
 
-        console.log(lessons);
         setLessons(lessons);
       }
       setLoading(false); 
