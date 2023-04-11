@@ -21,40 +21,10 @@ function StudentMain() {
   const { user, setUser } = useContext(UserContext);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [imageURL, setImageURL] = useState("");
-  const [name, setName] = useState("");
-  const [account, setAccount] = useState("");
-  const [classNames, setClassNames] = useState([]);
-
-
-  useEffect(() => {
-    async function fetchUserData() {
-      const docRef = doc(db, "users", user.account);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setImageURL(userData.image || "");
-        setName(userData.name || "");
-        setAccount(userData.account || "");
-        setClasses(userData.classes || []);
-  
-        // Fetch class names
-        const classNames = await Promise.all(
-          userData.classes.map(async (classId) => {
-            const classDoc = await getDoc(doc(db, "classes", classId));
-            return classDoc.data().name;
-          })
-        );
-        setClassNames(classNames);
-      }
-    }
-  
-    fetchUserData();
-  }, [user]);
 
   useEffect(() => {
     const fetchClasses = async () => {
-      // console.log("user", user);
+      console.log("user", user);
       if (user && user.classes && user.classes.length > 0) {
         const lessonsRef = collection(db, "lessons");
         const q = await query(
@@ -62,19 +32,21 @@ function StudentMain() {
           where("classes", "array-contains-any", user.classes)
         );
         const results = await getDocs(q);
+        console.log("results", results);
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
 
         setClasses(lessons);
       }
-      setLoading(false); 
+      setLoading(false); // Set loading to false after trying to fetch classes
     };
 
     fetchClasses();
   }, [user,user.classes]);
 
   console.log("classes", classes);
+  console.log("uid", user.uid);
 
   return (
     <div>
@@ -85,9 +57,6 @@ function StudentMain() {
       ) : (
         <Container>
           <Container1>
-          <ProfileImg imageURL={imageURL}>
-          </ProfileImg>
-          <p>Hello {name}!</p>
             <BtnContainer>
               <Btn>
                 <Link to="/StudentMain">課程主頁</Link>
@@ -102,7 +71,7 @@ function StudentMain() {
           </Container1>
           <Container2 style={{ paddingLeft: "50px" }}>
             {classes.map((c) => (
-              <div>
+              <div key={c.name}>
                 <VideoImg img={c.img}></VideoImg>
                 <p>班級: {c.classes}</p>
                 <p>課程名稱: {c.name}</p>
@@ -149,7 +118,6 @@ const Container = styled.div`
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
-  align-items:center;
 `;
 
 const Container2 = styled.div`
@@ -164,19 +132,6 @@ const VideoImg = styled.div`
   background-image: url(${(props) => props.img});
   background-size: cover;
   background-position: center;
-`;
-
-const ProfileImg = styled.div`
-  width: 150px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  position: relative;
 `;
 
 export default StudentMain;

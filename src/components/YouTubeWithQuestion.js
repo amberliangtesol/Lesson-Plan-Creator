@@ -250,10 +250,12 @@ const YouTubeWithQuestions = () => {
           <BtnContainer>
             <h4>單元列表</h4>
             {sortedUnits.map((unit, index) => (
-              <p key={unit.id}
-                  style={{
-      color: unit.id === currentUnitId ? "red" : "black",
-    }}>
+              <p
+                key={unit.id}
+                style={{
+                  color: unit.id === currentUnitId ? "red" : "black",
+                }}
+              >
                 Unit {index + 1}: {unit.data.unitName}
               </p>
             ))}

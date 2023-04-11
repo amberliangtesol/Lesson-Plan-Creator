@@ -88,7 +88,7 @@ function TeacherMain() {
     }
   }, [user.classes]);
 
-  console.log(classes);
+  console.log("classes",classes);
 
 
   return (
