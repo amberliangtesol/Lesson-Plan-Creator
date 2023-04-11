@@ -43,7 +43,7 @@ function App() {
     <UserInfoProvider>
       <GlobalStyle />
       <Routes>
-        <Route path="/youtubewithquestion" element={<YouTubeWithQuestion />} />
+        <Route path="/youtubewithquestion/:lessonId" element={<YouTubeWithQuestion />} />
         <Route path="/gamemode" element={<GameMode />} />
         <Route path="/matching" element={<Matching />} />
         <Route path="/multiplechoice" element={<MultipleChoice />} />
@@ -51,7 +51,7 @@ function App() {
         <Route path="/badge" element={<Badge />} />
         <Route path="/course" element={<Course />} />
         <Route path="/createcourse" element={<CreateCourse />} />
-        <Route path="/create-unit/:lessonDocId" element={<CreateUnit />} />
+        <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
         <Route path="/addclass" element={<AddClass />} />
         <Route path="/editclass" element={<EditClass />} />
         <Route path="/login" element={<Login />} />

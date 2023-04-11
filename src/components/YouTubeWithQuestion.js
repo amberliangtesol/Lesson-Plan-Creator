@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
+import { useParams } from "react-router-dom";
 import {
   where,
   collection,
@@ -27,20 +28,24 @@ import { Link } from "react-router-dom";
 
 const YouTubeWithQuestions = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [currentUnitId, setCurrentUnitId] = useState("xXuWMEvkcTMgrwLe7HiE");
+  const { lessonId } = useParams();
+
+  //lessonid要改掉、currentUnitId預設是第一個UnitId或是localstorage存的UnitId
+  const [currentUnitId, setCurrentUnitId] = useState();
+  // const lessonId = "TupTZ1oEYEs4y583piqh";
+
   const [showNextButton, setShowNextButton] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const questions = useRef([]);
   const interval = useRef(null);
   const playerRef = useRef(null);
-  const lessonId = "TupTZ1oEYEs4y583piqh";
-  const unitDocPath = `lessons/${lessonId}/units/${currentUnitId}`;
   const [unsubscribeNextUnit, setUnsubscribeNextUnit] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [sortedUnits, setSortedUnits] = useState([]);
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
+      console.log(`lessons/${lessonId}/units`);
       const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
       const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
       const querySnapshot = await getDocs(unitsQuery);
@@ -49,114 +54,109 @@ const YouTubeWithQuestions = () => {
         data: doc.data(),
       }));
       setSortedUnits(units);
+      setCurrentUnitId(units[0].id);
     };
 
     fetchSortedUnits();
-  }, []);
+  }, [lessonId]);
 
   useEffect(() => {
-    if (currentUnitId) {
-      const fetchUnitData = async () => {
-        const docRef = doc(db, `lessons/${lessonId}/units/${currentUnitId}`);
-        const docSnap = await getDoc(docRef);
+    const fetchUnitData = async () => {
+      const docRef = doc(db, `lessons/${lessonId}/units/${currentUnitId}`);
+      const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          const unitData = docSnap.data();
-          questions.current = unitData.test.map((question) => {
-            return {
-              ...question.data,
-              type: question.type,
-            };
-          });
+      if (docSnap.exists()) {
+        const unitData = docSnap.data();
+        questions.current = unitData.test.map((question) => {
+          return {
+            ...question.data,
+            type: question.type,
+          };
+        });
 
-          console.log(unitData);
-          console.log("Video ID:", unitData.video);
+        console.log(unitData);
+        console.log("Video ID:", unitData.video);
 
-          if (playerRef.current && playerReady) {
-            playerRef.current.cueVideoById({ videoId: unitData.video });
-            playerRef.current.playVideo();
-          }
+        if (playerRef.current && playerReady) {
+          playerRef.current.cueVideoById({ videoId: unitData.video });
+          playerRef.current.playVideo();
         }
-      };
+      }
+    };
 
+    if (currentUnitId) {
       fetchUnitData();
     }
-  }, [currentUnitId]);
-
-  useEffect(() => {
-    const onPlayerStateChange = (event) => {
-      if (event.target.getPlayerState() === window.YT.PlayerState.PLAYING) {
-        interval.current = setInterval(() => {
-          const currentTime = event.target.getCurrentTime();
-          localStorage.setItem("videoTimestamp", currentTime);
-          if (!currentQuestion) {
-            const questionToShow = questions.current.find(
-              (q) => currentTime >= q.time && !q.answered
-            );
-            if (questionToShow) {
-              setCurrentQuestion(questionToShow);
-            }
-          }
-        }, 500);
-      } else if (
-        event.target.getPlayerState() === window.YT.PlayerState.ENDED
-      ) {
-        setShowNextButton(true);
-      }
-    };
-
-    window.onYouTubeIframeAPIReady = () => {
-      const onYouTubeIframeAPIReady = () => {
-        console.log("YouTube Iframe API Ready");
-      };
-
-      if (window.YT && window.YT.Player) {
-        onYouTubeIframeAPIReady();
-      } else {
-        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-      }
-
-      playerRef.current = new window.YT.Player("player", {
-        height: "360",
-        width: "640",
-        events: {
-          onReady: () => {
-            setPlayerReady(true);
-          },
-          onStateChange: onPlayerStateChange,
-          onError: (event) => {
-            console.error("YouTube Player Error:", event.data);
-          },
-        },
-      });
-    };
-
+    
     return () => {
-      if (window.YT && window.YT.Player) {
-        window.YT.Player.prototype.destroy();
-      }
       if (interval.current) {
         clearInterval(interval.current);
       }
-    };
-  }, [currentQuestion]);
+    }
+  }, [currentUnitId, lessonId, playerReady]);
+
+  const onPlayerStateChange = (event) => {
+    if (window.YT && window.YT.PlayerState && event.target.getPlayerState() === window.YT.PlayerState.PLAYING) {
+      interval.current = setInterval(() => {
+        const currentTime = event.target.getCurrentTime();
+        localStorage.setItem("videoTimestamp", currentTime);
+        localStorage.setItem("lessonid", lessonId);
+        localStorage.setItem("currentUnitId", currentUnitId);
+        if (!currentQuestion) {
+          const questionToShow = questions.current.find(
+            (q) => currentTime >= q.time && !q.answered
+          );
+          if (questionToShow) {
+            setCurrentQuestion(questionToShow);
+          }
+        }
+      }, 500);
+    } else if (
+      window.YT && event.target.getPlayerState() === window.YT.PlayerState.ENDED
+    ) {
+      setShowNextButton(true);
+    }
+  };
 
   useEffect(() => {
-    if (currentQuestion && playerRef.current) {
+    if (window.YT && currentQuestion && playerRef.current) {
       playerRef.current.pauseVideo();
-    } else if (!currentQuestion && playerRef.current) {
+    } else if (window.YT && !currentQuestion && playerRef.current) {
       playerRef.current.playVideo();
     }
     return () => {};
   }, [currentQuestion]);
 
+  window.onYouTubeIframeAPIReady = () => {
+    playerRef.current = new window.YT.Player("player", {
+      height: "360",
+      width: "640",
+      events: {
+        onReady: () => {
+          setPlayerReady(true);
+        },
+        onStateChange: onPlayerStateChange,
+        onError: (event) => {
+          console.error("YouTube Player Error:", event.data);
+        },
+      },
+    });
+  };
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://www.youtube.com/iframe_api";
     script.async = true;
+    script.id = 'youtubeAPI';
     document.body.appendChild(script);
 
-    return () => {};
+    return () => {
+      if (window.YT && window.YT.Player) {
+        window.YT.Player.prototype.destroy();
+        window.YT = null;
+      }
+      document.getElementById('youtubeAPI').remove();
+    };
   }, []);
 
   const updatedQuestions = async (id, isCorrect) => {
@@ -166,7 +166,7 @@ const YouTubeWithQuestions = () => {
     questions.current = updated;
     const unitDocRef = doc(
       db,
-      `${unitDocPath}/students_submission`,
+      `lessons/${lessonId}/units/${currentUnitId}/students_submission`,
       user.account
     );
 
@@ -201,7 +201,7 @@ const YouTubeWithQuestions = () => {
   const handleNextUnitClick = async () => {
     setShowNextButton(false); // Add this line to hide the button when clicked
     // Fetch the current unit's timestamp
-    const currentUnitRef = doc(db, unitDocPath);
+    const currentUnitRef = doc(db, `lessons/${lessonId}/units/${currentUnitId}`);
     const currentUnitSnap = await getDoc(currentUnitRef);
     const currentUnitTimestamp = currentUnitSnap.data().timestamp;
 

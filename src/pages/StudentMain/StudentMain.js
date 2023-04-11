@@ -19,7 +19,7 @@ function formatDate(timestamp) {
 
 function StudentMain() {
   const { user, setUser } = useContext(UserContext);
-  const [classes, setClasses] = useState([]);
+  const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [imageURL, setImageURL] = useState("");
   const [name, setName] = useState("");
@@ -29,14 +29,18 @@ function StudentMain() {
 
   useEffect(() => {
     async function fetchUserData() {
+      if (user.name) return;
+
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setImageURL(userData.image || "");
-        setName(userData.name || "");
-        setAccount(userData.account || "");
-        setClasses(userData.classes || []);
+        setUser({
+          ...user,
+          image: userData.image,
+          name: userData.name,
+          classes: userData.classes,
+        })
   
         // Fetch class names
         const classNames = await Promise.all(
@@ -48,14 +52,14 @@ function StudentMain() {
         setClassNames(classNames);
       }
     }
-  
     fetchUserData();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     const fetchClasses = async () => {
-      // console.log("user", user);
-      if (user && user.classes && user.classes.length > 0) {
+      if (user && user.classes && user.classes.length > 0 && lessons.length === 0) {
         const lessonsRef = collection(db, "lessons");
         const q = await query(
           lessonsRef,
@@ -66,15 +70,14 @@ function StudentMain() {
           return doc.data();
         });
 
-        setClasses(lessons);
+        console.log(lessons);
+        setLessons(lessons);
       }
       setLoading(false); 
     };
 
     fetchClasses();
-  }, [user,user.classes]);
-
-  console.log("classes", classes);
+  }, [lessons, user]);
 
   return (
     <div>
@@ -85,9 +88,9 @@ function StudentMain() {
       ) : (
         <Container>
           <Container1>
-          <ProfileImg imageURL={imageURL}>
+          <ProfileImg imageURL={user.image}>
           </ProfileImg>
-          <p>Hello {name}!</p>
+          <p>Hello {user.name}!</p>
             <BtnContainer>
               <Btn>
                 <Link to="/StudentMain">課程主頁</Link>
@@ -101,8 +104,8 @@ function StudentMain() {
             </BtnContainer>
           </Container1>
           <Container2 style={{ paddingLeft: "50px" }}>
-            {classes.map((c) => (
-              <div>
+            {lessons.map((c, index) => (
+              <div key={index}>
                 <VideoImg img={c.img}></VideoImg>
                 <p>班級: {c.classes}</p>
                 <p>課程名稱: {c.name}</p>
@@ -110,7 +113,7 @@ function StudentMain() {
                   課程時間{" "}
                   {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
                 </p>
-                <Link to="/YouTubeWithQuestion">
+                <Link to={`/YouTubeWithQuestion/${c.id}`}>
                   <Btn>進入課程</Btn>
                 </Link>
               </div>
