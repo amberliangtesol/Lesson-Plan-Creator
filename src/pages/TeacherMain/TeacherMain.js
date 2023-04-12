@@ -11,6 +11,8 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
+import { useNavigate } from "react-router-dom";
+
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -21,10 +23,8 @@ function TeacherMain() {
   const { user, setUser } = useContext(UserContext);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [imageURL, setImageURL] = useState("");
-  const [name, setName] = useState("");
-  const [account, setAccount] = useState("");
   const [classNames, setClassNames] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchUserData() {
@@ -82,6 +82,10 @@ function TeacherMain() {
     fetchClasses();
   }, [lessons, user]);
 
+  const handleScore = (id) => {
+    navigate(`/score/${id}`);
+  };
+
   return (
     <div>
       <h3>教師課程主頁</h3>
@@ -121,12 +125,12 @@ function TeacherMain() {
                   課程時間{" "}
                   {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
                 </p>
-                <Link to={`/YouTubeWithQuestion/${c.id}`}>
+                {/* <Link to={`/YouTubeWithQuestion/${c.id}`}>
                   <Btn>進入課程</Btn>
-                </Link>
-                <Link to="/Score">
-                  <Btn>答題狀況</Btn>
-                </Link>
+                </Link> */}
+                <Btn type="button" onClick={() => handleScore(c.id)}>
+                  <Link to="/Score">答題狀況</Link>
+                </Btn>
               </div>
             ))}
           </Container2>

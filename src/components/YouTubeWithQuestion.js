@@ -5,11 +5,9 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
 import { useParams } from "react-router-dom";
 import {
-  where,
   collection,
   query,
   orderBy,
-  limit,
   onSnapshot,
   doc,
   getDoc,
@@ -27,13 +25,9 @@ import styled from "styled-components/macro";
 import { Link } from "react-router-dom";
 
 const YouTubeWithQuestions = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(null);
   const { lessonId } = useParams();
-
-  //lessonid要改掉、currentUnitId預設是第一個UnitId或是localstorage存的UnitId
+  const [currentQuestion, setCurrentQuestion] = useState(null);
   const [currentUnitId, setCurrentUnitId] = useState();
-  // const lessonId = "TupTZ1oEYEs4y583piqh";
-
   const [showNextButton, setShowNextButton] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const questions = useRef([]);

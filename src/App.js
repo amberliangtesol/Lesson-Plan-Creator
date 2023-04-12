@@ -60,7 +60,7 @@ function App() {
         <Route path="/teacherprofile" element={<TeacherProfile />} />
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/score" element={<Score />} />
+        <Route path="/score/:lessonId" element={<Score />} />
         <Route path="/teachermain" element={<TeacherMain />} />
         <Route path="/studentmain" element={<StudentMain />} />
       </Routes>
