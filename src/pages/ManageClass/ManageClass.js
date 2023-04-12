@@ -2,18 +2,57 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { UserContext } from "../../UserInfoProvider";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 
 function ManageClass() {
   const { user, setUser } = useContext(UserContext);
+  const [classDetails, setClassDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // First useEffect for fetching and setting user data
+  useEffect(() => {
+    async function fetchUserData() {
+      if (user.name) return;
+
+      const docRef = doc(db, "users", user.account);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setUser({
+          ...user,
+          image: userData.image,
+          name: userData.name,
+          classes: userData.classes,
+        });
+      }
+    }
+    fetchUserData();
+  }, [user.account]);
+
+  // Second useEffect for fetching and setting class details
+  useEffect(() => {
+    async function fetchClassDetails() {
+      if (!user.classes) return;
+
+      const classDetails = await Promise.all(
+        user.classes.map(async (classId) => {
+          const classDoc = await getDoc(doc(db, "classes", classId));
+          const classData = classDoc.data();
+          return {
+            name: classData.name,
+            studentNumber: classData.students.length,
+            id: classData.id,
+          };
+        })
+      );
+      setClassDetails(classDetails);
+      setIsLoading(false);
+    }
+    fetchClassDetails();
+  }, [user.classes]);
+
+  console.log(classDetails);
 
   return (
     <div>
@@ -41,9 +80,23 @@ function ManageClass() {
           <Btn>
             <Link to="/AddClass">班級建立</Link>
           </Btn>
-          <Btn>
-            <Link to="/EditClass">班級編輯</Link>
-          </Btn>
+
+          <h4 style={{ paddingTop: "30px" }}>我的班級</h4>
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div>
+              {classDetails.map((classItem, index) => (
+                <div key={index}>
+                  <p>班級名稱: {classItem.name}</p>
+                  <p>學生人數: {classItem.studentNumber}人</p>
+                  <Btn>
+                    <Link to={`/edit-class/${classItem.id}`}>班級編輯</Link>
+                  </Btn>
+                </div>
+              ))}
+            </div>
+          )}
         </Container2>
       </Container>
     </div>
@@ -82,7 +135,7 @@ const Container1 = styled.div`
 
 const Container2 = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 `;
 
 const ProfileImg = styled.div`

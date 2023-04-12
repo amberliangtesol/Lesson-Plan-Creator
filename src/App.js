@@ -53,7 +53,7 @@ function App() {
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
         <Route path="/addclass" element={<AddClass />} />
-        <Route path="/editclass" element={<EditClass />} />
+        <Route path="/edit-class/:classId" element={<EditClass />} />
         <Route path="/login" element={<Login />} />
         <Route path="/managebadge" element={<ManageBadge />} />
         <Route path="/manageclass" element={<ManageClass />} />

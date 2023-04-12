@@ -16,42 +16,10 @@ import {
 import styled from "styled-components/macro";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Btn = styled.button`
-  cursor: pointer;
-  width: 70px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+import { useParams } from "react-router-dom";
 
 function EditClass() {
+  const { classId } = useParams();
   const [cols, setCols] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
@@ -93,7 +61,11 @@ function EditClass() {
       setTeachers(teacherEmails);
     };
     fetchTeachers();
-  }, []);
+    if (classId) {
+      fetchClassData(classId);
+      setSelectedClass(classId);
+    }
+  }, [classId]);
 
   const handleTeacherInputChange = (e) => {
     setTeacherInput(e.target.value);
@@ -125,15 +97,15 @@ function EditClass() {
     });
   };
 
-  const handleClassChange = async (e) => {
-    setSelectedClass(e.target.value);
-    if (e.target.value) {
-      fetchClassData(e.target.value);
-    } else {
-      setClassStudents([]);
-      setClassTeachers([]);
-    }
-  };
+  // const handleClassChange = async (e) => {
+  //   setSelectedClass(e.target.value);
+  //   if (e.target.value) {
+  //     fetchClassData(e.target.value);
+  //   } else {
+  //     setClassStudents([]);
+  //     setClassTeachers([]);
+  //   }
+  // };
 
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
@@ -278,7 +250,7 @@ function EditClass() {
         </BtnContainer>
       </Container1>
       <Container2 style={{ paddingLeft: "50px" }}>
-        <p>選擇班級</p>
+        {/* <p>選擇班級</p>
         <select value={selectedClass} onChange={handleClassChange}>
           <option value="">選擇班級</option>
           {classes.map((classOption) => (
@@ -286,7 +258,7 @@ function EditClass() {
               {classOption.name}
             </option>
           ))}
-        </select>
+        </select> */}
         <p>班級教師</p>
         <ul>
           {classTeachers.map((teacher, index) => (
@@ -323,5 +295,39 @@ function EditClass() {
     </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default EditClass;

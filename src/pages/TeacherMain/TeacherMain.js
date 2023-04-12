@@ -13,7 +13,6 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 
-
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   return date.toLocaleDateString();
@@ -73,7 +72,7 @@ function TeacherMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-
+        console.log(lessons);
         setLessons(lessons);
       }
       setLoading(false);
@@ -85,6 +84,11 @@ function TeacherMain() {
   const handleScore = (id) => {
     navigate(`/score/${id}`);
   };
+
+  function getClassNameById(classId) {
+    const index = user.classes.findIndex((id) => id === classId);
+    return classNames[index] || "";
+  }
 
   return (
     <div>
@@ -119,7 +123,14 @@ function TeacherMain() {
             {lessons.map((c, index) => (
               <div key={index}>
                 <VideoImg img={c.img}></VideoImg>
-                <p>班級: {c.classes}</p>
+                <p>
+                  班級:{" "}
+                  {c.classes.map((classId) => (
+                    <span key={classId}>
+                      {getClassNameById(classId)}{" "}
+                    </span>
+                  ))}
+                </p>
                 <p>課程名稱: {c.name}</p>
                 <p>
                   課程時間{" "}
