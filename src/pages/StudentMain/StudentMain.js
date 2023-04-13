@@ -29,28 +29,30 @@ function StudentMain() {
   useEffect(() => {
     async function fetchUserData() {
       if (user.name) return;
-
+    
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setUser({
-          ...user,
-          image: userData.image,
-          name: userData.name,
-          classes: userData.classes,
-        });
-
-        // Fetch class names
-        const classNames = await Promise.all(
-          userData.classes.map(async (classId) => {
-            const classDoc = await getDoc(doc(db, "classes", classId));
-            return classDoc.data().name;
-          })
-        );
-        setClassNames(classNames);
+        if (userData) { // Add this condition to check if userData is defined
+          // Fetch class names
+          const classNames = await Promise.all(
+            userData.classes.map(async (classId) => {
+              const classDoc = await getDoc(doc(db, "classes", classId));
+              return classDoc.data() && classDoc.data().name;
+            })
+          );
+          setUser({
+            ...user,
+            image: userData.image,
+            name: userData.name,
+            classes: userData.classes,
+            classNames,
+          });
+        }
       }
     }
+    
     fetchUserData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,7 +86,7 @@ function StudentMain() {
 
   function getClassNameById(classId) {
     const index = user.classes.findIndex((id) => id === classId);
-    return classNames[index] || "";
+    return (user.classNames || [])[index] || "";
   }
 
   return (

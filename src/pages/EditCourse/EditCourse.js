@@ -129,14 +129,17 @@ useEffect(() => {
 
   const handleUpdate = async () => {
     try {
-      // Upload the image to Firebase Storage and get its URL
-      const imageURL = await uploadImageAndGetURL(imageFile);
+      let imgUrl = imageURL;
+      if (imageFile) {
+        // Upload the image to Firebase Storage and get its URL
+        imgUrl = await uploadImageAndGetURL(imageFile);
+      }
 
       // Update the existing lesson document in Firestore
       const lessonRef = doc(db, "lessons", lessonId);
       await updateDoc(lessonRef, {
         name: courseName,
-        img: imageURL,
+        img: imgUrl,
         start_date: startTimestamp,
         end_date: endTimestamp,
         classes: classChoose,

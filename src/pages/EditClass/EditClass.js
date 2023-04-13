@@ -105,21 +105,23 @@ function EditClass() {
     const classDoc = await getDoc(classDocRef);
     const classData = classDoc.data();
 
-    // Update teachers field's array if the teacher is not already in the array
-    if (!classData.teachers.includes(selectedTeacher)) {
-      await updateDoc(classDocRef, {
-        teachers: [...classData.teachers, selectedTeacher],
-      });
-    }
+    if (selectedTeacher !== '') {
+      // Update teachers field's array if the teacher is not already in the array
+      if (!classData.teachers.includes(selectedTeacher)) {
+        await updateDoc(classDocRef, {
+          teachers: [...classData.teachers, selectedTeacher],
+        });
+      }
 
-    const teacherDocRef = doc(db, "users", selectedTeacher);
-    const teacherDoc = await getDoc(teacherDocRef);
-    const teacherData = teacherDoc.data();
+      const teacherDocRef = doc(db, "users", selectedTeacher);
+      const teacherDoc = await getDoc(teacherDocRef);
+      const teacherData = teacherDoc.data();
 
-    if (!teacherData.classes.includes(selectedClass)) {
-      await updateDoc(teacherDocRef, {
-        classes: [...teacherData.classes, selectedClass],
-      });
+      if (!teacherData.classes.includes(selectedClass)) {
+        await updateDoc(teacherDocRef, {
+          classes: [...teacherData.classes, selectedClass],
+        });
+      }
     }
     
     // Extract email and name columns from the rows

@@ -30,6 +30,7 @@ function CreateUnit() {
   const [explanation, setExplanation] = useState("");
   const [sortedUnits, setSortedUnits] = useState([]);
   const [currentUnitId, setCurrentUnitId] = useState();
+  const [submitted, setSubmitted] = useState(false);
 
   const createTest = (type) => {
     const init = {
@@ -83,6 +84,10 @@ function CreateUnit() {
       unitName: unitName,
       video: videoId,
       explanation: explanation,
+    })
+    .then(() => {
+      setSubmitted(true);
+      //設定空值
     });
   };
 
@@ -143,23 +148,26 @@ function CreateUnit() {
   useEffect(() => {
     const fetchSortedUnits = async () => {
       console.log(`lessons/${lessonId}/units`);
-      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
-      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
-      const querySnapshot = await getDocs(unitsQuery);
-      const units = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        data: doc.data(),
-      }));
-      setSortedUnits(units);
-
-      // Add a conditional check to make sure the units array is not empty
-      if (units.length > 0) {
-        setCurrentUnitId(units[0].id);
+      if (sortedUnits.length === 0 || submitted) {
+        console.log(submitted);
+        const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+        const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+        const querySnapshot = await getDocs(unitsQuery);
+        const units = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }));
+        setSortedUnits(units);
+        // Add a conditional check to make sure the units array is not empty
+        if (units.length > 0) {
+          setCurrentUnitId(units[0].id);
+          setSubmitted(false);
+        }
       }
     };
 
     fetchSortedUnits();
-  }, [lessonId]);
+  }, [lessonId, sortedUnits.length, submitted]);
 
   return (
     <div>
@@ -188,11 +196,10 @@ function CreateUnit() {
           </BtnContainer>
         </Container1>
         <Container2 style={{ paddingLeft: "50px" }}>
-          <Link to="/CreateCourse">
             <button type="button" onClick={handleCreate}>
               完成送出
             </button>
-          </Link>
+
 
           <form>
             <p>單元名稱</p>

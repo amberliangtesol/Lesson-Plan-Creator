@@ -35,6 +35,7 @@ function EditUnit() {
   const [currentUnitId, setCurrentUnitId] = useState();
   const [lessonData, setLessonData] = useState({});
 
+
   useEffect(() => {
     const fetchLessonData = async () => {
       const lessonDocRef = doc(db, "lessons", lessonId, "units", currentUnitId);
@@ -46,9 +47,11 @@ function EditUnit() {
         setSubTitle(lessonSnapshot.data().subtitle);
         setDescription(lessonSnapshot.data().description);
         setInputLink(lessonSnapshot.data().inputLink);
-        setVideoId(lessonSnapshot.data().videoId);
+        setVideoId(lessonSnapshot.data().video);
         setExplanation(lessonSnapshot.data().explanation);
+        setTotalTestArray(lessonSnapshot.data().test);
       }
+      console.log(lessonSnapshot.data());
     };
   
     fetchLessonData();

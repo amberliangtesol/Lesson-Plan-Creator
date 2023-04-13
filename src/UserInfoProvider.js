@@ -21,7 +21,7 @@ const UserInfoProvider = ({ children }) => {
         setUser(data);        
         setIsLogin(true);
       } else {
-        setUser();
+        setUser({});
         setIsLogin(false);
       }
     });

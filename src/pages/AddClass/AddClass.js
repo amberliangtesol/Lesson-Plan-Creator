@@ -82,10 +82,11 @@ function AddClass() {
       students: [],
       teachers: [selectedTeacher],
     });
-    setSelectedClass(newClassDocRef.id);
+    // setSelectedClass(newClassDocRef.id);
     await updateDoc(newClassDocRef, {
       id: newClassDocRef.id,
     });
+    return newClassDocRef.id;
   };
 
   const createOrUpdateClass = async () => {
@@ -93,8 +94,8 @@ function AddClass() {
     let classDoc = await getDoc(classDocRef);
 
     if (!classDoc.exists()) {
-      await createNewClass();
-      classDocRef = doc(db, "classes", selectedClass);
+      const newClassId = await createNewClass();
+      classDocRef = doc(db, "classes", newClassId);
       classDoc = await getDoc(classDocRef);
     }
 
@@ -105,16 +106,15 @@ function AddClass() {
         await updateDoc(classDocRef, {
           teachers: [...classData.teachers, selectedTeacher],
         });
-      }
-
-      const teacherDocRef = doc(db, "users", selectedTeacher);
-      const teacherDoc = await getDoc(teacherDocRef);
-      const teacherData = teacherDoc.data();
-
-      if (!teacherData.classes.includes(selectedClass)) {
-        await updateDoc(teacherDocRef, {
-          classes: [...teacherData.classes, selectedClass],
-        });
+        const teacherDocRef = doc(db, "users", selectedTeacher);
+        const teacherDoc = await getDoc(teacherDocRef);
+        const teacherData = teacherDoc.data();
+  
+        if (!teacherData.classes.includes(selectedClass)) {
+          await updateDoc(teacherDocRef, {
+            classes: [...teacherData.classes, selectedClass],
+          });
+        }
       }
 
       const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));

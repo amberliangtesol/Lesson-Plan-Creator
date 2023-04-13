@@ -22,12 +22,12 @@ function TeacherMain() {
   const { user, setUser } = useContext(UserContext);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [classNames, setClassNames] = useState([]);
+  // const [classNames, setClassNames] = useState([]);
   const navigate = useNavigate();
 
   function getClassNameById(classId) {
     const index = user.classes.findIndex((id) => id === classId);
-    return classNames[index] || "";
+    return (user.classNames || [])[index] || "";
   }
 
   useEffect(() => {
@@ -39,21 +39,20 @@ function TeacherMain() {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         if (userData) { // Add this condition to check if userData is defined
+          // Fetch class names
+          const classNames = await Promise.all(
+            userData.classes.map(async (classId) => {
+              const classDoc = await getDoc(doc(db, "classes", classId));
+              return classDoc.data() && classDoc.data().name;
+            })
+          );
           setUser({
             ...user,
             image: userData.image,
             name: userData.name,
             classes: userData.classes,
+            classNames,
           });
-    
-          // Fetch class names
-          const classNames = await Promise.all(
-            userData.classes.map(async (classId) => {
-              const classDoc = await getDoc(doc(db, "classes", classId));
-              return classDoc.data().name;
-            })
-          );
-          setClassNames(classNames);
         }
       }
     }
