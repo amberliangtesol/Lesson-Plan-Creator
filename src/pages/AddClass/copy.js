@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import "./AddClass.css";
 import { auth, db } from "../../utils/firebaseApp";
 import {
@@ -110,7 +109,7 @@ function AddClass() {
         const teacherDocRef = doc(db, "users", selectedTeacher);
         const teacherDoc = await getDoc(teacherDocRef);
         const teacherData = teacherDoc.data();
-
+  
         if (!teacherData.classes.includes(selectedClass)) {
           await updateDoc(teacherDocRef, {
             classes: [...teacherData.classes, selectedClass],
@@ -141,42 +140,26 @@ function AddClass() {
               });
             }
           } else {
-            async function createCustomUser(student) {
-              const functions = getFunctions();
-              const createCustomUserFunction = httpsCallable(
-                functions,
-                "createCustomUser"
+            try {
+              const { user } = await createUserWithEmailAndPassword(
+                auth,
+                student.email,
+                student.email
               );
 
-              try {
-                const result = await createCustomUserFunction({
-                  email: student.email,
-                  // phoneNumber: student.phoneNumber || '',
-                  photoURL: student.photoURL || '',
-                  password: student.email,
-                  name: student.name,
-                  selectedTeacher,
-                  selectedClass,
-                });
-
-                if (result.data.success) {
-                  console.log(
-                    "Successfully created new user:",
-                    result.data.uid
-                  );
-                } else {
-                  console.error(
-                    `Error creating user: ${student.email}`,
-                    result.data.error
-                  );
-                }
-              } catch (error) {
-                console.error(`Error creating user: ${student.email}`, error);
-              }
+              await setDoc(userDocRef, {
+                role: "student",
+                account: student.email,
+                image: "",
+                uid: user.uid,
+                name: student.name,
+                createdBy: selectedTeacher,
+                classes: [selectedClass],
+                badge: { collected: [""], outdated: [""] },
+              });
+            } catch (error) {
+              console.error(`Error creating user: ${student.email}`, error);
             }
-
-            // Call the createCustomUser function with the student object
-            createCustomUser(student);
           }
         }
       }
@@ -192,6 +175,7 @@ function AddClass() {
       alert("Please select a teacher before submitting.");
     }
   };
+  
 
   const DeleteIcon = ({ onDelete }) => {
     return (
@@ -290,7 +274,7 @@ function AddClass() {
         <input type="file" onChange={fileHandler} style={{ padding: "10px" }} />
         {renderTable()}
         <Link to="/ManageClass">
-          <Btn onClick={handleSubmit}>建立帳號</Btn>
+        <Btn onClick={handleSubmit}>建立帳號</Btn>
         </Link>
       </Container2>
     </Container>
