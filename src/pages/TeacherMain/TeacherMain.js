@@ -147,7 +147,7 @@ function TeacherMain() {
                   <Link to="/Score">答題狀況</Link>
                 </Btn>
                 <Btn type="button">
-                  <Link to="/EditCourse">班級編輯</Link>
+                  <Link to="/EditCourse">課程編輯</Link>
                 </Btn>
               </div>
             ))}

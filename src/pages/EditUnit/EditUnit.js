@@ -15,7 +15,7 @@ function chunk(array, chunk) {
   return result;
 }
 
-function CreateUnit() {
+function EditUnit() {
   const { lessonDocId } = useParams();
   const { lessonId } = useParams();
   const [unitName, setUnitName] = useState("");
@@ -527,4 +527,4 @@ const Splict = styled.div`
   border-top: 1px solid;
 `;
 
-export default CreateUnit;
+export default EditUnit;

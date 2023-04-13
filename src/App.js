@@ -10,6 +10,8 @@ import Badge from "./pages/Badge/Badge";
 import Course from "./pages/Course/Course";
 import CreateCourse from "./pages/CreateCourse/CreateCourse";
 import CreateUnit from "./pages/CreateUnit/CreateUnit";
+import EditCourse from "./pages/EditCourse/EditCourse";
+import EditUnit from "./pages/EditUnit/EditUnit";
 import AddClass from "./pages/AddClass/AddClass";
 import EditClass from "./pages/EditClass/EditClass";
 import Login from "./pages/Login/Login";
@@ -22,6 +24,9 @@ import Score from "./pages/Score/Score";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
 import UserInfoProvider from "./UserInfoProvider";
+
+
+
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -50,8 +55,13 @@ function App() {
         <Route path="/sorting" element={<Sorting />} />
         <Route path="/badge" element={<Badge />} />
         <Route path="/course" element={<Course />} />
+
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
+        
+        <Route path="/editcourse" element={<EditCourse />} />
+        <Route path="/edit-unit/:lessonId" element={<EditUnit />} />
+
         <Route path="/addclass" element={<AddClass />} />
         <Route path="/edit-class/:classId" element={<EditClass />} />
         <Route path="/login" element={<Login />} />
