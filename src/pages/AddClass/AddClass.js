@@ -169,8 +169,13 @@ function AddClass() {
   };
 
   const handleSubmit = async () => {
-    await createOrUpdateClass();
+    if (selectedTeacher) {
+      await createOrUpdateClass();
+    } else {
+      alert("Please select a teacher before submitting.");
+    }
   };
+  
 
   const DeleteIcon = ({ onDelete }) => {
     return (
@@ -292,7 +297,7 @@ const Container2 = styled.div`
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 70px;
+  width: 100px;
   height: 25px;
   a {
     text-decoration: none;

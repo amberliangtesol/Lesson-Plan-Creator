@@ -9,12 +9,6 @@ import profile from "./profile.png";
 import { UserContext } from "../../UserInfoProvider";
 import { Link } from "react-router-dom";
 
-const ProfileIcon = styled.div`
-  width: 120px;
-  height: 120px;
-  background-image: url(${profile});
-  cursor: pointer;
-`;
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -93,9 +87,16 @@ function Login() {
   );
 }
 
+const ProfileIcon = styled.div`
+  width: 120px;
+  height: 120px;
+  background-image: url(${profile});
+  cursor: pointer;
+`;
+
 const Btn = styled.button`
   cursor: pointer;
-  width: 70px;
+  width: 100px;
   height: 25px;
   a {
     text-decoration: none;

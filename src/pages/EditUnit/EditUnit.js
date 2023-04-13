@@ -1,11 +1,16 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { orderBy, getDocs, query, addDoc, collection } from "firebase/firestore";
+import {
+  orderBy,
+  getDocs,
+  query,
+  addDoc,
+  collection,
+} from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-
 
 function chunk(array, chunk) {
   let result = [];
@@ -16,8 +21,7 @@ function chunk(array, chunk) {
 }
 
 function EditUnit() {
-  const { lessonDocId } = useParams();
-  const { lessonId } = useParams();
+  const { lessonDocId, lessonId } = useParams();
   const [unitName, setUnitName] = useState("");
   const [subTitle, setSubTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -26,24 +30,6 @@ function EditUnit() {
   const [explanation, setExplanation] = useState("");
   const [sortedUnits, setSortedUnits] = useState([]);
   const [currentUnitId, setCurrentUnitId] = useState();
-  
-  useEffect(() => {
-    const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
-      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
-      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
-      const querySnapshot = await getDocs(unitsQuery);
-      const units = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        data: doc.data(),
-      }));
-      setSortedUnits(units);
-      setCurrentUnitId(units[0].id);
-    };
-
-    fetchSortedUnits();
-  }, [lessonId]);
-
 
   const createTest = (type) => {
     const init = {
@@ -83,7 +69,8 @@ function EditUnit() {
   ]);
 
   const handleCreate = () => {
-    addDoc(collection(db, `lessons/${lessonDocId}/units`), {
+    // addDoc(collection(db, `lessons/${lessonDocId}/units`), {
+    addDoc(collection(db, "lessons", lessonDocId, "units"), {
       timestamp: new Date().valueOf(),
       description: description,
       subtitle: subTitle,
@@ -153,14 +140,35 @@ function EditUnit() {
     setVideoId(videoId);
   };
 
+  useEffect(() => {
+    const fetchSortedUnits = async () => {
+      console.log(`lessons/${lessonId}/units`);
+      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(unitsQuery);
+      const units = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setSortedUnits(units);
+
+      // Add a conditional check to make sure the units array is not empty
+      if (units.length > 0) {
+        setCurrentUnitId(units[0].id);
+      }
+    };
+
+    fetchSortedUnits();
+  }, [lessonId]);
+
   return (
     <div>
-     <h3>單元建立</h3>
+      <h3>單元編輯</h3>
       <Container>
         <Container1>
           <BtnContainer>
             <h4>單元列表</h4>
-              {sortedUnits.map((unit, index) => (
+            {sortedUnits.map((unit, index) => (
               <p
                 key={unit.id}
                 style={{
@@ -180,306 +188,296 @@ function EditUnit() {
           </BtnContainer>
         </Container1>
         <Container2 style={{ paddingLeft: "50px" }}>
-      <Link to="/CreateCourse">
-        <button type="button" onClick={handleCreate}>
-          完成送出
-        </button>
-      </Link>
-      {/* <Link to="/TeacherMain">
-        <Btn>回首頁</Btn>
-      </Link>       */}
-      <form>
-        <p>單元名稱</p>
-        <input
-          type="text"
-          onChange={(e) => setUnitName(e.target.value)}
-        ></input>
+          <Link to="/CreateCourse">
+            <button type="button" onClick={handleCreate}>
+              完成送出
+            </button>
+          </Link>
 
-        <p>影音資料</p>
-        {/* <input
-          placeholder="影片檔案"
-          type="file"
-          onChange={(e) =>
-            setVideoSource(URL.createObjectURL(e.target.files[0]))
-          }
-        ></input> */}
-        <input
-          type="text"
-          value={inputLink}
-          onChange={handleInputChange}
-          placeholder="請貼上YouTube連結"
-        ></input>
-        <button type="button" onClick={extractVideoId}>
-          確認連結
-        </button>
-        {/* {videoId && <p>Video ID: {videoId}</p>} */}
-        {/* <div id="video-preview">
-          {videoSource && (
-            <iframe
-              title="Video Preview"
-              width="560"
-              height="315"
-              src={videoSource}
-              // frameBorder="0"
-              allowFullScreen
-            ></iframe>
-          )}
-        </div> */}
+          <form>
+            <p>單元名稱</p>
+            <input
+              type="text"
+              onChange={(e) => setUnitName(e.target.value)}
+            ></input>
 
-        {/* YT預覽有問題 */}
+            <p>影音資料</p>
+            <input
+              type="text"
+              value={inputLink}
+              onChange={handleInputChange}
+              placeholder="請貼上YouTube連結"
+            ></input>
+            <button type="button" onClick={extractVideoId}>
+              確認連結
+            </button>
 
-        <p>單元小標</p>
-        <input
-          type="text"
-          onChange={(e) => setSubTitle(e.target.value)}
-        ></input>
+            <p>單元小標</p>
+            <input
+              type="text"
+              onChange={(e) => setSubTitle(e.target.value)}
+            ></input>
 
-        <p>補充說明</p>
-        <input
-          type="text"
-          onChange={(e) => setDescription(e.target.value)}
-        ></input>
+            <p>補充說明</p>
+            <input
+              type="text"
+              onChange={(e) => setDescription(e.target.value)}
+            ></input>
 
-        <p>加入測驗</p>
-        <Splict></Splict>
+            <p>加入測驗</p>
+            <Splict></Splict>
 
-        {totalTestArray.map((item, index) => (
-          <div key={`test_${index}`}>
-            <p>選擇題型</p>
-            <select
-              value={item.type}
-              onChange={(e) => handleSelectType(e.target.value, index)}
-            >
-              <option value="">選擇題型</option>
-              <option value="multiple-choice">選擇題</option>
-              <option value="matching">翻翻牌</option>
-              <option value="sorting">排序題</option>
-            </select>
-            {item.type === "multiple-choice" && (
-              <div>
-                '選擇題'
-                <p>插入時間</p>
-                <input
-                  type="number"
-                  value={item.data.time}
-                  onChange={(e) => {
-                    let timeArray = [...totalTestArray];
-                    timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray);
-                  }}
-                />
-                <p>對戰模式</p>
+            {totalTestArray.map((item, index) => (
+              <div key={`test_${index}`}>
+                <p>選擇題型</p>
                 <select
-                  value={item.data.gameMode}
-                  onChange={(e) => {
-                    let gameModeArray = [...totalTestArray];
-                    gameModeArray[index].data.gameMode = e.target.value;
-                    setTotalTestArray(gameModeArray);
-                  }}
+                  value={item.type}
+                  onChange={(e) => handleSelectType(e.target.value, index)}
                 >
-                  <option value="true">開啟</option>
-                  <option value="false">關閉</option>
+                  <option value="">選擇題型</option>
+                  <option value="multiple-choice">選擇題</option>
+                  <option value="matching">翻翻牌</option>
+                  <option value="sorting">排序題</option>
                 </select>
-                <p>問題</p>
-                <input
-                  type="text"
-                  value={item.data.question}
-                  onChange={(e) => {
-                    let questionArray = [...totalTestArray];
-                    questionArray[index].data.question = e.target.value;
-                    setTotalTestArray(questionArray);
-                  }}
-                ></input>
-                <p>詳解</p>
-                <input
-                  type="text"
-                  value={item.data.explanation}
-                  onChange={(e) => {
-                    let explanationArray = [...totalTestArray];
-                    explanationArray[index].data.explanation = e.target.value;
-                    setTotalTestArray(explanationArray);
-                  }}
-                ></input>
-                <p>選項</p>
-                <label for="ans">解答</label>
-                {(item.data.options || []).map((option, idx) => (
+                {item.type === "multiple-choice" && (
                   <div>
+                    '選擇題'
+                    <p>插入時間</p>
                     <input
-                      key={`multiple_choice_checkbox_${idx}`}
-                      type="checkbox"
-                      checked={option.correct}
-                      value="true"
+                      type="number"
+                      value={item.data.time}
                       onChange={(e) => {
-                        const options = [...item.data.options];
-                        options[idx] = {
-                          ...options[idx],
-                          correct: e.target.value,
-                        };
-                        handleChange(index, "options", options);
+                        let timeArray = [...totalTestArray];
+                        timeArray[index].data.time = e.target.value;
+                        setTotalTestArray(timeArray);
                       }}
                     />
+                    <p>對戰模式</p>
+                    <select
+                      value={item.data.gameMode}
+                      onChange={(e) => {
+                        let gameModeArray = [...totalTestArray];
+                        gameModeArray[index].data.gameMode = e.target.value;
+                        setTotalTestArray(gameModeArray);
+                      }}
+                    >
+                      <option value="true">開啟</option>
+                      <option value="false">關閉</option>
+                    </select>
+                    <p>問題</p>
                     <input
-                      key={`multiple_choice_text_${idx}`}
                       type="text"
-                      value={option.text}
+                      value={item.data.question}
                       onChange={(e) => {
-                        const options = [...item.data.options];
-                        options[idx] = {
-                          ...options[idx],
-                          text: e.target.value,
-                        };
-                        handleChange(index, "options", options);
+                        let questionArray = [...totalTestArray];
+                        questionArray[index].data.question = e.target.value;
+                        setTotalTestArray(questionArray);
                       }}
-                    />
+                    ></input>
+                    <p>詳解</p>
+                    <input
+                      type="text"
+                      value={item.data.explanation}
+                      onChange={(e) => {
+                        let explanationArray = [...totalTestArray];
+                        explanationArray[index].data.explanation =
+                          e.target.value;
+                        setTotalTestArray(explanationArray);
+                      }}
+                    ></input>
+                    <p>選項</p>
+                    <label for="ans">解答</label>
+                    {(item.data.options || []).map((option, idx) => (
+                      <div>
+                        <input
+                          key={`multiple_choice_checkbox_${idx}`}
+                          type="checkbox"
+                          checked={option.correct}
+                          value="true"
+                          onChange={(e) => {
+                            const options = [...item.data.options];
+                            options[idx] = {
+                              ...options[idx],
+                              correct: e.target.value,
+                            };
+                            handleChange(index, "options", options);
+                          }}
+                        />
+                        <input
+                          key={`multiple_choice_text_${idx}`}
+                          type="text"
+                          value={option.text}
+                          onChange={(e) => {
+                            const options = [...item.data.options];
+                            options[idx] = {
+                              ...options[idx],
+                              text: e.target.value,
+                            };
+                            handleChange(index, "options", options);
+                          }}
+                        />
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => handleAddOption(index)}
+                    >
+                      再加一個選項
+                    </button>
                   </div>
-                ))}
-                <button type="button" onClick={() => handleAddOption(index)}>
-                  再加一個選項
-                </button>
-              </div>
-            )}
-            {item.type === "matching" && (
-              <div>
-                '翻翻牌'
-                <p>插入時間</p>
-                <input
-                  type="number"
-                  value={item.data.time}
-                  onChange={(e) => {
-                    let timeArray = [...totalTestArray];
-                    timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray);
-                  }}
-                />
-                <p>對戰模式</p>
-                <select
-                  value={item.data.gameMode}
-                  onChange={(e) => {
-                    let gameModeArray = [...totalTestArray];
-                    gameModeArray[index].data.gameMode = e.target.value;
-                    setTotalTestArray(gameModeArray);
-                  }}
-                >
-                  <option value="true">開啟</option>
-                  <option value="false">關閉</option>
-                </select>
-                <p>問題</p>
-                <input
-                  type="text"
-                  value={item.data.question}
-                  onChange={(e) => {
-                    let questionArray = [...totalTestArray];
-                    questionArray[index].data.question = e.target.value;
-                    setTotalTestArray(questionArray);
-                  }}
-                ></input>
-                <p>詳解</p>
-                <input
-                  type="text"
-                  value={item.data.explanation}
-                  onChange={(e) => {
-                    let explanationArray = [...totalTestArray];
-                    explanationArray[index].data.explanation = e.target.value;
-                    setTotalTestArray(explanationArray);
-                  }}
-                ></input>
-                <p>配對</p>
-                {chunk(item.data.cards || [], 2).map((chunkedCards, idx) => {
-                  return chunkedCards.map((card, iidx) => (
-                    <div>
-                      <input
-                        key={`matching_question_${idx}_${iidx}`}
-                        type="text"
-                        value={card.text}
-                        onChange={(e) => {
-                          const cards = [...item.data.cards];
-                          const current = idx * 2 + iidx;
-                          cards[current] = {
-                            ...cards[current],
-                            text: e.target.value,
-                          };
-                          handleChange(index, "cards", cards);
-                        }}
-                      />
-                    </div>
-                  ));
-                })}
-                <button type="button" onClick={() => handleAddOption(index)}>
-                  再加一個選項
-                </button>
-              </div>
-            )}
-            {item.type === "sorting" && (
-              <div>
-                '排序題'
-                <p>插入時間</p>
-                <input
-                  type="number"
-                  value={item.data.time}
-                  onChange={(e) => {
-                    let timeArray = [...totalTestArray];
-                    timeArray[index].data.time = e.target.value;
-                    setTotalTestArray(timeArray);
-                  }}
-                />
-                <p>對戰模式</p>
-                <select
-                  value={item.data.gameMode}
-                  onChange={(e) => {
-                    let gameModeArray = [...totalTestArray];
-                    gameModeArray[index].data.gameMode = e.target.value;
-                    setTotalTestArray(gameModeArray);
-                  }}
-                >
-                  <option value="true">開啟</option>
-                  <option value="false">關閉</option>
-                </select>
-                <p>問題</p>
-                <input
-                  type="text"
-                  value={item.data.question}
-                  onChange={(e) => {
-                    let questionArray = [...totalTestArray];
-                    questionArray[index].data.question = e.target.value;
-                    setTotalTestArray(questionArray);
-                  }}
-                ></input>
-                <p>詳解</p>
-                <input
-                  type="text"
-                  value={item.data.explanation}
-                  onChange={(e) => {
-                    let explanationArray = [...totalTestArray];
-                    explanationArray[index].data.explanation = e.target.value;
-                    setTotalTestArray(explanationArray);
-                  }}
-                ></input>
-                <p>選項</p>
-                {(item.data.sorted || []).map((sorted, idx) => (
+                )}
+                {item.type === "matching" && (
                   <div>
+                    '翻翻牌'
+                    <p>插入時間</p>
                     <input
-                      key={`sorting_text_${idx}`}
-                      type="text"
-                      value={sorted.text}
+                      type="number"
+                      value={item.data.time}
                       onChange={(e) => {
-                        const sorted = [...item.data.sorted];
-                        sorted[idx] = e.target.value;
-                        handleChange(index, "sorted", sorted);
+                        let timeArray = [...totalTestArray];
+                        timeArray[index].data.time = e.target.value;
+                        setTotalTestArray(timeArray);
                       }}
                     />
+                    <p>對戰模式</p>
+                    <select
+                      value={item.data.gameMode}
+                      onChange={(e) => {
+                        let gameModeArray = [...totalTestArray];
+                        gameModeArray[index].data.gameMode = e.target.value;
+                        setTotalTestArray(gameModeArray);
+                      }}
+                    >
+                      <option value="true">開啟</option>
+                      <option value="false">關閉</option>
+                    </select>
+                    <p>問題</p>
+                    <input
+                      type="text"
+                      value={item.data.question}
+                      onChange={(e) => {
+                        let questionArray = [...totalTestArray];
+                        questionArray[index].data.question = e.target.value;
+                        setTotalTestArray(questionArray);
+                      }}
+                    ></input>
+                    <p>詳解</p>
+                    <input
+                      type="text"
+                      value={item.data.explanation}
+                      onChange={(e) => {
+                        let explanationArray = [...totalTestArray];
+                        explanationArray[index].data.explanation =
+                          e.target.value;
+                        setTotalTestArray(explanationArray);
+                      }}
+                    ></input>
+                    <p>配對</p>
+                    {chunk(item.data.cards || [], 2).map(
+                      (chunkedCards, idx) => {
+                        return chunkedCards.map((card, iidx) => (
+                          <div>
+                            <input
+                              key={`matching_question_${idx}_${iidx}`}
+                              type="text"
+                              value={card.text}
+                              onChange={(e) => {
+                                const cards = [...item.data.cards];
+                                const current = idx * 2 + iidx;
+                                cards[current] = {
+                                  ...cards[current],
+                                  text: e.target.value,
+                                };
+                                handleChange(index, "cards", cards);
+                              }}
+                            />
+                          </div>
+                        ));
+                      }
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleAddOption(index)}
+                    >
+                      再加一個選項
+                    </button>
                   </div>
-                ))}
-                <button type="button" onClick={() => handleAddOption(index)}>
-                  再加一個選項
-                </button>
+                )}
+                {item.type === "sorting" && (
+                  <div>
+                    '排序題'
+                    <p>插入時間</p>
+                    <input
+                      type="number"
+                      value={item.data.time}
+                      onChange={(e) => {
+                        let timeArray = [...totalTestArray];
+                        timeArray[index].data.time = e.target.value;
+                        setTotalTestArray(timeArray);
+                      }}
+                    />
+                    <p>對戰模式</p>
+                    <select
+                      value={item.data.gameMode}
+                      onChange={(e) => {
+                        let gameModeArray = [...totalTestArray];
+                        gameModeArray[index].data.gameMode = e.target.value;
+                        setTotalTestArray(gameModeArray);
+                      }}
+                    >
+                      <option value="true">開啟</option>
+                      <option value="false">關閉</option>
+                    </select>
+                    <p>問題</p>
+                    <input
+                      type="text"
+                      value={item.data.question}
+                      onChange={(e) => {
+                        let questionArray = [...totalTestArray];
+                        questionArray[index].data.question = e.target.value;
+                        setTotalTestArray(questionArray);
+                      }}
+                    ></input>
+                    <p>詳解</p>
+                    <input
+                      type="text"
+                      value={item.data.explanation}
+                      onChange={(e) => {
+                        let explanationArray = [...totalTestArray];
+                        explanationArray[index].data.explanation =
+                          e.target.value;
+                        setTotalTestArray(explanationArray);
+                      }}
+                    ></input>
+                    <p>選項</p>
+                    {(item.data.sorted || []).map((sorted, idx) => (
+                      <div>
+                        <input
+                          key={`sorting_text_${idx}`}
+                          type="text"
+                          value={sorted.text}
+                          onChange={(e) => {
+                            const sorted = [...item.data.sorted];
+                            sorted[idx] = e.target.value;
+                            handleChange(index, "sorted", sorted);
+                          }}
+                        />
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => handleAddOption(index)}
+                    >
+                      再加一個選項
+                    </button>
+                  </div>
+                )}{" "}
               </div>
-            )}{" "}
-          </div>
-        ))}
+            ))}
 
-        <button onClick={handleAddTest}>再加一題</button>
-      </form>
-              </Container2>
+            <button onClick={handleAddTest}>再加一題</button>
+          </form>
+        </Container2>
       </Container>
     </div>
   );

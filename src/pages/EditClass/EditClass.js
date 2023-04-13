@@ -97,15 +97,6 @@ function EditClass() {
     });
   };
 
-  // const handleClassChange = async (e) => {
-  //   setSelectedClass(e.target.value);
-  //   if (e.target.value) {
-  //     fetchClassData(e.target.value);
-  //   } else {
-  //     setClassStudents([]);
-  //     setClassTeachers([]);
-  //   }
-  // };
 
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
@@ -250,15 +241,6 @@ function EditClass() {
         </BtnContainer>
       </Container1>
       <Container2 style={{ paddingLeft: "50px" }}>
-        {/* <p>選擇班級</p>
-        <select value={selectedClass} onChange={handleClassChange}>
-          <option value="">選擇班級</option>
-          {classes.map((classOption) => (
-            <option key={classOption.id} value={classOption.id}>
-              {classOption.name}
-            </option>
-          ))}
-        </select> */}
         <p>班級教師</p>
         <ul>
           {classTeachers.map((teacher, index) => (
@@ -312,7 +294,7 @@ const Container2 = styled.div`
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 70px;
+  width: 100px;
   height: 25px;
   a {
     text-decoration: none;

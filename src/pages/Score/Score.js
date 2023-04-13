@@ -125,7 +125,7 @@ function Score() {
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 70px;
+  width: 100px;
   height: 25px;
   a {
     text-decoration: none;

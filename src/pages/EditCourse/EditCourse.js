@@ -4,11 +4,20 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { orderBy, getDocs, addDoc, collection, query, onSnapshot, updateDoc, arrayUnion, doc } from "firebase/firestore";
+import {
+  orderBy,
+  getDocs,
+  addDoc,
+  collection,
+  query,
+  onSnapshot,
+  updateDoc,
+  arrayUnion,
+  doc,
+} from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-
 
 function EditCourse() {
   const { lessonId } = useParams();
@@ -22,23 +31,6 @@ function EditCourse() {
   const [sortedUnits, setSortedUnits] = useState([]);
   const [currentUnitId, setCurrentUnitId] = useState();
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
-      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
-      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
-      const querySnapshot = await getDocs(unitsQuery);
-      const units = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        data: doc.data(),
-      }));
-      setSortedUnits(units);
-      setCurrentUnitId(units[0].id);
-    };
-
-    fetchSortedUnits();
-  }, [lessonId]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -117,6 +109,27 @@ function EditCourse() {
     return imageURL;
   };
 
+  useEffect(() => {
+    const fetchSortedUnits = async () => {
+      console.log(`lessons/${lessonId}/units`);
+      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(unitsQuery);
+      const units = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setSortedUnits(units);
+
+      // Add a conditional check to make sure the units array is not empty
+      if (units.length > 0) {
+        setCurrentUnitId(units[0].id);
+      }
+    };
+
+    fetchSortedUnits();
+  }, [lessonId]);
+
   return (
     <div>
       <h3>課程編輯</h3>
@@ -124,7 +137,7 @@ function EditCourse() {
         <Container1>
           <BtnContainer>
             <h4>單元列表</h4>
-              {sortedUnits.map((unit, index) => (
+            {sortedUnits.map((unit, index) => (
               <p
                 key={unit.id}
                 style={{
@@ -179,7 +192,10 @@ function EditCourse() {
               選擇班級
             </option> */}
             {classList.map((classItem) => (
-              <option key={`${classItem.id}_${classItem.index}`} value={classItem.id}>
+              <option
+                key={`${classItem.id}_${classItem.index}`}
+                value={classItem.id}
+              >
                 {classItem.name}
               </option>
             ))}
@@ -261,4 +277,3 @@ const VideoImg = styled.div`
 `;
 
 export default EditCourse;
-

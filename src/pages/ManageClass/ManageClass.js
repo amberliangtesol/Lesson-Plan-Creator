@@ -39,6 +39,12 @@ function ManageClass() {
         user.classes.map(async (classId) => {
           const classDoc = await getDoc(doc(db, "classes", classId));
           const classData = classDoc.data();
+      
+          if (!classData) {
+            console.warn(`Class data not found for class ID: ${classId}`);
+            return null;
+          }
+      
           return {
             name: classData.name,
             studentNumber: classData.students.length,
@@ -46,7 +52,7 @@ function ManageClass() {
           };
         })
       );
-      setClassDetails(classDetails);
+      setClassDetails(classDetails.filter(Boolean));
       setIsLoading(false);
     }
     fetchClassDetails();
@@ -105,7 +111,7 @@ function ManageClass() {
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 80px;
+  width: 100px;
   height: 25px;
   a {
     text-decoration: none;

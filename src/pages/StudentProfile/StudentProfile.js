@@ -9,61 +9,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 70px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ProfileImg = styled.div`
-  width: 150px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-`;
-
-const IconWrapper = styled.span`
-  position: absolute;
-`;
-
-const UploadLabel = styled.label`
-  cursor: pointer;
-`;
-
 function StudentProfile() {
   const [imageURL, setImageURL] = useState("");
   const [imageFile, setImageFile] = useState("");
@@ -230,5 +175,60 @@ function StudentProfile() {
     </div>
   );
 }
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 100px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ProfileImg = styled.div`
+  width: 150px;
+  height: 150px;
+  border: 1px solid black;
+  background-image: url(${(props) => props.imageURL});
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+`;
+
+const IconWrapper = styled.span`
+  position: absolute;
+`;
+
+const UploadLabel = styled.label`
+  cursor: pointer;
+`;
 
 export default StudentProfile;
