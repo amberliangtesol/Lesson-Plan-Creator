@@ -5,15 +5,15 @@ import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
+  getDoc,
+  doc,
   orderBy,
   getDocs,
   addDoc,
   collection,
   query,
   onSnapshot,
-  updateDoc,
-  arrayUnion,
-  doc,
+  updateDoc
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
@@ -71,31 +71,6 @@ function EditCourse() {
     }
   };
 
-  const handleCreate = async () => {
-    try {
-      // Upload the image to Firebase Storage and get its URL
-      const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
-
-      // Create the document in Firestore with the image URL
-      const docRef = await addDoc(collection(db, "lessons"), {
-        name: courseName,
-        img: imageURL,
-        start_date: startTimestamp,
-        end_date: endTimestamp,
-        classes: classChoose,
-      });
-      await updateDoc(docRef, {
-        id: docRef.id,
-      });
-      const lessonDocId = docRef.id;
-      navigate(`/create-unit/${lessonDocId}`);
-
-      console.log("Document created with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error creating document: ", e);
-    }
-  };
-
   const uploadImageAndGetURL = async (imageFile) => {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${imageFile.name}`);
@@ -108,6 +83,28 @@ function EditCourse() {
 
     return imageURL;
   };
+
+// Fetch the lesson data
+useEffect(() => {
+  const fetchLesson = async () => {
+    const lessonRef = doc(db, "lessons", lessonId);
+    const lessonDoc = await getDoc(lessonRef);
+
+    if (lessonDoc.exists()) {
+      const lessonData = lessonDoc.data();
+      if (lessonData) {
+        setCourseName(lessonData.name);
+        setImageURL(lessonData.img);
+        setStartTimestamp(lessonData.start_date);
+        setEndTimestamp(lessonData.end_date);
+        setClassChoose(lessonData.classes);
+      }
+    }
+  };
+
+  fetchLesson();
+}, [lessonId]);
+
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
@@ -129,6 +126,27 @@ function EditCourse() {
 
     fetchSortedUnits();
   }, [lessonId]);
+
+  const handleUpdate = async () => {
+    try {
+      // Upload the image to Firebase Storage and get its URL
+      const imageURL = await uploadImageAndGetURL(imageFile);
+
+      // Update the existing lesson document in Firestore
+      const lessonRef = doc(db, "lessons", lessonId);
+      await updateDoc(lessonRef, {
+        name: courseName,
+        img: imageURL,
+        start_date: startTimestamp,
+        end_date: endTimestamp,
+        classes: classChoose,
+      });
+      navigate(`/edit-unit/${lessonId}`);
+      console.log("Document updated with ID: ", lessonId);
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  };
 
   return (
     <div>
@@ -175,6 +193,7 @@ function EditCourse() {
           <h4>課程名稱</h4>
           <input
             type="text"
+            value={courseName}
             onChange={(e) => setCourseName(e.target.value)}
           ></input>
           <h4>班級設定</h4>
@@ -217,7 +236,7 @@ function EditCourse() {
               setEndTimestamp(new Date(e.target.value).getTime())
             }
           />
-          <Btn type="button" onClick={handleCreate}>
+          <Btn type="button" onClick={handleUpdate}>
             <Link to="/EditUnit">單元編輯</Link>
           </Btn>
         </Container2>

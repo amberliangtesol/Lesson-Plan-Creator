@@ -33,28 +33,31 @@ function TeacherMain() {
   useEffect(() => {
     async function fetchUserData() {
       if (user.name) return;
-
+    
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setUser({
-          ...user,
-          image: userData.image,
-          name: userData.name,
-          classes: userData.classes,
-        });
-
-        // Fetch class names
-        const classNames = await Promise.all(
-          userData.classes.map(async (classId) => {
-            const classDoc = await getDoc(doc(db, "classes", classId));
-            return classDoc.data().name;
-          })
-        );
-        setClassNames(classNames);
+        if (userData) { // Add this condition to check if userData is defined
+          setUser({
+            ...user,
+            image: userData.image,
+            name: userData.name,
+            classes: userData.classes,
+          });
+    
+          // Fetch class names
+          const classNames = await Promise.all(
+            userData.classes.map(async (classId) => {
+              const classDoc = await getDoc(doc(db, "classes", classId));
+              return classDoc.data().name;
+            })
+          );
+          setClassNames(classNames);
+        }
       }
     }
+    
     fetchUserData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,6 +93,9 @@ function TeacherMain() {
     navigate(`/score/${id}`);
   };
 
+  const handleEditCourse = (id) => {
+    navigate(`/EditCourse/${id}`);
+  };
 
 
   return (
@@ -140,13 +146,10 @@ function TeacherMain() {
                   課程時間{" "}
                   {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
                 </p>
-                {/* <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link> */}
                 <Btn type="button" onClick={() => handleScore(c.id)}>
                   <Link to="/Score">答題狀況</Link>
                 </Btn>
-                <Btn type="button">
+                <Btn type="button" onClick={() => handleEditCourse(c.id)}>
                   <Link to="/EditCourse">課程編輯</Link>
                 </Btn>
               </div>

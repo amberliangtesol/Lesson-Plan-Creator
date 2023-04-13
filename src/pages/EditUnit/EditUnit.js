@@ -2,10 +2,13 @@ import React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import {
+  getDoc,
+  doc,
   orderBy,
   getDocs,
   query,
   addDoc,
+  updateDoc,
   collection,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
@@ -30,7 +33,28 @@ function EditUnit() {
   const [explanation, setExplanation] = useState("");
   const [sortedUnits, setSortedUnits] = useState([]);
   const [currentUnitId, setCurrentUnitId] = useState();
+  const [lessonData, setLessonData] = useState({});
 
+  useEffect(() => {
+    const fetchLessonData = async () => {
+      const lessonDocRef = doc(db, "lessons", lessonId, "units", currentUnitId);
+      const lessonSnapshot = await getDoc(lessonDocRef);
+      console.log("lessonDocRef",lessonDocRef);
+      if (lessonSnapshot.exists()) {
+        setLessonData(lessonSnapshot.data());
+        setUnitName(lessonSnapshot.data().unitName);
+        setSubTitle(lessonSnapshot.data().subtitle);
+        setDescription(lessonSnapshot.data().description);
+        setInputLink(lessonSnapshot.data().inputLink);
+        setVideoId(lessonSnapshot.data().videoId);
+        setExplanation(lessonSnapshot.data().explanation);
+      }
+    };
+  
+    fetchLessonData();
+  }, [lessonId, currentUnitId]);
+
+  
   const createTest = (type) => {
     const init = {
       explanation: "",
@@ -68,23 +92,31 @@ function EditUnit() {
     { type: "", data: {} },
   ]);
 
-  const handleCreate = () => {
-    // addDoc(collection(db, `lessons/${lessonDocId}/units`), {
-    addDoc(collection(db, "lessons", lessonDocId, "units"), {
-      timestamp: new Date().valueOf(),
-      description: description,
-      subtitle: subTitle,
-      test: totalTestArray.map((item, index) => {
-        return {
-          ...item,
-          data: { ...item.data, id: index + 1 },
-        };
-      }),
-      unitName: unitName,
-      video: videoId,
-      explanation: explanation,
-    });
+  const handleUpdate = async () => {
+    try {
+      const lessonDocRef = doc(db, `lessons/${lessonId}/units`, currentUnitId);
+  
+      await updateDoc(lessonDocRef, {
+        timestamp: new Date().valueOf(),
+        description: description,
+        subtitle: subTitle,
+        test: totalTestArray.map((item, index) => {
+          return {
+            ...item,
+            data: { ...item.data, id: index + 1 },
+          };
+        }),
+        unitName: unitName,
+        video: videoId,
+        explanation: explanation,
+      });
+  
+      console.log("Document updated with ID: ", currentUnitId);
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
   };
+  
 
   const handleAddTest = (e) => {
     const newTest = createTest();
@@ -140,6 +172,7 @@ function EditUnit() {
     setVideoId(videoId);
   };
 
+
   useEffect(() => {
     const fetchSortedUnits = async () => {
       console.log(`lessons/${lessonId}/units`);
@@ -188,8 +221,8 @@ function EditUnit() {
           </BtnContainer>
         </Container1>
         <Container2 style={{ paddingLeft: "50px" }}>
-          <Link to="/CreateCourse">
-            <button type="button" onClick={handleCreate}>
+          <Link to="/TeacherMain">
+            <button type="button" onClick={handleUpdate}>
               完成送出
             </button>
           </Link>
@@ -198,13 +231,14 @@ function EditUnit() {
             <p>單元名稱</p>
             <input
               type="text"
+              value={unitName}
               onChange={(e) => setUnitName(e.target.value)}
             ></input>
 
             <p>影音資料</p>
             <input
               type="text"
-              value={inputLink}
+              value={videoId}
               onChange={handleInputChange}
               placeholder="請貼上YouTube連結"
             ></input>
@@ -215,12 +249,14 @@ function EditUnit() {
             <p>單元小標</p>
             <input
               type="text"
+              value={subTitle}
               onChange={(e) => setSubTitle(e.target.value)}
             ></input>
 
             <p>補充說明</p>
             <input
               type="text"
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
             ></input>
 

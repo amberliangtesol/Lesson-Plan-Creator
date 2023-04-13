@@ -59,7 +59,7 @@ function App() {
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
         
-        <Route path="/editcourse" element={<EditCourse />} />
+        <Route path="/editcourse/:lessonId" element={<EditCourse />} />
         <Route path="/edit-unit/:lessonId" element={<EditUnit />} />
 
         <Route path="/addclass" element={<AddClass />} />
