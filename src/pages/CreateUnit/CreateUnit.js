@@ -1,30 +1,11 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { addDoc, doc, collection } from "firebase/firestore";
-import { auth, db } from "../../utils/firebaseApp";
+import { orderBy, getDocs, query, addDoc, collection } from "firebase/firestore";
+import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 70px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const Splict = styled.div`
-  width: 500px;
-  border-top: 1px solid;
-`;
 
 function chunk(array, chunk) {
   let result = [];
@@ -36,23 +17,34 @@ function chunk(array, chunk) {
 
 function CreateUnit() {
   const { lessonDocId } = useParams();
-
+  const { lessonId } = useParams();
   const [unitName, setUnitName] = useState("");
-  const [videoSource, setVideoSource] = useState("");
   const [subTitle, setSubTitle] = useState("");
   const [description, setDescription] = useState("");
   const [inputLink, setInputLink] = useState("");
   const [videoId, setVideoId] = useState("");
-  // const [timeStamp, setTimeStamp] = useState("");
-  // const [question, setQuestion] = useState("");
   const [explanation, setExplanation] = useState("");
-  // const [gameMode, setGameMode] = useState("");
-  // const [optionsState, setOptionsState] = useState("");
-  // const [testArray, setTestArray] = useState([{ correct: false, text: "" }]);
-  // const [optionContent, setOptionContent] = useState({
-  //   correct: false,
-  //   text: "",
-  // });
+  const [sortedUnits, setSortedUnits] = useState([]);
+  const [currentUnitId, setCurrentUnitId] = useState();
+  
+  useEffect(() => {
+    const fetchSortedUnits = async () => {
+      console.log(`lessons/${lessonId}/units`);
+      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(unitsQuery);
+      const units = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setSortedUnits(units);
+      setCurrentUnitId(units[0].id);
+    };
+
+    fetchSortedUnits();
+  }, [lessonId]);
+
+
   const createTest = (type) => {
     const init = {
       explanation: "",
@@ -163,7 +155,32 @@ function CreateUnit() {
 
   return (
     <div>
-      <Link to="/TeacherMain">
+     <h3>單元建立</h3>
+      <Container>
+        <Container1>
+          <BtnContainer>
+            <h4>單元列表</h4>
+              {sortedUnits.map((unit, index) => (
+              <p
+                key={unit.id}
+                style={{
+                  color: unit.id === currentUnitId ? "red" : "black",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setCurrentUnitId(unit.id);
+                }}
+              >
+                Unit {index + 1}: {unit.data.unitName}
+              </p>
+            ))}
+            <Btn>
+              <Link to="/TeacherMain">回課程主頁</Link>
+            </Btn>
+          </BtnContainer>
+        </Container1>
+        <Container2 style={{ paddingLeft: "50px" }}>
+      <Link to="/CreateCourse">
         <button type="button" onClick={handleCreate}>
           完成送出
         </button>
@@ -461,8 +478,52 @@ function CreateUnit() {
 
         <button onClick={handleAddTest}>再加一題</button>
       </form>
+              </Container2>
+      </Container>
     </div>
   );
 }
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 70px;
+  height: 25px;
+  a {
+    text-decoration: none;
+    color: #000000;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  select {
+    pointer-events: auto;
+  }
+`;
+
+const Splict = styled.div`
+  width: 500px;
+  border-top: 1px solid;
+`;
 
 export default CreateUnit;

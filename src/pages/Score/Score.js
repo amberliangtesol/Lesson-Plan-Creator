@@ -31,13 +31,13 @@ function Score() {
 
   const useFirestoreData = (lessonId, currentUnitId) => {
     const [data, setData] = useState(null);
-  
+
     useEffect(() => {
       const fetchData = async () => {
         if (!currentUnitId) {
           return;
         }
-  
+
         const unitRef = doc(db, "lessons", lessonId, "units", currentUnitId);
         const studentsSubmissionCollection = collection(
           unitRef,
@@ -45,21 +45,21 @@ function Score() {
         );
         const q = query(studentsSubmissionCollection);
         const querySnapshot = await getDocs(q);
-  
+
         const fetchedData = {};
         querySnapshot.forEach((doc) => {
           fetchedData[doc.id] = doc.data();
         });
-  
+
         setData(fetchedData);
       };
-  
+
       fetchData();
     }, [lessonId, currentUnitId]);
-  
+
     return data;
   };
-  
+
   const fetchedData = useFirestoreData(lessonId, currentUnitId);
   const data = {};
 
@@ -70,7 +70,14 @@ function Score() {
   }
 
   if (fetchedData === null) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <p>尚未有學生答題</p>
+        <Link to="/TeacherMain">
+          <Btn>回首頁</Btn>
+        </Link>
+      </div>
+    );
   }
 
   const isDataValid = Object.values(data).every(

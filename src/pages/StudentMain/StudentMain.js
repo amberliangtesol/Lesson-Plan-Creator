@@ -26,7 +26,6 @@ function StudentMain() {
   const [account, setAccount] = useState("");
   const [classNames, setClassNames] = useState([]);
 
-
   useEffect(() => {
     async function fetchUserData() {
       if (user.name) return;
@@ -40,8 +39,8 @@ function StudentMain() {
           image: userData.image,
           name: userData.name,
           classes: userData.classes,
-        })
-  
+        });
+
         // Fetch class names
         const classNames = await Promise.all(
           userData.classes.map(async (classId) => {
@@ -54,12 +53,17 @@ function StudentMain() {
     }
     fetchUserData();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     const fetchClasses = async () => {
-      if (user && user.classes && user.classes.length > 0 && lessons.length === 0) {
+      if (
+        user &&
+        user.classes &&
+        user.classes.length > 0 &&
+        lessons.length === 0
+      ) {
         const lessonsRef = collection(db, "lessons");
         const q = await query(
           lessonsRef,
@@ -72,11 +76,16 @@ function StudentMain() {
 
         setLessons(lessons);
       }
-      setLoading(false); 
+      setLoading(false);
     };
 
     fetchClasses();
   }, [lessons, user]);
+
+  function getClassNameById(classId) {
+    const index = user.classes.findIndex((id) => id === classId);
+    return classNames[index] || "";
+  }
 
   return (
     <div>
@@ -87,9 +96,8 @@ function StudentMain() {
       ) : (
         <Container>
           <Container1>
-          <ProfileImg imageURL={user.image}>
-          </ProfileImg>
-          <p>Hello {user.name}!</p>
+            <ProfileImg imageURL={user.image}></ProfileImg>
+            <p>Hello {user.name}!</p>
             <BtnContainer>
               <Btn>
                 <Link to="/StudentMain">課程主頁</Link>
@@ -106,7 +114,12 @@ function StudentMain() {
             {lessons.map((c, index) => (
               <div key={index}>
                 <VideoImg img={c.img}></VideoImg>
-                <p>班級: {c.classes}</p>
+                <p>
+                  班級:{" "}
+                  {c.classes.map((classId) => (
+                    <span key={classId}>{getClassNameById(classId)} </span>
+                  ))}
+                </p>{" "}
                 <p>課程名稱: {c.name}</p>
                 <p>
                   課程時間{" "}
@@ -151,12 +164,15 @@ const Container = styled.div`
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
-  align-items:center;
+  align-items: center;
 `;
 
 const Container2 = styled.div`
+  width:100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap:20px;
 `;
 
 const VideoImg = styled.div`

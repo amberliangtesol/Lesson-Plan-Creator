@@ -25,6 +25,11 @@ function TeacherMain() {
   const [classNames, setClassNames] = useState([]);
   const navigate = useNavigate();
 
+  function getClassNameById(classId) {
+    const index = user.classes.findIndex((id) => id === classId);
+    return classNames[index] || "";
+  }
+
   useEffect(() => {
     async function fetchUserData() {
       if (user.name) return;
@@ -85,10 +90,7 @@ function TeacherMain() {
     navigate(`/score/${id}`);
   };
 
-  function getClassNameById(classId) {
-    const index = user.classes.findIndex((id) => id === classId);
-    return classNames[index] || "";
-  }
+
 
   return (
     <div>
@@ -116,10 +118,12 @@ function TeacherMain() {
               </Btn>
             </BtnContainer>
           </Container1>
-          <Container2 style={{ paddingLeft: "50px" }}>
-            <Btn>
+
+          <Btn>
               <Link to="/CreateCourse">課程建立</Link>
             </Btn>
+
+          <Container2 style={{ paddingLeft: "50px" }}>
             {lessons.map((c, index) => (
               <div key={index}>
                 <VideoImg img={c.img}></VideoImg>
@@ -142,6 +146,9 @@ function TeacherMain() {
                 <Btn type="button" onClick={() => handleScore(c.id)}>
                   <Link to="/Score">答題狀況</Link>
                 </Btn>
+                <Btn type="button">
+                  <Link to="/EditCourse">班級編輯</Link>
+                </Btn>
               </div>
             ))}
           </Container2>
@@ -153,7 +160,7 @@ function TeacherMain() {
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 70px;
+  width: 80px;
   height: 25px;
   a {
     text-decoration: none;
@@ -182,8 +189,11 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
+  width:100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap:20px;
 `;
 
 const VideoImg = styled.div`

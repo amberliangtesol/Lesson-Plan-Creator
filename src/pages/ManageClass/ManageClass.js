@@ -76,20 +76,20 @@ function ManageClass() {
             </Btn>
           </BtnContainer>
         </Container1>
-        <Container2 style={{ paddingLeft: "50px" }}>
-          <Btn>
+
+        <Btn>
             <Link to="/AddClass">班級建立</Link>
           </Btn>
 
-          <h4 style={{ paddingTop: "30px" }}>我的班級</h4>
+        <Container2 style={{ paddingLeft: "50px" }}>
+          {/* <h4 style={{ paddingTop: "30px" }}>我的班級</h4> */}
           {isLoading ? (
             <p>Loading...</p>
           ) : (
             <div>
               {classDetails.map((classItem, index) => (
                 <div key={index}>
-                  <p>班級名稱: {classItem.name}</p>
-                  <p>學生人數: {classItem.studentNumber}人</p>
+                  <p>班級名稱: {classItem.name} / 學生人數: {classItem.studentNumber}人</p>
                   <Btn>
                     <Link to={`/edit-class/${classItem.id}`}>班級編輯</Link>
                   </Btn>
@@ -105,7 +105,7 @@ function ManageClass() {
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 70px;
+  width: 80px;
   height: 25px;
   a {
     text-decoration: none;
@@ -134,8 +134,11 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
+  width:100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap:20px;
 `;
 
 const ProfileImg = styled.div`

@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, query, onSnapshot, updateDoc, arrayUnion, doc } from "firebase/firestore";
-import { auth, db } from "../../utils/firebaseApp";
+import { orderBy, getDocs, addDoc, collection, query, onSnapshot, updateDoc, arrayUnion, doc } from "firebase/firestore";
+import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
-
+import { useParams } from "react-router-dom";
 
 
 function CreateCourse() {
+  const { lessonId } = useParams();
   const [startTimestamp, setStartTimestamp] = useState(Date.now());
   const [endTimestamp, setEndTimestamp] = useState(Date.now());
   const [imageURL, setImageURL] = useState("");
@@ -18,13 +19,26 @@ function CreateCourse() {
   const [classChoose, setClassChoose] = useState([]);
   const [classList, setClassList] = useState([]);
   const [imageFile, setImageFile] = useState("");
+  const [sortedUnits, setSortedUnits] = useState([]);
+  const [currentUnitId, setCurrentUnitId] = useState();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    const fetchSortedUnits = async () => {
+      console.log(`lessons/${lessonId}/units`);
+      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(unitsQuery);
+      const units = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setSortedUnits(units);
+      setCurrentUnitId(units[0].id);
+    };
 
-  // useEffect(() => {
-  //   const now = new Date().toISOString().slice(0, 10);
-  //   setStartTimestamp(now);
-  //   setEndTimestamp(now);
-  // }, []);
+    fetchSortedUnits();
+  }, [lessonId]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -110,6 +124,20 @@ function CreateCourse() {
         <Container1>
           <BtnContainer>
             <h4>單元列表</h4>
+              {sortedUnits.map((unit, index) => (
+              <p
+                key={unit.id}
+                style={{
+                  color: unit.id === currentUnitId ? "red" : "black",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setCurrentUnitId(unit.id);
+                }}
+              >
+                Unit {index + 1}: {unit.data.unitName}
+              </p>
+            ))}
             <Btn>
               <Link to="/TeacherMain">回課程主頁</Link>
             </Btn>
