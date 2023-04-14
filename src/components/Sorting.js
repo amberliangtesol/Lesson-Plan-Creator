@@ -15,6 +15,7 @@ const SingleBox = styled.div`
 
 function Sorting(props) {
   const correctOrder = props.sorted || [];
+  const explanation = props.explanation; // Get the explanation prop
   const [dragId, setDragId] = useState();
   const [boxes, setBoxes] = useState(
     correctOrder.map((id) => ({
@@ -55,10 +56,15 @@ function Sorting(props) {
     });
 
     setBoxes(newBoxState);
+  };
 
-    if (checkWin(newBoxState)) {
-      alert("you win!");
-      props.onWin();
+  const handleSubmitClick = () => {
+    if (checkWin(boxes)) {
+      alert("You win!");
+      props.onWin(true);
+    } else {
+      alert(explanation);
+      props.onWin(false);
     }
   };
 
@@ -86,20 +92,22 @@ function Sorting(props) {
   };
 
   return (
-    <BoxContainer>
-      {boxes
-        .sort((a, b) => a.order - b.order)
-        .map((box) => (
-          <Box
-            key={box.id}
-            boxColor="#3f3f3a"
-            boxNumber={box.id}
-            handleDrag={handleDrag}
-            handleDrop={handleDrop}
-          />
-        ))}
-    </BoxContainer>
-
+    <>
+      <BoxContainer>
+        {boxes
+          .sort((a, b) => a.order - b.order)
+          .map((box) => (
+            <Box
+              key={box.id}
+              boxColor="#3f3f3a"
+              boxNumber={box.id}
+              handleDrag={handleDrag}
+              handleDrop={handleDrop}
+            />
+          ))}
+      </BoxContainer>
+      <button onClick={handleSubmitClick}>送出答案</button>
+    </>
   );
 }
 

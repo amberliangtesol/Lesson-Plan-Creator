@@ -20,6 +20,8 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
 
 const Matching = (props) => {
   const cards = props.cards || [];
+  const explanation = props.explanation; // Get the explanation prop
+
   const shuffle = (array) => {
     let currentIndex = array.length,
       temporaryValue,
@@ -48,6 +50,7 @@ const Matching = (props) => {
 
   const [flippedCards, setFlippedCards] = useState([]);
   const [gameOver, setGameOver] = useState(false);
+  const [clickHistory, setClickHistory] = useState([]);
 
   const handleClick = (name, groupId, index) => {
     let currentCard = {
@@ -55,6 +58,10 @@ const Matching = (props) => {
       groupId,
       index,
     };
+
+        // Log click
+        setClickHistory([...clickHistory, currentCard]);
+
 
     //update card is flipped
     let updateCards = cardList.map((card) => {
@@ -115,14 +122,18 @@ const Matching = (props) => {
   //   props.onWin();    
   // };
 
+
   useEffect(() => {
     if (gameOver) {
-      alert("you win!");
+      console.log('Number of clicks:', clickHistory.length);
+      alert(explanation);
       props.onWin();
     }
   }, [gameOver]);
 
+
   return (
+    <div>
     <div className="game-board">
       {!gameOver &&
         cardList.map((card, index) => (
@@ -140,6 +151,7 @@ const Matching = (props) => {
           />
         ))}
       {gameOver}
+    </div>
     </div>
   );
 };
