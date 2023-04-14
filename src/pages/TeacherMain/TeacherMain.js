@@ -162,7 +162,7 @@ function TeacherMain() {
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 80px;
+  width: 100px;
   height: 25px;
   a {
     text-decoration: none;

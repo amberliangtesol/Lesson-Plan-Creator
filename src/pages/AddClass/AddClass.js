@@ -101,21 +101,21 @@ function AddClass() {
     }
 
     if (classDoc.exists) {
+      console.log("Class document exists");
       const classData = classDoc.data();
-
-      if (!classData.teachers.includes(selectedTeacher)) {
-        await updateDoc(classDocRef, {
-          teachers: [...classData.teachers, selectedTeacher],
+      console.log("Class teachers:", classData.teachers);
+      console.log("Selected teacher:", selectedTeacher);
+  
+      // Check removed
+      console.log("Updating teacher's classes array");
+      const teacherDocRef = doc(db, "users", selectedTeacher);
+      const teacherDoc = await getDoc(teacherDocRef);
+      const teacherData = teacherDoc.data();
+  
+      if (!teacherData.classes.includes(classDocRef.id)) {
+        await updateDoc(teacherDocRef, {
+          classes: [...teacherData.classes, classDocRef.id],
         });
-        const teacherDocRef = doc(db, "users", selectedTeacher);
-        const teacherDoc = await getDoc(teacherDocRef);
-        const teacherData = teacherDoc.data();
-
-        if (!teacherData.classes.includes(selectedClass)) {
-          await updateDoc(teacherDocRef, {
-            classes: [...teacherData.classes, selectedClass],
-          });
-        }
       }
 
       const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
@@ -135,9 +135,13 @@ function AddClass() {
 
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            if (!userData.classes.includes(selectedClass)) {
+            // if (!userData.classes.includes(selectedClass)) {
+            //   await updateDoc(userDocRef, {
+            //     classes: [...userData.classes, selectedClass],
+            //   });
+            if (!userData.classes.includes(classDocRef.id)) { // Use classDocRef.id instead of selectedClass
               await updateDoc(userDocRef, {
-                classes: [...userData.classes, selectedClass],
+                classes: [...userData.classes, classDocRef.id],
               });
             }
           } else {
@@ -156,9 +160,8 @@ function AddClass() {
                   password: student.email,
                   name: student.name,
                   selectedTeacher,
-                  selectedClass,
+                  selectedClass: classDocRef.id,
                 });
-
                 if (result.data.success) {
                   console.log(
                     "Successfully created new user:",
