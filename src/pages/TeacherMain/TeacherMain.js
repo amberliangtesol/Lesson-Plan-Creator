@@ -158,7 +158,7 @@ function TeacherMain() {
                     <Btn
                       type="button"
                       onClick={() => handleEditCourse(c.id)}
-                      disabled={!isCourseOutdated(c)}
+                      // disabled={!isCourseOutdated(c)}
                     >
                       <Link to="/EditCourse">課程編輯</Link>
                     </Btn>

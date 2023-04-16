@@ -117,14 +117,23 @@ const YouTubeWithQuestions = () => {
   };
 
   useEffect(() => {
-    if (window.YT && currentQuestion && playerRef.current && typeof playerRef.current.pauseVideo === 'function') {
+    if (
+      window.YT &&
+      currentQuestion &&
+      playerRef.current &&
+      typeof playerRef.current.pauseVideo === "function"
+    ) {
       playerRef.current.pauseVideo();
-    } else if (window.YT && !currentQuestion && playerRef.current && typeof playerRef.current.playVideo === 'function') {
+    } else if (
+      window.YT &&
+      !currentQuestion &&
+      playerRef.current &&
+      typeof playerRef.current.playVideo === "function"
+    ) {
       playerRef.current.playVideo();
     }
     return () => {};
   }, [currentQuestion]);
-  
 
   window.onYouTubeIframeAPIReady = () => {
     playerRef.current = new window.YT.Player("player", {
@@ -189,38 +198,45 @@ const YouTubeWithQuestions = () => {
 
   const updateUserBadgeData = async (badgeId) => {
     const userDocRef = doc(db, "users", user.account);
-  
+
     // Check if the document exists
     const docSnap = await getDoc(userDocRef);
-  
+
     if (docSnap.exists()) {
       const userDocData = docSnap.data();
       const userBadges = userDocData.badge.collected || [];
-  
+
       // Update the existing document
       await updateDoc(userDocRef, {
         "badge.collected": [...userBadges, badgeId],
       });
     }
-  };  
+  };
 
-const handleAnswerClick = (option) => {
-  if (option.correct) {
-    alert("Congratulations! Correct answer.");
-    updatedQuestions(currentQuestion.id, true);
+  const handleAnswerClick = (option) => {
+    if (option.correct) {
+      alert("Congratulations! Correct answer.");
+      updatedQuestions(currentQuestion.id, true);
 
-    if (countdown > 0) {
-      updateUserBadgeData("badge2");
+      if (countdown > 0) {
+        updateUserBadgeData("badge2");
+      }
+    } else {
+      alert(currentQuestion.explanation);
+      updatedQuestions(currentQuestion.id, false);
     }
-  } else {
-    alert(currentQuestion.explanation);
-    updatedQuestions(currentQuestion.id, false);
-  }
-};
-
+  };
 
   const handleNextUnitClick = async () => {
     setShowNextButton(false); // Add this line to hide the button when clicked
+
+    // Check if the user has answered all questions in the current unit
+    const answeredQuestions = questions.current.filter((q) => q.answered);
+    if (answeredQuestions.length === questions.current.length) {
+      // Give the user badge1 if they have answered all questions
+      updateUserBadgeData("badge1");
+    }
+
     // Fetch the current unit's timestamp
     const currentUnitRef = doc(
       db,
@@ -293,7 +309,9 @@ const handleAnswerClick = (option) => {
           {showNextButton && (
             <button onClick={handleNextUnitClick}>Go to next unit</button>
           )}
-          {currentQuestion && currentQuestion.gameMode && <GameMode countdown={countdown} setCountdown={setCountdown} />}
+          {currentQuestion && currentQuestion.gameMode && (
+            <GameMode countdown={countdown} setCountdown={setCountdown} />
+          )}
           {currentQuestion && currentQuestion.type === "multiple-choice" && (
             <div>
               <MultipleChoice
