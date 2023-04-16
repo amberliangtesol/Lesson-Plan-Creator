@@ -1,6 +1,3 @@
-//更新存擋後才能render下一個單元
-//更新存擋後才能render下一個單元
-
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
 import { useParams } from "react-router-dom";
@@ -81,16 +78,20 @@ const YouTubeWithQuestions = () => {
     if (currentUnitId) {
       fetchUnitData();
     }
-    
+
     return () => {
       if (interval.current) {
         clearInterval(interval.current);
       }
-    }
+    };
   }, [currentUnitId, lessonId, playerReady]);
 
   const onPlayerStateChange = (event) => {
-    if (window.YT && window.YT.PlayerState && event.target.getPlayerState() === window.YT.PlayerState.PLAYING) {
+    if (
+      window.YT &&
+      window.YT.PlayerState &&
+      event.target.getPlayerState() === window.YT.PlayerState.PLAYING
+    ) {
       interval.current = setInterval(() => {
         const currentTime = event.target.getCurrentTime();
         localStorage.setItem("videoTimestamp", currentTime);
@@ -106,7 +107,8 @@ const YouTubeWithQuestions = () => {
         }
       }, 500);
     } else if (
-      window.YT && event.target.getPlayerState() === window.YT.PlayerState.ENDED
+      window.YT &&
+      event.target.getPlayerState() === window.YT.PlayerState.ENDED
     ) {
       setShowNextButton(true);
     }
@@ -141,7 +143,7 @@ const YouTubeWithQuestions = () => {
     const script = document.createElement("script");
     script.src = "https://www.youtube.com/iframe_api";
     script.async = true;
-    script.id = 'youtubeAPI';
+    script.id = "youtubeAPI";
     document.body.appendChild(script);
 
     return () => {
@@ -149,7 +151,7 @@ const YouTubeWithQuestions = () => {
         window.YT.Player.prototype.destroy();
         window.YT = null;
       }
-      document.getElementById('youtubeAPI').remove();
+      document.getElementById("youtubeAPI").remove();
     };
   }, []);
 
@@ -195,7 +197,10 @@ const YouTubeWithQuestions = () => {
   const handleNextUnitClick = async () => {
     setShowNextButton(false); // Add this line to hide the button when clicked
     // Fetch the current unit's timestamp
-    const currentUnitRef = doc(db, `lessons/${lessonId}/units/${currentUnitId}`);
+    const currentUnitRef = doc(
+      db,
+      `lessons/${lessonId}/units/${currentUnitId}`
+    );
     const currentUnitSnap = await getDoc(currentUnitRef);
     const currentUnitTimestamp = currentUnitSnap.data().timestamp;
 
@@ -276,7 +281,10 @@ const YouTubeWithQuestions = () => {
             <div>
               <Sorting
                 sorted={currentQuestion.sorted}
-                onWin={() => updatedQuestions(currentQuestion.id, true)}
+                onWin={(isCorrect) =>
+                  updatedQuestions(currentQuestion.id, isCorrect)
+                }
+                explanation={currentQuestion.explanation}
               />
             </div>
           )}
@@ -285,6 +293,7 @@ const YouTubeWithQuestions = () => {
               <Matching
                 cards={currentQuestion.cards}
                 onWin={() => updatedQuestions(currentQuestion.id, true)}
+                explanation={currentQuestion.explanation}
               />
             </div>
           )}

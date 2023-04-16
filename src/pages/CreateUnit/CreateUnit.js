@@ -87,7 +87,12 @@ function CreateUnit() {
     })
     .then(() => {
       setSubmitted(true);
-      //設定空值
+      setUnitName("");
+      setSubTitle("");
+      setDescription("");
+      setInputLink("");
+      setVideoId("");
+      setExplanation("");
     });
   };
 

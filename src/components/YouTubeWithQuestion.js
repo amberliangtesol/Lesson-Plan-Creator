@@ -1,6 +1,3 @@
-//更新存擋後才能render下一個單元
-//更新存擋後才能render下一個單元
-
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../UserInfoProvider";
 import { useParams } from "react-router-dom";
@@ -36,6 +33,7 @@ const YouTubeWithQuestions = () => {
   const [unsubscribeNextUnit, setUnsubscribeNextUnit] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [sortedUnits, setSortedUnits] = useState([]);
+  const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
@@ -111,6 +109,7 @@ const YouTubeWithQuestions = () => {
       }, 500);
     } else if (
       window.YT &&
+      window.YT.PlayerState &&
       event.target.getPlayerState() === window.YT.PlayerState.ENDED
     ) {
       setShowNextButton(true);
@@ -118,13 +117,14 @@ const YouTubeWithQuestions = () => {
   };
 
   useEffect(() => {
-    if (window.YT && currentQuestion && playerRef.current) {
+    if (window.YT && currentQuestion && playerRef.current && typeof playerRef.current.pauseVideo === 'function') {
       playerRef.current.pauseVideo();
-    } else if (window.YT && !currentQuestion && playerRef.current) {
+    } else if (window.YT && !currentQuestion && playerRef.current && typeof playerRef.current.playVideo === 'function') {
       playerRef.current.playVideo();
     }
     return () => {};
   }, [currentQuestion]);
+  
 
   window.onYouTubeIframeAPIReady = () => {
     playerRef.current = new window.YT.Player("player", {
@@ -187,15 +187,37 @@ const YouTubeWithQuestions = () => {
     setCurrentQuestion(null);
   };
 
-  const handleAnswerClick = (option) => {
-    if (option.correct) {
-      alert("Congratulations! Correct answer.");
-      updatedQuestions(currentQuestion.id, true);
-    } else {
-      alert(currentQuestion.explanation);
-      updatedQuestions(currentQuestion.id, false);
+  const updateUserBadgeData = async (badgeId) => {
+    const userDocRef = doc(db, "users", user.account);
+  
+    // Check if the document exists
+    const docSnap = await getDoc(userDocRef);
+  
+    if (docSnap.exists()) {
+      const userDocData = docSnap.data();
+      const userBadges = userDocData.badge.collected || [];
+  
+      // Update the existing document
+      await updateDoc(userDocRef, {
+        "badge.collected": [...userBadges, badgeId],
+      });
     }
-  };
+  };  
+
+const handleAnswerClick = (option) => {
+  if (option.correct) {
+    alert("Congratulations! Correct answer.");
+    updatedQuestions(currentQuestion.id, true);
+
+    if (countdown > 0) {
+      updateUserBadgeData("badge2");
+    }
+  } else {
+    alert(currentQuestion.explanation);
+    updatedQuestions(currentQuestion.id, false);
+  }
+};
+
 
   const handleNextUnitClick = async () => {
     setShowNextButton(false); // Add this line to hide the button when clicked
@@ -271,7 +293,7 @@ const YouTubeWithQuestions = () => {
           {showNextButton && (
             <button onClick={handleNextUnitClick}>Go to next unit</button>
           )}
-          {currentQuestion && currentQuestion.gameMode && <GameMode />}
+          {currentQuestion && currentQuestion.gameMode && <GameMode countdown={countdown} setCountdown={setCountdown} />}
           {currentQuestion && currentQuestion.type === "multiple-choice" && (
             <div>
               <MultipleChoice

@@ -118,10 +118,13 @@ function ManageBadge() {
           ? studentBadgeData.outdated
           : [];
     
-        if (collected.includes(badgeCode)) {
-          const updatedCollected = collected.filter(
-            (item) => item !== badgeCode
-          );
+        const badgeIndex = collected.indexOf(badgeCode);
+    
+        if (badgeIndex > -1) {
+          const updatedCollected = [
+            ...collected.slice(0, badgeIndex),
+            ...collected.slice(badgeIndex + 1),
+          ];
           const updatedOutdated = [...outdated, `used${badgeCode}`];
     
           await updateDoc(studentRef, {
@@ -139,6 +142,7 @@ function ManageBadge() {
         alert("學生資料不存在");
       }
     };
+    
     
 
     return (

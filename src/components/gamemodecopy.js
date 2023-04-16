@@ -34,9 +34,9 @@ const shuffleArray = (array) => {
 };
 
 
-const GameMode = ({ countdown, setCountdown }) => {
+const GameMode = () => {
   const [gamemode, setGamemode] = useState(true);
-  // const [countdown, setCountdown] = useState(null);
+  const [countdown, setCountdown] = useState(null);
   const [npcCountdown, setNpcCountdown] = useState(null);
   const [currentMonster, setCurrentMonster] = useState(monsterImages[0]);
 
