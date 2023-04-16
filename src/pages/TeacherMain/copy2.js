@@ -11,20 +11,24 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
+import { useNavigate } from "react-router-dom";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   return date.toLocaleDateString();
 }
 
-function StudentMain() {
+function TeacherMain() {
   const { user, setUser } = useContext(UserContext);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [imageURL, setImageURL] = useState("");
-  const [name, setName] = useState("");
-  const [account, setAccount] = useState("");
-  const [classNames, setClassNames] = useState([]);
+  // const [classNames, setClassNames] = useState([]);
+  const navigate = useNavigate();
+
+  function getClassNameById(classId) {
+    const index = user.classes.findIndex((id) => id === classId);
+    return (user.classNames || [])[index] || "";
+  }
 
   useEffect(() => {
     async function fetchUserData() {
@@ -76,7 +80,7 @@ function StudentMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-
+        console.log(lessons);
         setLessons(lessons);
       }
       setLoading(false);
@@ -85,10 +89,13 @@ function StudentMain() {
     fetchClasses();
   }, [lessons, user]);
 
-  function getClassNameById(classId) {
-    const index = user.classes.findIndex((id) => id === classId);
-    return (user.classNames || [])[index] || "";
-  }
+  const handleScore = (id) => {
+    navigate(`/score/${id}`);
+  };
+
+  const handleEditCourse = (id) => {
+    navigate(`/EditCourse/${id}`);
+  };
 
   function isCourseOutdated(course) {
     const currentDate = new Date();
@@ -96,9 +103,19 @@ function StudentMain() {
     return endDate < currentDate;
   }
 
+  const sortedLessons = lessons.slice().sort((a, b) => {
+    if (isCourseOutdated(a) && !isCourseOutdated(b)) {
+      return 1;
+    } else if (!isCourseOutdated(a) && isCourseOutdated(b)) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
   return (
     <div>
-      <h3>學生課程主頁</h3>
+      <h3>教師課程主頁</h3>
 
       {loading ? (
         <div>Loading...</div>
@@ -109,88 +126,55 @@ function StudentMain() {
             <p>Hello {user.name}!</p>
             <BtnContainer>
               <Btn>
-                <Link to="/StudentMain">課程主頁</Link>
+                <Link to="/TeacherMain">課程主頁</Link>
               </Btn>
               <Btn>
-                <Link to="/Badge">徽章搜集</Link>
+                <Link to="/ManageClass">班級管理</Link>
               </Btn>
               <Btn>
-                <Link to="/StudentProfile">個人設定</Link>
+                <Link to="/ManageBadge">徽章管理</Link>
+              </Btn>
+              <Btn>
+                <Link to="/TeacherProfile">個人設定</Link>
               </Btn>
             </BtnContainer>
           </Container1>
-          {/* <Container2 style={{ paddingLeft: "50px" }}>
-            {lessons.map((c, index) => (
-              <div key={index}>
-                <VideoImg img={c.img}></VideoImg>
-                <p>
-                  班級:{" "}
-                  {c.classes.map((classId) => (
-                    <span key={classId}>{getClassNameById(classId)} </span>
-                  ))}
-                </p>{" "}
-                <p>課程名稱: {c.name}</p>
-                <p>
-                  課程時間{" "}
-                  {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
-                </p>
-                <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link>
-              </div>
-            ))}
-          </Container2> */}
-          <div>
-            <Container2 style={{ paddingLeft: "50px" }}>
-              <h4>進行中課程</h4>
-              {lessons
-                .filter((c) => !isCourseOutdated(c))
-                .map((c, index) => (
-                  <OutdatedCourse key={index} outdated={false}>
-                    <VideoImg img={c.img}></VideoImg>
-                    <p>
-                      班級:{" "}
-                      {c.classes.map((classId) => (
-                        <span key={classId}>{getClassNameById(classId)} </span>
-                      ))}
-                    </p>
-                    <p>課程名稱: {c.name}</p>
-                    <p>
-                      課程時間{" "}
-                      {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
-                    </p>
-                    <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link>
-                  </OutdatedCourse>
-                ))}
-            </Container2>
 
-            <Container2 style={{ paddingLeft: "50px" }}>
-              <h4>已完成課程</h4>
-              {lessons
-                .filter((c) => isCourseOutdated(c))
-                .map((c, index) => (
-                  <OutdatedCourse key={index} outdated>
-                    <VideoImg img={c.img}></VideoImg>
-                    <p>
-                      班級:{" "}
-                      {c.classes.map((classId) => (
-                        <span key={classId}>{getClassNameById(classId)} </span>
-                      ))}
-                    </p>
-                    <p>課程名稱: {c.name}</p>
-                    <p>
-                      課程時間{" "}
-                      {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
-                    </p>
-                    <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link>
-                  </OutdatedCourse>
-                ))}
-            </Container2>
-          </div>
+          <Btn>
+            <Link to="/CreateCourse">課程建立</Link>
+          </Btn>
+
+          <Container2 style={{ paddingLeft: "50px" }}>
+            {sortedLessons.map((c, index) => {
+              const outdated = isCourseOutdated(c);
+              return (
+                <OutdatedCourse key={index} outdated={outdated}>
+                  <VideoImg img={c.img}></VideoImg>
+                  <p>
+                    班級:{" "}
+                    {c.classes.map((classId) => (
+                      <span key={classId}>{getClassNameById(classId)} </span>
+                    ))}
+                  </p>
+                  <p>課程名稱: {c.name}</p>
+                  <p>
+                    課程時間{" "}
+                    {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
+                  </p>
+                  <ActiveBtn type="button" onClick={() => handleScore(c.id)}>
+                    <Link to="/Score">答題狀況</Link>
+                  </ActiveBtn>
+                  <Btn
+                    type="button"
+                    onClick={() => handleEditCourse(c.id)}
+                    disabled={outdated}
+                  >
+                    <Link to="/EditCourse">課程編輯</Link>
+                  </Btn>
+                </OutdatedCourse>
+              );
+            })}
+          </Container2>
         </Container>
       )}
     </div>
@@ -209,6 +193,12 @@ const Btn = styled.button`
     &:active {
       text-decoration: none;
     }
+  }
+`;
+
+const ActiveBtn = styled(Btn)`
+  && {
+    opacity: 1;
   }
 `;
 
@@ -262,8 +252,8 @@ const OutdatedCourse = styled.div`
     outdated &&
     `
     opacity: 0.5;
-    pointer-events: none;
+    ${"" /* pointer-events: none; */}
   `}
 `;
 
-export default StudentMain;
+export default TeacherMain;
