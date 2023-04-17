@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import "./EditClass.css";
 import { auth, db } from "../../utils/firebaseApp";
 import {
@@ -146,36 +147,52 @@ function EditClass() {
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
-          // Update the classes field for existing students
           const userData = userDoc.data();
-          if (!userData.classes.includes(selectedClass)) {
+          // if (!userData.classes.includes(selectedClass)) {
+          //   await updateDoc(userDocRef, {
+          //     classes: [...userData.classes, selectedClass],
+          //   });
+          if (!userData.classes.includes(classDocRef.id)) { // Use classDocRef.id instead of selectedClass
             await updateDoc(userDocRef, {
-              classes: [...userData.classes, selectedClass],
+              classes: [...userData.classes, classDocRef.id],
             });
           }
         } else {
-          // Create a new user account using Firebase Auth
-          try {
-            const { user } = await createUserWithEmailAndPassword(
-              auth,
-              student.email,
-              student.email // Using the email as the password, but consider generating a random or default password
+          async function createCustomUser(student) {
+            const functions = getFunctions();
+            const createCustomUserFunction = httpsCallable(
+              functions,
+              "createCustomUser"
             );
 
-            // Create user documents for new students
-            await setDoc(userDocRef, {
-              role: "student",
-              account: student.email,
-              image: "",
-              uid: user.uid,
-              name: student.name,
-              createdBy: selectedTeacher,
-              classes: [selectedClass],
-              badge: { collected: [""], outdated: [""] },
-            });
-          } catch (error) {
-            console.error(`Error creating user: ${student.email}`, error);
+            try {
+              const result = await createCustomUserFunction({
+                email: student.email,
+                // phoneNumber: student.phoneNumber || '',
+                photoURL: student.photoURL || '',
+                password: student.email,
+                name: student.name,
+                selectedTeacher,
+                selectedClass: classDocRef.id,
+              });
+              if (result.data.success) {
+                console.log(
+                  "Successfully created new user:",
+                  result.data.uid
+                );
+              } else {
+                console.error(
+                  `Error creating user: ${student.email}`,
+                  result.data.error
+                );
+              }
+            } catch (error) {
+              console.error(`Error creating user: ${student.email}`, error);
+            }
           }
+
+          // Call the createCustomUser function with the student object
+          createCustomUser(student);
         }
       }
     }
