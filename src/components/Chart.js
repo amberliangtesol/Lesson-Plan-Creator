@@ -3,41 +3,6 @@ import { Chart as ChartJS, registerables } from "chart.js";
 import { Bar, Doughnut } from "react-chartjs-2";
 import styled from "styled-components/macro";
 
-const StyledTable = styled.table`
-  border-collapse: collapse;
-  width: 80%;
-  margin-bottom: 2rem;
-
-  th,
-  td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-`;
-
-ChartJS.register(...registerables);
-
-const DonutChartsContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 80%;
-`;
-
-const DonutChartContainer = styled.div`
-  width: 25%;
-`;
-
-const BarChartContainer = styled.div`
-  margin-top: 20px;
-  width: 50%;
-`;
-
 const processDonutData = (data) => {
   const labels = Object.keys(data);
 
@@ -157,13 +122,13 @@ const Chart = ({ data }) => {
   }, [data]);
 
   const renderTable = () => {
-    const students = Object.keys(data);
-    if (students.length === 0) {
+    const studentIds = Object.keys(data);
+    if (studentIds.length === 0) {
       return null;
     }
-
-    const numQuestions = data[students[0]] ? data[students[0]].length : 0;
-
+  
+    const numQuestions = data[studentIds[0]] ? data[studentIds[0]].length : 0;
+  
     return (
       <StyledTable>
         <thead>
@@ -175,67 +140,104 @@ const Chart = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-    {students.map((student) => (
-      <tr key={student}>
-        <td>{student}</td>
-        {data[student] &&
-          data[student].map((q, i) => (
-            <td
-              key={`answer-${i}`}
-              style={{
-                color:
-                  Object.values(q)[0] === true
-                    ? "black"
-                    : Object.values(q)[0] === false
-                    ? "red"
-                    : "lightgray",
-              }}
-            >
-              {Object.values(q)[0] === true
-                ? "答對"
-                : Object.values(q)[0] === false
-                ? "答錯"
-                : "未答"}
-            </td>
+          {studentIds.map((studentId) => (
+            <tr key={studentId}>
+              <td>{studentId}</td>
+              {data[studentId] &&
+                data[studentId].map((q, i) => (
+                  <td
+                    key={`answer-${i}`}
+                    style={{
+                      color:
+                        Object.values(q)[0] === true
+                          ? "black"
+                          : Object.values(q)[0] === false
+                          ? "red"
+                          : "lightgray",
+                    }}
+                  >
+                    {Object.values(q)[0] === true
+                      ? "答對"
+                      : Object.values(q)[0] === false
+                      ? "答錯"
+                      : "未答"}
+                  </td>
+                ))}
+            </tr>
           ))}
-      </tr>
-    ))}
-  </tbody>
+        </tbody>
       </StyledTable>
     );
   };
+  
+  
+
 
   return (
-   <div>
-     <DonutChartsContainer>
-       {donutData1 && (
-         <DonutChartContainer>
-           <Doughnut data={donutData1} />
-           <p style={{ textAlign: "center" }}>作業完成率</p>
-         </DonutChartContainer>
-       )}
-       {donutData2 && (
-         <DonutChartContainer>
-           <Doughnut data={donutData2} />
-           <p style={{ textAlign: "center" }}>答題正確率</p>
-         </DonutChartContainer>
-       )}
-       {donutData3 && (
-         <DonutChartContainer>
-           <Doughnut data={donutData3} />
-           <p style={{ textAlign: "center" }}>需特別關注學生</p>
-         </DonutChartContainer>
-       )}
-     </DonutChartsContainer>
-     {chartData && (
-       <BarChartContainer>
-         <Bar data={chartData} />
-       </BarChartContainer>
-     )}
-     {renderTable()}
-   </div>
- );
- 
+    <div>
+      <DonutChartsContainer>
+        {donutData1 && (
+          <DonutChartContainer>
+            <Doughnut data={donutData1} />
+            <p style={{ textAlign: "center" }}>作業完成率</p>
+          </DonutChartContainer>
+        )}
+        {donutData2 && (
+          <DonutChartContainer>
+            <Doughnut data={donutData2} />
+            <p style={{ textAlign: "center" }}>答題正確率</p>
+          </DonutChartContainer>
+        )}
+        {donutData3 && (
+          <DonutChartContainer>
+            <Doughnut data={donutData3} />
+            <p style={{ textAlign: "center" }}>需特別關注學生</p>
+          </DonutChartContainer>
+        )}
+      </DonutChartsContainer>
+      {chartData && (
+        <BarChartContainer>
+          <Bar data={chartData} />
+        </BarChartContainer>
+      )}
+      {renderTable()}
+    </div>
+  );
 };
+
+const StyledTable = styled.table`
+  border-collapse: collapse;
+  width: 80%;
+  margin-bottom: 2rem;
+
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+`;
+
+ChartJS.register(...registerables);
+
+const DonutChartsContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+`;
+
+const DonutChartContainer = styled.div`
+  width: 25%;
+`;
+
+const BarChartContainer = styled.div`
+  margin-top: 20px;
+  width: 50%;
+`;
 
 export default Chart;
