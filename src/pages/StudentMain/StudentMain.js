@@ -28,7 +28,7 @@ function StudentMain() {
 
   useEffect(() => {
     async function fetchUserData() {
-      if (user.name) return;
+      if (user.classNames) return;
 
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);

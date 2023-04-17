@@ -34,7 +34,7 @@ const shuffleArray = (array) => {
 };
 
 
-const GameMode = ({ countdown, setCountdown }) => {
+const GameMode = ({ countdown, setCountdown}) => {
   const [gamemode, setGamemode] = useState(true);
   // const [countdown, setCountdown] = useState(null);
   const [npcCountdown, setNpcCountdown] = useState(null);

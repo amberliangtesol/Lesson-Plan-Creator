@@ -68,7 +68,8 @@ function Score() {
       data[studentId] = studentData.answered;
     }
   }
-
+  console.log("data",data);
+  
   if (fetchedData === null) {
     return (
       <div>

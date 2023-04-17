@@ -171,6 +171,7 @@ const YouTubeWithQuestions = () => {
     const updated = questions.current.map((q) =>
       q.id === id ? { ...q, answered: true } : q
     );
+    const index = questions.current.findIndex((q) => q.id === id);
     questions.current = updated;
     const unitDocRef = doc(
       db,
@@ -182,10 +183,10 @@ const YouTubeWithQuestions = () => {
     const docSnap = await getDoc(unitDocRef);
 
     if (docSnap.exists()) {
+      const answered = [...docSnap.data().answered];
+      answered[index] = { [currentQuestion.type]: isCorrect };
       // Update the existing document
-      await updateDoc(unitDocRef, {
-        answered: arrayUnion({ [currentQuestion.type]: isCorrect }),
-      });
+      await updateDoc(unitDocRef, { answered });
     } else {
       // Create a new document
       await setDoc(unitDocRef, {

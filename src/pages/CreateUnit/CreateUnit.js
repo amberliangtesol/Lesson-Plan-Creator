@@ -70,6 +70,12 @@ function CreateUnit() {
   ]);
 
   const handleCreate = () => {
+  let videoId = "";
+    if (inputLink){
+      const url = new URL(inputLink);
+      videoId = url.searchParams.get("v");
+    }
+
     // addDoc(collection(db, `lessons/${lessonDocId}/units`), {
     addDoc(collection(db, `lessons/${lessonId}/units`), {
       timestamp: new Date().valueOf(),
@@ -78,7 +84,11 @@ function CreateUnit() {
       test: totalTestArray.map((item, index) => {
         return {
           ...item,
-          data: { ...item.data, id: index + 1 },
+          data: { 
+            ...item.data, 
+            gameMode: item.data.gameMode === "true",
+            id: index + 1
+          },
         };
       }),
       unitName: unitName,
@@ -93,6 +103,7 @@ function CreateUnit() {
       setInputLink("");
       setVideoId("");
       setExplanation("");
+      setTotalTestArray([{ type: "", data: {} }]);
     });
   };
 
@@ -154,7 +165,6 @@ function CreateUnit() {
     const fetchSortedUnits = async () => {
       console.log(`lessons/${lessonId}/units`);
       if (sortedUnits.length === 0 || submitted) {
-        console.log(submitted);
         const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
         const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
         const querySnapshot = await getDocs(unitsQuery);
@@ -210,6 +220,7 @@ function CreateUnit() {
             <p>單元名稱</p>
             <input
               type="text"
+              value={unitName}
               onChange={(e) => setUnitName(e.target.value)}
             ></input>
 
@@ -220,19 +231,21 @@ function CreateUnit() {
               onChange={handleInputChange}
               placeholder="請貼上YouTube連結"
             ></input>
-            <button type="button" onClick={extractVideoId}>
+            {/* <button type="button" onClick={extractVideoId}>
               確認連結
-            </button>
+            </button> */}
 
             <p>單元小標</p>
             <input
               type="text"
+              value={subTitle}
               onChange={(e) => setSubTitle(e.target.value)}
             ></input>
 
             <p>補充說明</p>
             <input
               type="text"
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
             ></input>
 
@@ -467,7 +480,7 @@ function CreateUnit() {
                         <input
                           key={`sorting_text_${idx}`}
                           type="text"
-                          value={sorted.text}
+                          value={sorted}
                           onChange={(e) => {
                             const sorted = [...item.data.sorted];
                             sorted[idx] = e.target.value;

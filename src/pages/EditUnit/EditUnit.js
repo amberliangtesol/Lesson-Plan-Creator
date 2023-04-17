@@ -100,7 +100,7 @@ function EditUnit() {
       const lessonDocRef = doc(db, `lessons/${lessonId}/units`, currentUnitId);
   
       await updateDoc(lessonDocRef, {
-        timestamp: new Date().valueOf(),
+        // timestamp: new Date().valueOf(),
         description: description,
         subtitle: subTitle,
         test: totalTestArray.map((item, index) => {
@@ -325,7 +325,7 @@ function EditUnit() {
                       }}
                     ></input>
                     <p>選項</p>
-                    <label for="ans">解答</label>
+                    <label htmlFor="ans">解答</label>
                     {(item.data.options || []).map((option, idx) => (
                       <div>
                         <input
@@ -494,7 +494,7 @@ function EditUnit() {
                         <input
                           key={`sorting_text_${idx}`}
                           type="text"
-                          value={sorted.text}
+                          value={sorted}
                           onChange={(e) => {
                             const sorted = [...item.data.sorted];
                             sorted[idx] = e.target.value;
