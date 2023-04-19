@@ -18,6 +18,8 @@ import styled from "styled-components/macro";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Header from "../../components/Header";
+import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 
 function EditClass() {
   const { classId } = useParams();
@@ -98,7 +100,6 @@ function EditClass() {
     });
   };
 
-
   const handleSubmit = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
 
@@ -106,7 +107,7 @@ function EditClass() {
     const classDoc = await getDoc(classDocRef);
     const classData = classDoc.data();
 
-    if (selectedTeacher !== '') {
+    if (selectedTeacher !== "") {
       // Update teachers field's array if the teacher is not already in the array
       if (!classData.teachers.includes(selectedTeacher)) {
         await updateDoc(classDocRef, {
@@ -124,7 +125,7 @@ function EditClass() {
         });
       }
     }
-    
+
     // Extract email and name columns from the rows
     const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
 
@@ -152,7 +153,8 @@ function EditClass() {
           //   await updateDoc(userDocRef, {
           //     classes: [...userData.classes, selectedClass],
           //   });
-          if (!userData.classes.includes(classDocRef.id)) { // Use classDocRef.id instead of selectedClass
+          if (!userData.classes.includes(classDocRef.id)) {
+            // Use classDocRef.id instead of selectedClass
             await updateDoc(userDocRef, {
               classes: [...userData.classes, classDocRef.id],
             });
@@ -169,17 +171,14 @@ function EditClass() {
               const result = await createCustomUserFunction({
                 email: student.email,
                 // phoneNumber: student.phoneNumber || '',
-                photoURL: student.photoURL || '',
+                photoURL: student.photoURL || "",
                 password: student.email,
                 name: student.name,
                 selectedTeacher,
                 selectedClass: classDocRef.id,
               });
               if (result.data.success) {
-                console.log(
-                  "Successfully created new user:",
-                  result.data.uid
-                );
+                console.log("Successfully created new user:", result.data.uid);
               } else {
                 console.error(
                   `Error creating user: ${student.email}`,
@@ -241,69 +240,55 @@ function EditClass() {
   };
 
   return (
-    <Container>
-      <Container1>
-        <BtnContainer>
-          <h3>班級建立</h3>
-          <Btn>
-            <Link to="/TeacherMain">課程主頁</Link>
-          </Btn>
-          <Btn>
-            <Link to="/ManageClass">班級管理</Link>
-          </Btn>
-          <Btn>
-            <Link to="/ManageBadge">徽章管理</Link>
-          </Btn>
-          <Btn>
-            <Link to="/TeacherProfile">個人設定</Link>
-          </Btn>
-        </BtnContainer>
-      </Container1>
-      <Container2 style={{ paddingLeft: "50px" }}>
-        <p>班級教師</p>
-        <ul>
-          {classTeachers.map((teacher, index) => (
-            <li key={index}>{teacher}</li>
-          ))}
-        </ul>
-        <p>新增教師</p>
-        <input
-          type="text"
-          value={teacherInput}
-          onChange={handleTeacherInputChange}
-          onBlur={handleTeacherInputBlur}
-          placeholder="輸入教師電子郵件"
-        ></input>
-        <p>現有學生</p>
-        <ul>
-          {classStudents.map((student, index) => (
-            <li key={index}>{student}</li>
-          ))}
-        </ul>
-        <p>新增學生</p>
+    <div>
+      <Header></Header>
+      <Container>
+        <TeacherMainSidebar></TeacherMainSidebar>
+        <div>
+        <h3>班級建立</h3>
+          <Container2 style={{ paddingLeft: "50px" }}>
+            <p>班級教師</p>
+            <ul>
+              {classTeachers.map((teacher, index) => (
+                <li key={index}>{teacher}</li>
+              ))}
+            </ul>
+            <p>新增教師</p>
+            <input
+              type="text"
+              value={teacherInput}
+              onChange={handleTeacherInputChange}
+              onBlur={handleTeacherInputBlur}
+              placeholder="輸入教師電子郵件"
+            ></input>
+            <p>現有學生</p>
+            <ul>
+              {classStudents.map((student, index) => (
+                <li key={index}>{student}</li>
+              ))}
+            </ul>
+            <p>新增學生</p>
 
-        <input
-          type="file"
-          onChange={fileHandler}
-          style={{ padding: "10px" }}
-        ></input>
-        {renderTable()}
+            <input
+              type="file"
+              onChange={fileHandler}
+              style={{ padding: "10px" }}
+            ></input>
+            {renderTable()}
 
-        <Link to="/ManageClass">
-          <Btn onClick={handleSubmit}>確認修改</Btn>
-        </Link>
-      </Container2>
-    </Container>
+            <Link to="/ManageClass">
+              <Btn onClick={handleSubmit}>確認修改</Btn>
+            </Link>
+          </Container2>
+        </div>
+      </Container>
+    </div>
   );
 }
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-`;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 const Container2 = styled.div`
@@ -324,11 +309,6 @@ const Btn = styled.button`
       text-decoration: none;
     }
   }
-`;
-
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 export default EditClass;

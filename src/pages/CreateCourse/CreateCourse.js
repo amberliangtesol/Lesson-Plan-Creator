@@ -18,6 +18,7 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Header from "../../components/Header";
 
 function CreateCourse() {
   const { lessonId } = useParams();
@@ -134,6 +135,7 @@ function CreateCourse() {
 
   return (
     <div>
+      <Header></Header>
       <h3>課程建立</h3>
       <Container>
         <Container1>

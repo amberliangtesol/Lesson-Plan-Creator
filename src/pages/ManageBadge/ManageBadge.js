@@ -13,6 +13,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
+import Header from "../../components/Header";
+import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 
 function ManageBadge() {
   const { user, setUser } = useContext(UserContext);
@@ -103,12 +105,12 @@ function ManageBadge() {
         準時完成作業: "badge1",
         挑戰打怪成功: "badge2",
       };
-    
+
       const badgeCode = badgeMapping[badge];
-    
+
       const studentRef = doc(db, "users", student);
       const studentSnap = await getDoc(studentRef);
-    
+
       if (studentSnap.exists()) {
         const studentBadgeData = studentSnap.data().badge;
         const collected = Array.isArray(studentBadgeData.collected)
@@ -117,23 +119,23 @@ function ManageBadge() {
         const outdated = Array.isArray(studentBadgeData.outdated)
           ? studentBadgeData.outdated
           : [];
-    
+
         const badgeIndex = collected.indexOf(badgeCode);
-    
+
         if (badgeIndex > -1) {
           const updatedCollected = [
             ...collected.slice(0, badgeIndex),
             ...collected.slice(badgeIndex + 1),
           ];
           const updatedOutdated = [...outdated, `used${badgeCode}`];
-    
+
           await updateDoc(studentRef, {
             badge: {
               collected: updatedCollected,
               outdated: updatedOutdated,
             },
           });
-    
+
           alert("徽章已兌換");
         } else {
           alert("該學生無該徽章");
@@ -142,8 +144,6 @@ function ManageBadge() {
         alert("學生資料不存在");
       }
     };
-    
-    
 
     return (
       <Container2 style={{ paddingLeft: "50px" }}>
@@ -199,27 +199,14 @@ function ManageBadge() {
 
   return (
     <div>
-      <h3>徽章管理</h3>
+      <Header></Header>
+
       <Container>
-        <Container1>
-          <ProfileImg imageURL={user.image}></ProfileImg>
-          <p>Hello {user.name}!</p>
-          <BtnContainer>
-            <Btn>
-              <Link to="/TeacherMain">課程主頁</Link>
-            </Btn>
-            <Btn>
-              <Link to="/ManageClass">班級管理</Link>
-            </Btn>
-            <Btn>
-              <Link to="/ManageBadge">徽章管理</Link>
-            </Btn>
-            <Btn>
-              <Link to="/TeacherProfile">個人設定</Link>
-            </Btn>
-          </BtnContainer>
-        </Container1>
-        <ContainerContent />
+        <TeacherMainSidebar></TeacherMainSidebar>
+        <div>
+          <h3>徽章管理</h3>
+          <ContainerContent />
+        </div>
       </Container>
     </div>
   );
@@ -240,37 +227,17 @@ const Btn = styled.button`
   }
 `;
 
-const BtnContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
+
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const ProfileImg = styled.div`
-  width: 150px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-`;
 
 export default ManageBadge;

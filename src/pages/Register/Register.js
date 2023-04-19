@@ -3,17 +3,10 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../utils/firebaseApp";
 import { setDoc, doc } from "firebase/firestore";
-import styled from 'styled-components/macro';
-import profile from './profile.png';
-import { useNavigate } from 'react-router-dom';
-
-
-const ProfileIcon = styled.div`
-  width: 120px;
-  height: 120px;
-  background-image: url(${profile});
-  cursor: pointer;
-`;
+import styled from "styled-components/macro";
+import profile from "./profile.png";
+import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header";
 
 function Register() {
   const navigate = useNavigate();
@@ -36,42 +29,94 @@ function Register() {
           account: email,
           role: "teacher",
           classes: [],
-          uid: uid
-        })        
-        .then(() => {
+          uid: uid,
+        }).then(() => {
           console.log("註冊成功");
           // Redirect to the login page after successful registration
           navigate("/login");
         });
-      console.log(userCredential);
-    })
+        console.log(userCredential);
+      })
       .catch((error) => {
         // const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage);
       });
   };
-  
+
   return (
-    <div>
-      <ProfileIcon></ProfileIcon>
-      <p>教師註冊</p>
-      <form>
-        <p>姓名</p>
-        <input type="text" onChange={(e) => setName(e.target.value)}></input>
-        <p>帳號</p>
-        <input type="text" onChange={(e) => setEmail(e.target.value)}></input>
-        <p>密碼</p>
-        <input
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-        ></input>
+    <Body>
+      <Header></Header>
+      <Wrapper>
+        <ProfileIcon></ProfileIcon>
+        <h2>教師註冊</h2>
+        <RegisterForm>
+          <RegisterText>姓名</RegisterText>
+          <RegisterInput
+            type="text"
+            onChange={(e) => setName(e.target.value)}
+          ></RegisterInput>
+          <RegisterText>帳號</RegisterText>
+          <RegisterInput
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+          ></RegisterInput>
+          <RegisterText>密碼</RegisterText>
+          <RegisterInput
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          ></RegisterInput>
+        </RegisterForm>
         <button type="button" onClick={handleRegister}>
           註冊
         </button>
-      </form>
-    </div>
+      </Wrapper>
+    </Body>
   );
 }
+
+const Body = styled.div`
+  background-color:#F5F5F5;
+  height: 100vh;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+`;
+
+const ProfileIcon = styled.div`
+  width: 98px;
+  height: 142px;
+  background-image: url(${profile});
+  cursor: pointer;
+`;
+
+const RegisterText = styled.p`
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 29px;
+  color: #000000;
+`;
+const RegisterForm = styled.form`
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const RegisterInput = styled.input`
+  width: 300px;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 20px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+`;
 
 export default Register;

@@ -15,6 +15,8 @@ import badge1 from "./badge1.png";
 import badge2 from "./badge2.png";
 import usedbadge1 from "./usedbadge1.png";
 import usedbadge2 from "./usedbadge2.png";
+import Header from "../../components/Header";
+import StudentMainSidebar from "../../components/StudentMainSidebar";
 
 function Badge() {
   const { user, setUser } = useContext(UserContext);
@@ -100,25 +102,11 @@ function Badge() {
 
   return (
     <div>
-      <h3>徽章搜集</h3>
+      <Header></Header>
       <Container>
-        <Container1>
-          <ProfileImg imageURL={user.image}></ProfileImg>
-          <p>Hello {user.name}!</p>
-          <BtnContainer>
-            <Btn>
-              <Link to="/StudentMain">課程主頁</Link>
-            </Btn>
-            <Btn>
-              <Link to="/Badge">徽章搜集</Link>
-            </Btn>
-            <Btn>
-              <Link to="/StudentProfile">個人設定</Link>
-            </Btn>
-          </BtnContainer>
-        </Container1>
-
+        <StudentMainSidebar></StudentMainSidebar>
         <div>
+          <h3>徽章搜集</h3>
           <Container2 style={{ paddingLeft: "50px" }}>
             <h4>我的徽章</h4>
             <BadgeContainer>

@@ -11,6 +11,7 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Header from "../../components/Header";
 
 function chunk(array, chunk) {
   let result = [];
@@ -186,6 +187,7 @@ function CreateUnit() {
 
   return (
     <div>
+      <Header></Header>
       <h3>單元建立</h3>
       <Container>
         <Container1>

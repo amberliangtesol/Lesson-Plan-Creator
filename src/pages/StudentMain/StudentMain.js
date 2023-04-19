@@ -11,6 +11,8 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
+import Header from "../../components/Header";
+import StudentMainSidebar from "../../components/StudentMainSidebar";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -98,49 +100,11 @@ function StudentMain() {
 
   return (
     <div>
-      <h3>學生課程主頁</h3>
-
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
+      <Header></Header>
         <Container>
-          <Container1>
-            <ProfileImg imageURL={user.image}></ProfileImg>
-            <p>Hello {user.name}!</p>
-            <BtnContainer>
-              <Btn>
-                <Link to="/StudentMain">課程主頁</Link>
-              </Btn>
-              <Btn>
-                <Link to="/Badge">徽章搜集</Link>
-              </Btn>
-              <Btn>
-                <Link to="/StudentProfile">個人設定</Link>
-              </Btn>
-            </BtnContainer>
-          </Container1>
-          {/* <Container2 style={{ paddingLeft: "50px" }}>
-            {lessons.map((c, index) => (
-              <div key={index}>
-                <VideoImg img={c.img}></VideoImg>
-                <p>
-                  班級:{" "}
-                  {c.classes.map((classId) => (
-                    <span key={classId}>{getClassNameById(classId)} </span>
-                  ))}
-                </p>{" "}
-                <p>課程名稱: {c.name}</p>
-                <p>
-                  課程時間{" "}
-                  {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
-                </p>
-                <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link>
-              </div>
-            ))}
-          </Container2> */}
+        <StudentMainSidebar></StudentMainSidebar>
           <div>
+          <h3>學生課程主頁</h3>
             <Container2 style={{ paddingLeft: "50px" }}>
               <h4>進行中課程</h4>
               {lessons
@@ -192,7 +156,6 @@ function StudentMain() {
             </Container2>
           </div>
         </Container>
-      )}
     </div>
   );
 }

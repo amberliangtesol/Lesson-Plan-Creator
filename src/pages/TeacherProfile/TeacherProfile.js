@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-
+import Header from "../../components/Header";
+import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 
 function TeacherProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -129,50 +130,39 @@ function TeacherProfile() {
 
   return (
     <div>
-      <h3>徽章管理</h3>
+      <Header></Header>
+
       <Container>
-        <Container1>
-          <BtnContainer>
-            <Btn>
-              <Link to="/TeacherMain">課程主頁</Link>
+        <TeacherMainSidebar></TeacherMainSidebar>
+        <div>
+          <h3>個人設定</h3>
+          <Container2 style={{ paddingLeft: "50px" }}>
+            <ProfileImg imageURL={imageURL}>
+              <IconWrapper>
+                <UploadLabel htmlFor="imageUpload">
+                  <UploadIcon />
+                </UploadLabel>
+              </IconWrapper>
+            </ProfileImg>
+            <input
+              id="imageUpload"
+              type="file"
+              accept="image/*"
+              name="上傳"
+              cursor="pointer"
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+            ></input>
+            <p>姓名: {name}</p>
+            <p>帳號: {account}</p>
+            <p>班級: {classNames.join(", ")}</p>
+            <Btn onClick={handleResetPassword}>密碼變更</Btn>
+            <Btn type="button" onClick={handleChange}>
+              確認修改
             </Btn>
-            <Btn>
-              <Link to="/ManageClass">班級管理</Link>
-            </Btn>
-            <Btn>
-              <Link to="/ManageBadge">徽章管理</Link>
-            </Btn>
-            <Btn>
-              <Link to="/TeacherProfile">個人設定</Link>
-            </Btn>
-          </BtnContainer>
-        </Container1>
-        <Container2 style={{ paddingLeft: "50px" }}>
-          <ProfileImg imageURL={imageURL}>
-            <IconWrapper>
-              <UploadLabel htmlFor="imageUpload">
-                <UploadIcon />
-              </UploadLabel>
-            </IconWrapper>
-          </ProfileImg>
-          <input
-            id="imageUpload"
-            type="file"
-            accept="image/*"
-            name="上傳"
-            cursor="pointer"
-            onChange={handleImageUpload}
-            style={{ display: "none" }}
-          ></input>
-          <p>姓名: {name}</p>
-          <p>帳號: {account}</p>
-          <p>班級: {classNames.join(", ")}</p>
-          <Btn onClick={handleResetPassword}>密碼變更</Btn>
-          <Btn type="button" onClick={handleChange}>
-            確認修改
-          </Btn>
-          <Btn onClick={logOut}>登出</Btn>
-        </Container2>
+            <Btn onClick={logOut}>登出</Btn>
+          </Container2>
+        </div>
       </Container>
     </div>
   );

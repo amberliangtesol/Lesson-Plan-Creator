@@ -21,11 +21,11 @@ import TeacherProfile from "./pages/TeacherProfile/TeacherProfile";
 import StudentProfile from "./pages/StudentProfile/StudentProfile";
 import Register from "./pages/Register/Register";
 import Score from "./pages/Score/Score";
+import Main from "./pages/Main/Main";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
 import UserInfoProvider from "./UserInfoProvider";
 import HoverComputer from "./components/HoverComputer/HoverComputer";
-
 
 
 
@@ -35,6 +35,8 @@ const GlobalStyle = createGlobalStyle`
   }
     body {
     font-family: 'Noto Sans TC';
+    margin: 0;
+    padding:0;
   }
     #root {
     min-height: 100vh;
@@ -72,6 +74,7 @@ function App() {
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/register" element={<Register />} />
         <Route path="/score/:lessonId" element={<Score />} />
+        <Route path="/" element={<Main />} />
         <Route path="/teachermain" element={<TeacherMain />} />
         <Route path="/studentmain" element={<StudentMain />} />
         <Route path="/hovercomputer" element={<HoverComputer />} />

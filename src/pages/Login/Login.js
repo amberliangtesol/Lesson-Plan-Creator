@@ -8,6 +8,7 @@ import styled from "styled-components/macro";
 import profile from "./profile.png";
 import { UserContext } from "../../UserInfoProvider";
 import { Link } from "react-router-dom";
+import Header from "../../components/Header";
 
 
 function Login() {
@@ -58,22 +59,24 @@ function Login() {
   };
 
   return (
-    <div>
+    <Body>
+      <Header></Header>
+      <Wrapper>
       <ProfileIcon></ProfileIcon>
-      <form>
-        <h4>登入</h4>
-        <p>身份</p>
-        <select value={role} onChange={handleRoleChange}>
+      <h2>登入</h2>
+      <RegisterForm>
+        <RegisterText>身份</RegisterText>
+        <RegisterSelect value={role} onChange={handleRoleChange}>
           <option value="student">student</option>
           <option value="teacher">teacher</option>
-        </select>
-        <p>帳號</p>
-        <input type="text" onChange={(e) => setEmail(e.target.value)}></input>
-        <p>密碼</p>
-        <input
+        </RegisterSelect>
+        <RegisterText>帳號</RegisterText>
+        <RegisterInput type="text" onChange={(e) => setEmail(e.target.value)}></RegisterInput>
+        <RegisterText>密碼</RegisterText>
+        <RegisterInput
           type="password"
           onChange={(e) => setPassword(e.target.value)}
-        ></input>
+        ></RegisterInput>
         <div>
           <Btn type="button" onClick={handleLogin}>
             登入
@@ -82,16 +85,71 @@ function Login() {
             <Link to="/Register">註冊</Link>
           </Btn>
         </div>
-      </form>
-    </div>
+      </RegisterForm>
+      </Wrapper>
+    </Body>
   );
 }
 
+const Body = styled.div`
+  background-color:#F5F5F5;
+  height: 100vh;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+`;
+
 const ProfileIcon = styled.div`
-  width: 120px;
-  height: 120px;
+  width: 98px;
+  height: 142px;
   background-image: url(${profile});
   cursor: pointer;
+`;
+
+const RegisterText = styled.p`
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 29px;
+  color: #000000;
+`;
+
+const RegisterForm = styled.form`
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const RegisterInput = styled.input`
+  width: 300px;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 20px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+`;
+
+const RegisterSelect = styled.select`
+  width: 300px;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 20px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+  ${'' /* appearance: none;
+  background-image: url('path/to/your/arrow.svg');
+  background-repeat: no-repeat;
+  background-position: right center;
+  padding-right: 30px;  */}
 `;
 
 const Btn = styled.button`
