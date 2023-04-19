@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
+// import Button1 from "../../components/Button1";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -133,6 +134,9 @@ function TeacherMain() {
           <Btn>
             <Link to="/CreateCourse">課程建立</Link>
           </Btn>
+
+          {/* <Button1>hi</Button1> */}
+
           <div>
             <Container2 style={{ paddingLeft: "50px" }}>
               <h4>進行中課程</h4>
@@ -184,12 +188,7 @@ function TeacherMain() {
                       課程時間{" "}
                       {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
                     </p>
-                    <ScoreBtn
-                      type="button"
-                      onClick={() => handleScore(c.id)}
-                    >
-                      <Link to="/Score">答題狀況</Link>
-                    </ScoreBtn>
+
 
                     <Btn
                       type="button"
@@ -198,6 +197,14 @@ function TeacherMain() {
                     >
                       <Link to="/EditCourse">課程編輯</Link>
                     </Btn>
+
+                    <ScoreBtn
+                      type="button"
+                      onClick={() => handleScore(c.id)}
+                    >
+                      <Link to="/Score">答題狀況</Link>
+                    </ScoreBtn>
+                    
                   </OutdatedCourse>
                 ))}
             </Container2>
@@ -210,11 +217,14 @@ function TeacherMain() {
 
 const Btn = styled.button`
   cursor: pointer;
-  width: 100px;
-  height: 25px;
+  width: 104px;
+  height: 41px;
+  border-radius: 33px;
+  background-color: #1A1A1A;
+  border: none;
   a {
+    color: white;
     text-decoration: none;
-    color: #000000;
     &:hover,
     &:link,
     &:active {

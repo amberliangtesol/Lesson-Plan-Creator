@@ -24,6 +24,7 @@ import Score from "./pages/Score/Score";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
 import UserInfoProvider from "./UserInfoProvider";
+import HoverComputer from "./components/HoverComputer/HoverComputer";
 
 
 
@@ -73,6 +74,7 @@ function App() {
         <Route path="/score/:lessonId" element={<Score />} />
         <Route path="/teachermain" element={<TeacherMain />} />
         <Route path="/studentmain" element={<StudentMain />} />
+        <Route path="/hovercomputer" element={<HoverComputer />} />
       </Routes>
     </UserInfoProvider>
   );
