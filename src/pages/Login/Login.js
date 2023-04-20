@@ -11,7 +11,8 @@ import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import arrow from "./arrow.png";
-
+import { ColorFilledBtn } from "../../components/Buttons";
+import { ColorBorderBtn } from "../../components/Buttons";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -83,12 +84,14 @@ function Login() {
             placeholder="請輸入密碼"
           ></RegisterInput>
           <div>
-            <Btn type="button" onClick={handleLogin}>
-              登入
-            </Btn>
-            <Btn type="button">
-              <Link to="/Register">註冊</Link>
-            </Btn>
+            <BtnContainer>
+              <ColorFilledBtn type="button" onClick={handleLogin}>
+                登入
+              </ColorFilledBtn>
+              <ColorBorderBtn type="button">
+                <Link to="/Register">註冊</Link>
+              </ColorBorderBtn>
+            </BtnContainer>
           </div>
         </RegisterForm>
       </Wrapper>
@@ -117,23 +120,16 @@ const ProfileIcon = styled.div`
   cursor: pointer;
 `;
 
-const RegisterText = styled.p`
-  font-style: normal;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 29px;
-  color: #000000;
-`;
-
 const RegisterForm = styled.form`
-  width: 300px;
+  width: 360px;
   display: flex;
   flex-direction: column;
-  gap:15px;
+  gap: 15px;
+  padding-bottom: 30px;
 `;
 
 const RegisterInput = styled.input`
-  width: 300px;
+  width: 360px;
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
@@ -144,7 +140,7 @@ const RegisterInput = styled.input`
 `;
 
 const RegisterSelect = styled.select`
-  width: 300px;
+  width: 360px;
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
@@ -159,19 +155,13 @@ const RegisterSelect = styled.select`
   padding-right: 30px;
 `;
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
+const BtnContainer = styled.div`
+  width: 360px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  padding-bottom: 30px;
 `;
+
 
 export default Login;

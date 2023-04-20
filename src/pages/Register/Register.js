@@ -7,6 +7,8 @@ import styled from "styled-components/macro";
 import profile from "./profile.png";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import { ColorBorderBtn } from "../../components/Buttons";
 
 function Register() {
   const navigate = useNavigate();
@@ -51,26 +53,32 @@ function Register() {
         <ProfileIcon></ProfileIcon>
         <h2>教師註冊</h2>
         <RegisterForm>
-          <RegisterText>姓名</RegisterText>
           <RegisterInput
             type="text"
             onChange={(e) => setName(e.target.value)}
+            placeholder="請輸入姓名"
           ></RegisterInput>
-          <RegisterText>帳號</RegisterText>
           <RegisterInput
             type="text"
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="請輸入信箱"
           ></RegisterInput>
-          <RegisterText>密碼</RegisterText>
           <RegisterInput
             type="password"
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="請輸入密碼"
           ></RegisterInput>
         </RegisterForm>
-        <button type="button" onClick={handleRegister}>
+
+        <BtnContainer>
+        <ColorBorderBtn type="button" onClick={handleRegister}>
           註冊
-        </button>
+        </ColorBorderBtn>
+        </BtnContainer>
+
       </Wrapper>
+      <Footer></Footer>
+
     </Body>
   );
 }
@@ -89,27 +97,23 @@ const Wrapper = styled.div`
 `;
 
 const ProfileIcon = styled.div`
-  width: 98px;
-  height: 142px;
+  width: 107px;
+  height: 135px;
   background-image: url(${profile});
   cursor: pointer;
 `;
 
-const RegisterText = styled.p`
-  font-style: normal;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 29px;
-  color: #000000;
-`;
+
 const RegisterForm = styled.form`
-  width: 300px;
+  width: 360px;
   display: flex;
   flex-direction: column;
+  gap:15px;
+  padding-bottom: 30px;
 `;
 
 const RegisterInput = styled.input`
-  width: 300px;
+  width: 360px;
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
@@ -117,6 +121,15 @@ const RegisterInput = styled.input`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+`;
+
+const BtnContainer = styled.div`
+  width: 360px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  padding-bottom: 30px;
+  justify-content:center;
 `;
 
 export default Register;
