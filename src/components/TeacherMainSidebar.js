@@ -88,6 +88,8 @@ const BtnContainer = styled.div`
   line-height: 29px;
   letter-spacing: 0em;
   text-align: left;
+  @media screen and (max-width: 1279px) {
+  }
 `;
 
 const Container1 = styled.div`
@@ -98,6 +100,8 @@ const Container1 = styled.div`
   background-color: #f5f5f5;
   padding-top: 100px;
   height:100vh;
+  @media screen and (max-width: 1279px) {
+  }
 `;
 
 const ProfileImg = styled.div`
@@ -111,6 +115,8 @@ const ProfileImg = styled.div`
   justify-content: center;
   position: relative;
   background-color: #ffffff;
+  @media screen and (max-width: 1279px) {
+  }
 `;
 
 const Greeting = styled.p`
@@ -122,6 +128,8 @@ const Greeting = styled.p`
   font-size: 30px;
   font-weight: 700;
   line-height: 29px;
+  @media screen and (max-width: 1279px) {
+  }
 `;
 
 const StyledParagraph = styled.p`
@@ -132,6 +140,8 @@ const StyledParagraph = styled.p`
   text-decoration: none;
   &.active {
     border-bottom: 3px solid black;
+  }
+  @media screen and (max-width: 1279px) {
   }
 `;
 
@@ -153,6 +163,8 @@ const Btnwrapper = styled.div`
       height: 3px;
       background-color: #f46868;
     }
+  }
+  @media screen and (max-width: 1279px) {
   }
 `;
 

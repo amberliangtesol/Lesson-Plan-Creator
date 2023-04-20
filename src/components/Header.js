@@ -17,6 +17,8 @@ const Logo = styled.div`
   height: 51px;
   background-image: url(${logo});
   cursor: pointer;
+  @media screen and (max-width: 1279px) {
+  }
 `;
 
 

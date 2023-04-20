@@ -9,12 +9,14 @@ import profile from "./profile.png";
 import { UserContext } from "../../UserInfoProvider";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import arrow from "./arrow.png";
 
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
+  const [role, setRole] = useState("");
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -62,37 +64,41 @@ function Login() {
     <Body>
       <Header></Header>
       <Wrapper>
-      <ProfileIcon></ProfileIcon>
-      <h2>登入</h2>
-      <RegisterForm>
-        <RegisterText>身份</RegisterText>
-        <RegisterSelect value={role} onChange={handleRoleChange}>
-          <option value="student">student</option>
-          <option value="teacher">teacher</option>
-        </RegisterSelect>
-        <RegisterText>帳號</RegisterText>
-        <RegisterInput type="text" onChange={(e) => setEmail(e.target.value)}></RegisterInput>
-        <RegisterText>密碼</RegisterText>
-        <RegisterInput
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-        ></RegisterInput>
-        <div>
-          <Btn type="button" onClick={handleLogin}>
-            登入
-          </Btn>
-          <Btn type="button">
-            <Link to="/Register">註冊</Link>
-          </Btn>
-        </div>
-      </RegisterForm>
+        <ProfileIcon></ProfileIcon>
+        <h2>登入</h2>
+        <RegisterForm>
+          <RegisterSelect value={role} onChange={handleRoleChange}>
+            <option value="">請選擇身份</option>
+            <option value="student">student</option>
+            <option value="teacher">teacher</option>
+          </RegisterSelect>
+          <RegisterInput
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="請輸入帳號"
+          ></RegisterInput>
+          <RegisterInput
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="請輸入密碼"
+          ></RegisterInput>
+          <div>
+            <Btn type="button" onClick={handleLogin}>
+              登入
+            </Btn>
+            <Btn type="button">
+              <Link to="/Register">註冊</Link>
+            </Btn>
+          </div>
+        </RegisterForm>
       </Wrapper>
+      <Footer></Footer>
     </Body>
   );
 }
 
 const Body = styled.div`
-  background-color:#F5F5F5;
+  background-color: #f5f5f5;
   height: 100vh;
 `;
 
@@ -123,6 +129,7 @@ const RegisterForm = styled.form`
   width: 300px;
   display: flex;
   flex-direction: column;
+  gap:15px;
 `;
 
 const RegisterInput = styled.input`
@@ -145,11 +152,11 @@ const RegisterSelect = styled.select`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
-  ${'' /* appearance: none;
-  background-image: url('path/to/your/arrow.svg');
+  appearance: none;
+  background-image: url(${arrow});
   background-repeat: no-repeat;
   background-position: right center;
-  padding-right: 30px;  */}
+  padding-right: 30px;
 `;
 
 const Btn = styled.button`
