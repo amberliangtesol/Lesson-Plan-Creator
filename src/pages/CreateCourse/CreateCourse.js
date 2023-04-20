@@ -12,14 +12,14 @@ import {
   query,
   onSnapshot,
   updateDoc,
-  arrayUnion,
-  doc,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
 
 function CreateCourse() {
   const { lessonId } = useParams();
@@ -135,9 +135,9 @@ function CreateCourse() {
   }, [lessonId]);
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-      <h3>課程建立</h3>
+      <Title>課程建立</Title>
       <Container>
         <Container1>
           <BtnContainer>
@@ -228,9 +228,48 @@ function CreateCourse() {
         </Container2>
       </Container>
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
 
 const UploadLabel = styled.label`
   cursor: pointer;
@@ -256,10 +295,7 @@ const BtnContainer = styled.div`
   flex-direction: column;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
+
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;

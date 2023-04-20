@@ -1,22 +1,42 @@
 /* EditClass.css */
 .ExcelTable2007 {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
   font-size: 14px;
+  margin-top: 50px;
 }
 
 .ExcelTable2007 th {
-  background-color: #f2f2f2;
-  border: 1px solid #ddd;
-  padding: 8px;
+  /* background-color: #f2f2f2; */
+  padding: 10px 30px;
   text-align: left;
+  font-size: 18px;
+  color:#F46868;
+  border-bottom: dashed 2px #e4e1e1;
+}
+
+.ExcelTable2007 th:first-child {
+  border-top-left-radius: 20px;
+}
+
+.ExcelTable2007 th:last-child {
+  border-top-right-radius: 20px;
 }
 
 .ExcelTable2007 td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  padding: 10px 30px;
+  font-size: 18px;
 }
 
 .ExcelTable2007 tr:nth-child(even) {
-  background-color: #f2f2f2;
+  /* background-color: #f2f2f2; */
+}
+
+.ExcelTable2007 tr:last-child td:first-child {
+  border-bottom-left-radius: 20px;
+}
+
+.ExcelTable2007 tr:last-child td:last-child {
+  border-bottom-right-radius: 20px;
 }

@@ -316,7 +316,7 @@ const CourseWrapper = styled.div`
 `;
 
 const CourseOutsideWrapper = styled.div`
-  width: 100%;
+  width: 60vw;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

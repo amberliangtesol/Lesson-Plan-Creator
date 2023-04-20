@@ -7,6 +7,8 @@ import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
 
 function ManageClass() {
   const { user, setUser } = useContext(UserContext);
@@ -64,72 +66,83 @@ function ManageClass() {
   console.log(classDetails);
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-
-      <Container>
-        <TeacherMainSidebar></TeacherMainSidebar>
-        <div>
-          <h3>班級管理</h3>
-          <Btn>
-            <Link to="/AddClass">班級建立</Link>
-          </Btn>
-
-          <Container2 style={{ paddingLeft: "50px" }}>
-            {/* <h4 style={{ paddingTop: "30px" }}>我的班級</h4> */}
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <div>
-                {classDetails.map((classItem, index) => (
-                  <div key={index}>
-                    <p>
-                      班級名稱: {classItem.name} / 學生人數:{" "}
-                      {classItem.studentNumber}人
-                    </p>
-                    <Btn>
-                      <Link to={`/edit-class/${classItem.id}`}>班級編輯</Link>
-                    </Btn>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Container2>
-        </div>
-      </Container>
+      <Content>
+        <Container>
+          <TeacherMainSidebar></TeacherMainSidebar>
+          <MainContent>
+            <Title>班級管理</Title>
+            <MainRedFilledBtn style={{ marginLeft: "auto" }}>
+              <Link to="/AddClass">班級建立</Link>
+            </MainRedFilledBtn>
+            <Container2>
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : (
+                <ClassWrapper>
+                  {classDetails.map((classItem, index) => (
+                    <ClassContainer key={index}>
+                      <p>
+                        <b>班級名稱</b> {classItem.name}
+                        <b style={{ color: "#F46868" }}> / </b>
+                        <b>學生人數</b>
+                        {classItem.studentNumber}人
+                      </p>
+                      <MainDarkBorderBtn style={{ marginLeft: "auto" }}>
+                        <Link to={`/edit-class/${classItem.id}`}>班級編輯</Link>
+                      </MainDarkBorderBtn>
+                    </ClassContainer>
+                  ))}
+                </ClassWrapper>
+              )}
+            </Container2>
+          </MainContent>
+        </Container>
+      </Content>
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
+const Body = styled.div`
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const Container1 = styled.div`
+
+const MainContent = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const Container2 = styled.div`
@@ -140,17 +153,30 @@ const Container2 = styled.div`
   gap: 20px;
 `;
 
-const ProfileImg = styled.div`
-  width: 150px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  align-items: center;
+const ClassWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   justify-content: center;
-  position: relative;
+  margin-top: 50px;
+`;
+
+const ClassContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 60vw;
+  height: 83px;
+  padding: 30px 60px;
+  align-items: center;
+  & > :last-child {
+    justify-self: flex-end;
+  }
+  p {
+    font-size: 20px;
+    letter-spacing: 0.03em;
+  }
 `;
 
 export default ManageClass;

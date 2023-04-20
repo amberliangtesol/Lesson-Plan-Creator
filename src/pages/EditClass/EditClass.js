@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
@@ -15,12 +15,23 @@ import {
   where,
 } from "firebase/firestore";
 import styled from "styled-components/macro";
-import { AiFillDelete } from "react-icons/ai";
+import { RiDeleteBinLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
+import arrow from "../Login/arrow.png";
+
+const HiddenFileInput = styled.input.attrs({ type: "file" })`
+  display: none;
+`;
+
+const CustomFileInputButton = styled(MainDarkBorderBtn)`
+  /* Add any custom styles you want for the input button */
+`;
 
 function EditClass() {
   const { classId } = useParams();
@@ -33,6 +44,10 @@ function EditClass() {
   const [classes, setClasses] = useState([]);
   const [classTeachers, setClassTeachers] = useState([]);
   const [classStudents, setClassStudents] = useState([]);
+  const fileInputRef = useRef();
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
 
   const fetchClassData = async (classId) => {
     const classDocRef = doc(db, "classes", classId);
@@ -201,7 +216,7 @@ function EditClass() {
   const DeleteIcon = ({ onDelete }) => {
     return (
       <span onClick={onDelete}>
-        <AiFillDelete />
+        <RiDeleteBinLine />
       </span>
     );
   };
@@ -241,76 +256,169 @@ function EditClass() {
   };
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-      <Container>
-        <TeacherMainSidebar></TeacherMainSidebar>
-        <div>
-        <h3>班級建立</h3>
-          <Container2 style={{ paddingLeft: "50px" }}>
-            <p>班級教師</p>
-            <ul>
-              {classTeachers.map((teacher, index) => (
-                <li key={index}>{teacher}</li>
-              ))}
-            </ul>
-            <p>新增教師</p>
-            <input
-              type="text"
-              value={teacherInput}
-              onChange={handleTeacherInputChange}
-              onBlur={handleTeacherInputBlur}
-              placeholder="輸入教師電子郵件"
-            ></input>
-            <p>現有學生</p>
-            <ul>
-              {classStudents.map((student, index) => (
-                <li key={index}>{student}</li>
-              ))}
-            </ul>
-            <p>新增學生</p>
+      <Content>
+        <Container>
+          <TeacherMainSidebar></TeacherMainSidebar>
+          <MainContent>
+            <Title>班級建立</Title>
+            <MainRedFilledBtn
+              onClick={handleSubmit}
+              style={{ marginLeft: "auto" }}
+            >
+              <Link to="/ManageClass">確認修改</Link>
+            </MainRedFilledBtn>
+            <ClassContainer>
+              <ClassContainerBox>
+                <p style={{ margin: "10px" }}>班級教師</p>
+                <SelectOptions>
+                  {classTeachers.map((teacher, index) => (
+                    <option key={index} value={teacher}>
+                      {teacher}
+                    </option>
+                  ))}
+                </SelectOptions>
 
-            <input
-              type="file"
-              onChange={fileHandler}
-              style={{ padding: "10px" }}
-            ></input>
+                <p style={{ margin: "10px" }}>現有學生</p>
+                <SelectOptions>
+                  {classStudents.map((student, index) => (
+                    <option key={index} value={student}>
+                      {student}
+                    </option>
+                  ))}
+                </SelectOptions>
+              </ClassContainerBox>
+
+              <ClassContainerBox>
+                <p style={{ margin: "10px" }}>新增教師</p>
+                <ClassInput
+                  type="text"
+                  value={teacherInput}
+                  onChange={handleTeacherInputChange}
+                  onBlur={handleTeacherInputBlur}
+                  placeholder="輸入教師電子郵件"
+                ></ClassInput>
+
+                <p style={{ margin: "10px" }}>新增學生</p>
+                <CustomFileInputButton
+                  onClick={triggerFileInput}
+                  // style={{ marginLeft: "auto" }}
+                >
+                  上傳帳號
+                </CustomFileInputButton>
+                <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
+              </ClassContainerBox>
+            </ClassContainer>
+
             {renderTable()}
+          </MainContent>
+        </Container>
+      </Content>
 
-            <Link to="/ManageClass">
-              <Btn onClick={handleSubmit}>確認修改</Btn>
-            </Link>
-          </Container2>
-        </div>
-      </Container>
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
+
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-const Container2 = styled.div`
+const MainContent = styled.div`
   display: flex;
   flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
 `;
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
+
+const ClassContainer = styled.div`
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 60vw;
+  height: 170px;
+  padding: 30px 60px;
+  align-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  ${
+    "" /* & > :last-child {
+    justify-self: flex-end;
+  } */
   }
+  p {
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+`;
+
+const ClassContainerBox = styled.div`
+display: flex;
+flex-direction: row;
+align-content: center;
+align-items: center;
+`;
+
+const ClassInput = styled.input`
+  width: 10vw;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  padding-right: 30px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+`;
+
+const SelectOptions = styled.select`
+  width: 10vw;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+  appearance: none;
+  background-image: url(${arrow});
+  background-repeat: no-repeat;
+  background-position: calc(100% - 20px) center;
+  padding-right: 30px;
 `;
 
 export default EditClass;

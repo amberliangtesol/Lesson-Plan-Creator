@@ -74,7 +74,7 @@ function Login() {
               onChange={handleRoleChange}
               placeholder="請輸入帳號"
             >
-              <option value="">請選擇身份</option>
+              <option value="" disabled>請選擇身份</option>
               <option value="student">student</option>
               <option value="teacher">teacher</option>
             </RegisterSelect>

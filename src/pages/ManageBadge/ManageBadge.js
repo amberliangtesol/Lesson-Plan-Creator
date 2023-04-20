@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
-import badge from "./badge.png";
 import { UserContext } from "../../UserInfoProvider";
 import {
   collection,
@@ -16,6 +15,8 @@ import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import arrow from "../Login/arrow.png";
 
 function ManageBadge() {
   const { user, setUser } = useContext(UserContext);
@@ -147,99 +148,135 @@ function ManageBadge() {
     };
 
     return (
-      <Container2 style={{ paddingLeft: "50px" }}>
-        <p>選擇班級</p>
-        <select
+      <Container2>
+        <SelectOptions
           value={selectedClass}
           onChange={(e) => {
             setSelectedClass(e.target.value);
             setSelectedStudent("");
             setSelectedBadge("");
           }}
-          style={{ width: "150px" }}
         >
-          <option value="">選擇班級</option>
+          <option value="" disabled>選擇班級</option>
           {classDetails.map((classItem, index) => (
             <option key={index} value={classItem.name}>
               {classItem.name}
             </option>
           ))}
-        </select>
-        <p>選擇學生</p>
-        <select
+        </SelectOptions>
+        <SelectOptions
           value={selectedStudent}
           onChange={(e) => setSelectedStudent(e.target.value)}
-          style={{ width: "150px" }}
         >
-          <option value="">選擇學生</option>
+          <option value="" disabled>選擇學生</option>
           {students.map((student, index) => (
             <option key={index} value={student}>
               {student}
             </option>
           ))}
-        </select>
-        <p>兌換徽章</p>
-        <select
+        </SelectOptions>
+        <SelectOptions
           value={selectedBadge}
           onChange={(e) => setSelectedBadge(e.target.value)}
-          style={{ width: "150px" }}
         >
-          <option value="">選擇徽章</option>
+          <option value="" disabled>選擇徽章</option>
           <option value="準時完成作業">準時完成作業</option>
           <option value="挑戰打怪成功">挑戰打怪成功</option>
-        </select>
-        <Btn
-          style={{ marginBottom: "30px" }}
-          onClick={() => redeemBadge(selectedStudent, selectedBadge)}
+        </SelectOptions>
+        <MainRedFilledBtn
+          onClick={() => {
+            redeemBadge(selectedStudent, selectedBadge);
+            setSelectedClass("");
+            setSelectedStudent("");
+            setSelectedBadge("");
+          }}
+          style={{ fontSize: "16px" }}
         >
           確認兌換
-        </Btn>
+        </MainRedFilledBtn>
       </Container2>
     );
   };
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-
-      <Container>
-        <TeacherMainSidebar></TeacherMainSidebar>
-        <div>
-          <h3>徽章管理</h3>
-          <ContainerContent />
-        </div>
-      </Container>
+      <Content>
+        <Container>
+          <TeacherMainSidebar></TeacherMainSidebar>
+          <MainContent>
+            <Title>徽章管理</Title>
+            <ContainerContent />
+          </MainContent>
+        </Container>
+      </Content>
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
 `;
 
+const Content = styled.div`
+  flex: 1;
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
 `;
 
+const SelectOptions = styled.select`
+  width: 360px;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+  appearance: none;
+  background-image: url(${arrow});
+  background-repeat: no-repeat;
+  background-position: calc(100% - 20px) center;
+  padding-right: 30px;
+`;
 
 export default ManageBadge;

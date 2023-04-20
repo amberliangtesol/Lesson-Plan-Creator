@@ -58,7 +58,7 @@ const TeacherMainSidebar = () => {
           onClick={() => handleLinkClick("/ManageBadge")}
         >
           <Btnwrapper className={activeLink === "/ManageBadge" ? "active" : ""}>
-            <BiBadgeCheck style={{ color: "black" }} />
+            <BiBadgeCheck style={{ color: "black"}} />
             <StyledParagraph>徽章管理</StyledParagraph>
           </Btnwrapper>
         </Link>
@@ -99,7 +99,7 @@ const Container1 = styled.div`
   width: 400px;
   background-color: #f5f5f5;
   padding-top: 100px;
-  height:100vh;
+  min-height:100vh;
   @media screen and (max-width: 1279px) {
   }
 `;
@@ -107,6 +107,7 @@ const Container1 = styled.div`
 const ProfileImg = styled.div`
   width: 150px;
   height: 150px;
+  box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
   background-position: center;
@@ -150,7 +151,7 @@ const Btnwrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   position: relative;
 
   &.active {

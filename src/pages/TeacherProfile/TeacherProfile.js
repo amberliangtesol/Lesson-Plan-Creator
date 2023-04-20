@@ -11,6 +11,8 @@ import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
 
 function TeacherProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -123,6 +125,7 @@ function TeacherProfile() {
     sendPasswordResetEmail(auth, user.account)
       .then(() => {
         console.log("Password reset email sent");
+        alert("變更密碼的信件已寄至您的信箱📬");
       })
       .catch((error) => {
         console.log(error);
@@ -130,84 +133,122 @@ function TeacherProfile() {
   };
 
   return (
-    <div>
+    <Body>
       <Header></Header>
+      <Content>
+        <Container>
+          <TeacherMainSidebar></TeacherMainSidebar>
+          <MainContent>
+            <Title>個人設定</Title>
+            <Container2>
+              <ProfileImg imageURL={imageURL}>
+                <IconWrapper>
+                  <UploadLabel htmlFor="imageUpload">
+                    <UploadIcon />
+                  </UploadLabel>
+                </IconWrapper>
+              </ProfileImg>
+              <input
+                id="imageUpload"
+                type="file"
+                accept="image/*"
+                name="上傳"
+                cursor="pointer"
+                onChange={handleImageUpload}
+                style={{ display: "none" }}
+              ></input>
+              <ProfileDetail>
+                <ProfileDetailContainer>
+                  <ProfileText>姓名</ProfileText> {name}
+                </ProfileDetailContainer>
 
-      <Container>
-        <TeacherMainSidebar></TeacherMainSidebar>
-        <div>
-          <h3>個人設定</h3>
-          <Container2 style={{ paddingLeft: "50px" }}>
-            <ProfileImg imageURL={imageURL}>
-              <IconWrapper>
-                <UploadLabel htmlFor="imageUpload">
-                  <UploadIcon />
-                </UploadLabel>
-              </IconWrapper>
-            </ProfileImg>
-            <input
-              id="imageUpload"
-              type="file"
-              accept="image/*"
-              name="上傳"
-              cursor="pointer"
-              onChange={handleImageUpload}
-              style={{ display: "none" }}
-            ></input>
-            <p>姓名: {name}</p>
-            <p>帳號: {account}</p>
-            <p>班級: {classNames.join(", ")}</p>
-            <Btn onClick={handleResetPassword}>密碼變更</Btn>
-            <Btn type="button" onClick={handleChange}>
-              確認修改
-            </Btn>
-            <Btn onClick={logOut}>登出</Btn>
-          </Container2>
-        </div>
-      </Container>
+                <ProfileDetailContainer>
+                  <ProfileText>班級</ProfileText> {classNames.join(", ")}
+                </ProfileDetailContainer>
+
+                <ProfileDetailContainer>
+                  <ProfileText>帳號</ProfileText> {account}
+                </ProfileDetailContainer>
+
+                <ProfileDetailContainer>
+                  <ProfileText>密碼</ProfileText>
+                  <MainDarkBorderBtn
+                    onClick={handleResetPassword}
+                    style={{ height: "30px", width: "80px" }}
+                  >
+                    變更
+                  </MainDarkBorderBtn>
+                </ProfileDetailContainer>
+              </ProfileDetail>
+            </Container2>
+            <ButtonContainer>
+              <MainDarkBorderBtn onClick={logOut}>登出</MainDarkBorderBtn>
+              <MainRedFilledBtn type="button" onClick={handleChange}>
+                確認
+              </MainRedFilledBtn>
+            </ButtonContainer>
+          </MainContent>
+        </Container>
+      </Content>
+
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
+const Body = styled.div`
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const Container1 = styled.div`
+
+const MainContent = styled.div`
   display: flex;
   flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  border-radius: 33px;
+  padding: 50px 100px;
+  box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
 `;
 
 const ProfileImg = styled.div`
   width: 150px;
   height: 150px;
-  border: 1px solid black;
+  box-shadow: rgb(0 0 0 / 50%) 0px 1px 4px 0px;
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
   background-position: center;
@@ -217,12 +258,41 @@ const ProfileImg = styled.div`
   position: relative;
 `;
 
+const ProfileDetail = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+`;
+
+const ProfileDetailContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+`;
+
+const ProfileText = styled.div`
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 19px;
+`;
 const IconWrapper = styled.span`
   position: absolute;
 `;
 
 const UploadLabel = styled.label`
   cursor: pointer;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 30px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default TeacherProfile;

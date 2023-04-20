@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
@@ -16,11 +16,21 @@ import {
   where,
 } from "firebase/firestore";
 import styled from "styled-components/macro";
-import { AiFillDelete } from "react-icons/ai";
+import { RiDeleteBinLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../UserInfoProvider";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
+
+const HiddenFileInput = styled.input.attrs({ type: "file" })`
+  display: none;
+`;
+
+const CustomFileInputButton = styled(MainDarkBorderBtn)`
+  /* Add any custom styles you want for the input button */
+`;
 
 function AddClass() {
   const { user, setUser } = useContext(UserContext);
@@ -31,7 +41,10 @@ function AddClass() {
   const [teacherInput, setTeacherInput] = useState("");
   const [teachers, setTeachers] = useState([]);
   const [useLoggedInUserEmail, setUseLoggedInUserEmail] = useState(false);
-
+  const fileInputRef = useRef();
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
   useEffect(() => {
     const fetchTeachers = async () => {
       const teachersQuery = query(
@@ -202,7 +215,7 @@ function AddClass() {
   const DeleteIcon = ({ onDelete }) => {
     return (
       <span onClick={onDelete} style={{ cursor: "pointer" }}>
-        <AiFillDelete />
+        <RiDeleteBinLine />
       </span>
     );
   };
@@ -233,7 +246,7 @@ function AddClass() {
             {cols.map((col, index) => (
               <th key={index}>{col.name}</th>
             ))}
-            {rows.length > 0 && <th>Delete</th>}
+            {rows.length > 0 && <th>刪除</th>}
           </tr>
         </thead>
         <tbody>{renderRows()}</tbody>
@@ -251,75 +264,131 @@ function AddClass() {
   };
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-      <Container>
-        <TeacherMainSidebar></TeacherMainSidebar>
-        <div>
-          <h3>班級建立</h3>
-          <Container2 style={{ paddingLeft: "50px" }}>
-            <p>班級名稱</p>
-            <input
-              type="text"
-              value={selectedClass}
-              onChange={handleClassNameChange}
-              placeholder="輸入班級名稱"
-            />{" "}
-            <p>指派教師</p>
-            <p>
-              <input
-                type="checkbox"
-                checked={useLoggedInUserEmail}
-                onChange={handleCheckboxChange}
+      <Content>
+        <Container>
+          <TeacherMainSidebar></TeacherMainSidebar>
+          <MainContent>
+            <Title>班級建立</Title>
+            <MainRedFilledBtn
+              onClick={handleSubmit}
+              style={{ marginLeft: "auto" }}
+            >
+              <Link to="/ManageClass">新增班級</Link>
+            </MainRedFilledBtn>
+
+            <ClassContainer>
+              {/* <p>班級</p> */}
+              <ClassInput
+                type="text"
+                value={selectedClass}
+                onChange={handleClassNameChange}
+                placeholder="輸入班級名稱"
+              />{" "}
+              {/* <p>教師</p> */}
+              <ClassInput
+                type="text"
+                value={teacherInput}
+                onChange={handleTeacherInputChange}
+                onBlur={handleTeacherInputBlur}
+                placeholder="輸入教師信箱"
               />
-              指派自己為教師
-            </p>{" "}
-            <input
-              type="text"
-              value={teacherInput}
-              onChange={handleTeacherInputChange}
-              onBlur={handleTeacherInputBlur}
-              placeholder="輸入教師電子郵件"
-            />
-            <input
-              type="file"
-              onChange={fileHandler}
-              style={{ padding: "10px" }}
-            />
+              <p>
+                <input
+                  type="checkbox"
+                  checked={useLoggedInUserEmail}
+                  onChange={handleCheckboxChange}
+                />
+                指派自己
+              </p>
+              <CustomFileInputButton
+                onClick={triggerFileInput}
+                style={{ marginLeft: "auto" }}
+              >
+                上傳帳號
+              </CustomFileInputButton>
+              <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
+            </ClassContainer>
             {renderTable()}
-            <Link to="/ManageClass">
-              <Btn onClick={handleSubmit}>新增班級</Btn>
-            </Link>
-          </Container2>
-        </div>
-      </Container>
-    </div>
+          </MainContent>
+        </Container>
+      </Content>
+    </Body>
   );
 }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-const Container2 = styled.div`
+const MainContent = styled.div`
   display: flex;
   flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
 `;
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
+
+const ClassContainer = styled.div`
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 60vw;
+  height: 83px;
+  padding: 30px 60px;
+  align-content: center;
+  align-items: center;
+  gap: 8px;
+  & > :last-child {
+    justify-self: flex-end;
   }
+  p {
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+`;
+
+const ClassInput = styled.input`
+  width: 25%;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
 `;
 
 export default AddClass;
