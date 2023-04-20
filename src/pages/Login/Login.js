@@ -64,26 +64,30 @@ function Login() {
   return (
     <Body>
       <Header></Header>
-      <Wrapper>
-        <ProfileIcon></ProfileIcon>
-        <h2>登入</h2>
-        <RegisterForm>
-          <RegisterSelect value={role} onChange={handleRoleChange}>
-            <option value="">請選擇身份</option>
-            <option value="student">student</option>
-            <option value="teacher">teacher</option>
-          </RegisterSelect>
-          <RegisterInput
-            type="text"
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="請輸入帳號"
-          ></RegisterInput>
-          <RegisterInput
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="請輸入密碼"
-          ></RegisterInput>
-          <div>
+      <Content>
+        <Wrapper>
+          <ProfileIcon></ProfileIcon>
+          <h2>登入</h2>
+          <RegisterForm>
+            <RegisterSelect
+              value={role}
+              onChange={handleRoleChange}
+              placeholder="請輸入帳號"
+            >
+              <option value="">請選擇身份</option>
+              <option value="student">student</option>
+              <option value="teacher">teacher</option>
+            </RegisterSelect>
+            <RegisterInput
+              type="text"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="請輸入帳號"
+            ></RegisterInput>
+            <RegisterInput
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="請輸入密碼"
+            ></RegisterInput>
             <BtnContainer>
               <ColorFilledBtn type="button" onClick={handleLogin}>
                 登入
@@ -92,9 +96,13 @@ function Login() {
                 <Link to="/Register">註冊</Link>
               </ColorBorderBtn>
             </BtnContainer>
-          </div>
-        </RegisterForm>
-      </Wrapper>
+            <TextContainer>
+              <Text1>無帳號教師</Text1>
+              <Text2>請先註冊</Text2>
+            </TextContainer>
+          </RegisterForm>
+        </Wrapper>
+      </Content>
       <Footer></Footer>
     </Body>
   );
@@ -102,7 +110,14 @@ function Login() {
 
 const Body = styled.div`
   background-color: #f5f5f5;
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin-top:90px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Wrapper = styled.div`
@@ -124,7 +139,7 @@ const RegisterForm = styled.form`
   width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
   padding-bottom: 30px;
 `;
 
@@ -133,7 +148,7 @@ const RegisterInput = styled.input`
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
-  font-size: 20px;
+  font-size: 18px;
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
@@ -144,14 +159,14 @@ const RegisterSelect = styled.select`
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
-  font-size: 20px;
+  font-size: 18px;
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
   appearance: none;
   background-image: url(${arrow});
   background-repeat: no-repeat;
-  background-position: right center;
+  background-position: calc(100% - 20px) center;
   padding-right: 30px;
 `;
 
@@ -160,8 +175,31 @@ const BtnContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 15px;
-  padding-bottom: 30px;
+  padding-bottom: 20px;
 `;
 
+const TextContainer = styled.div`
+  width: 360px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  padding-bottom: 20px;
+  justify-content: center;
+`;
+
+const Text1 = styled.p`
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  align-items: center;
+  text-align: center;
+  color: #666666;
+  letter-spacing: 0.1em;
+`;
+
+const Text2 = styled(Text1)`
+  font-weight: 700;
+  color: #F46868;
+`;
 
 export default Login;

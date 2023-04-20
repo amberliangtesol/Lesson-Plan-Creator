@@ -17,6 +17,7 @@ import usedbadge1 from "./usedbadge1.png";
 import usedbadge2 from "./usedbadge2.png";
 import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
+import Footer from "../../components/Footer";
 
 function Badge() {
   const { user, setUser } = useContext(UserContext);
@@ -124,6 +125,7 @@ function Badge() {
           </Container2>
         </div>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

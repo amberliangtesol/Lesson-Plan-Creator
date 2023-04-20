@@ -15,6 +15,7 @@ import {
 import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import Footer from "../../components/Footer";
 
 function ManageBadge() {
   const { user, setUser } = useContext(UserContext);
@@ -208,6 +209,7 @@ function ManageBadge() {
           <ContainerContent />
         </div>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

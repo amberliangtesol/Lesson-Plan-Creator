@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
 import GameMode from "./components/GameMode";
@@ -27,8 +27,6 @@ import StudentMain from "./pages/StudentMain/StudentMain";
 import UserInfoProvider from "./UserInfoProvider";
 import HoverComputer from "./components/HoverComputer/HoverComputer";
 
-
-
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
@@ -39,19 +37,25 @@ const GlobalStyle = createGlobalStyle`
     padding:0;
   }
     #root {
-    min-height: 100vh;
-            position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;    
+    position: relative;
     @media screen and (max-width: 1200px) {
     }
   }
 `;
+
 
 function App() {
   return (
     <UserInfoProvider>
       <GlobalStyle />
       <Routes>
-        <Route path="/youtubewithquestion/:lessonId" element={<YouTubeWithQuestion />} />
+        <Route
+          path="/youtubewithquestion/:lessonId"
+          element={<YouTubeWithQuestion />}
+        />
         <Route path="/gamemode" element={<GameMode />} />
         <Route path="/matching" element={<Matching />} />
         <Route path="/multiplechoice" element={<MultipleChoice />} />
@@ -61,7 +65,7 @@ function App() {
 
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
-        
+
         <Route path="/editcourse/:lessonId" element={<EditCourse />} />
         <Route path="/edit-unit/:lessonId" element={<EditUnit />} />
 

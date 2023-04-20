@@ -6,6 +6,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import Footer from "../../components/Footer";
 
 function ManageClass() {
   const { user, setUser } = useContext(UserContext);
@@ -96,6 +97,7 @@ function ManageClass() {
           </Container2>
         </div>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

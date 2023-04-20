@@ -33,6 +33,7 @@ const Hat = styled.div`
   }
 `;
 
+
 const Footer = () => {
   return (
     <Container>

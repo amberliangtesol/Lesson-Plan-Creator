@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 function Score() {
   const { lessonId } = useParams();
@@ -173,6 +174,7 @@ function Score() {
           )}
         </Container2>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

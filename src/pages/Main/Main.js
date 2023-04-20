@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../components/Header";
 import { Link } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 
 function Main() {
@@ -9,6 +10,7 @@ function Main() {
     <div>
       <Header></Header>
       <p>mainpage</p>
+      <Footer></Footer>
     </div>
   );
 }

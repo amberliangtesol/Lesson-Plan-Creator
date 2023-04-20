@@ -12,6 +12,7 @@ import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 function chunk(array, chunk) {
   let result = [];
@@ -506,6 +507,7 @@ function CreateUnit() {
           </form>
         </Container2>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

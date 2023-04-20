@@ -49,43 +49,50 @@ function Register() {
   return (
     <Body>
       <Header></Header>
-      <Wrapper>
-        <ProfileIcon></ProfileIcon>
-        <h2>教師註冊</h2>
-        <RegisterForm>
-          <RegisterInput
-            type="text"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="請輸入姓名"
-          ></RegisterInput>
-          <RegisterInput
-            type="text"
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="請輸入信箱"
-          ></RegisterInput>
-          <RegisterInput
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="請輸入密碼"
-          ></RegisterInput>
-        </RegisterForm>
+      <Content>
+        <Wrapper>
+          <ProfileIcon></ProfileIcon>
+          <h2>教師註冊</h2>
+          <RegisterForm>
+            <RegisterInput
+              type="text"
+              onChange={(e) => setName(e.target.value)}
+              placeholder="請輸入姓名"
+            ></RegisterInput>
+            <RegisterInput
+              type="text"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="請輸入信箱"
+            ></RegisterInput>
+            <RegisterInput
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="請輸入密碼"
+            ></RegisterInput>
+          </RegisterForm>
 
-        <BtnContainer>
-        <ColorBorderBtn type="button" onClick={handleRegister}>
-          註冊
-        </ColorBorderBtn>
-        </BtnContainer>
-
-      </Wrapper>
+          <BtnContainer>
+            <ColorBorderBtn type="button" onClick={handleRegister}>
+              註冊
+            </ColorBorderBtn>
+          </BtnContainer>
+        </Wrapper>
+      </Content>
       <Footer></Footer>
-
     </Body>
   );
 }
 
 const Body = styled.div`
-  background-color:#F5F5F5;
-  height: 100vh;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top:90px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Wrapper = styled.div`
@@ -103,12 +110,11 @@ const ProfileIcon = styled.div`
   cursor: pointer;
 `;
 
-
 const RegisterForm = styled.form`
   width: 360px;
   display: flex;
   flex-direction: column;
-  gap:15px;
+  gap: 20px;
   padding-bottom: 30px;
 `;
 
@@ -117,7 +123,7 @@ const RegisterInput = styled.input`
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
-  font-size: 20px;
+  font-size: 18px;
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
@@ -129,7 +135,7 @@ const BtnContainer = styled.div`
   flex-direction: row;
   gap: 15px;
   padding-bottom: 30px;
-  justify-content:center;
+  justify-content: center;
 `;
 
 export default Register;

@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import Footer from "../../components/Footer";
 
 function EditClass() {
   const { classId } = useParams();
@@ -282,6 +283,7 @@ function EditClass() {
           </Container2>
         </div>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

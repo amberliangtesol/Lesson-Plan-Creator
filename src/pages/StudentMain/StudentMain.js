@@ -13,6 +13,7 @@ import {
 import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
+import Footer from "../../components/Footer";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -156,6 +157,7 @@ function StudentMain() {
             </Container2>
           </div>
         </Container>
+        <Footer></Footer>
     </div>
   );
 }

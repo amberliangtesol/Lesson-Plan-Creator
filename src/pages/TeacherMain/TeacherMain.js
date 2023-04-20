@@ -14,6 +14,13 @@ import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
+import { BiTimeFive } from "react-icons/bi";
+import { BsFillBookmarkStarFill } from "react-icons/bs";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -103,126 +110,164 @@ function TeacherMain() {
   }
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-
+      <Content>
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
-          <div>
-            <h3>教師課程主頁</h3>
-            <Btn>
-              <Link to="/CreateCourse">課程建立</Link>
-            </Btn>
+          <MainContent>
+              <Title>課程主頁</Title>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <MainRedFilledBtn style={{ marginLeft: "auto"}}>
+                  <Link to="/CreateCourse">課程建立</Link>
+                </MainRedFilledBtn>
+              </div>
+            <CourseOutsideWrapper>
+              <Container2>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <BsFillBookmarkStarFill
+                    style={{ color: "#F46868", fontSize: "24px" }}
+                  ></BsFillBookmarkStarFill>
+                  <SubTitle>進行中課程</SubTitle>
+                </div>
 
-            <div>
-              <Container2 style={{ paddingLeft: "50px" }}>
-                <h4>進行中課程</h4>
-                {lessons
-                  .filter((c) => !isCourseOutdated(c))
-                  .map((c, index) => (
-                    <OutdatedCourse key={index} outdated={false}>
-                      <VideoImg img={c.img}></VideoImg>
-                      <p>
-                        班級:{" "}
-                        {c.classes.map((classId) => (
-                          <span key={classId}>
-                            {getClassNameById(classId)}{" "}
-                          </span>
-                        ))}
-                      </p>
-                      <p>課程名稱: {c.name}</p>
-                      <p>
-                        課程時間{" "}
-                        {`${formatDate(c.start_date)}~${formatDate(
-                          c.end_date
-                        )}`}
-                      </p>
-                      <Btn type="button" onClick={() => handleScore(c.id)}>
-                        <Link to="/Score">答題狀況</Link>
-                      </Btn>
-                      <Btn
-                        type="button"
-                        onClick={() => handleEditCourse(c.id)}
-                        // disabled={!isCourseOutdated(c)}
-                      >
-                        <Link to="/EditCourse">課程編輯</Link>
-                      </Btn>
-                    </OutdatedCourse>
-                  ))}
+                <CourseWrapper>
+                  {lessons
+                    .filter((c) => !isCourseOutdated(c))
+                    .map((c, index) => (
+                      <OutdatedCourse key={index} outdated={false}>
+                        <CourseContent>
+                          <VideoImg img={c.img}></VideoImg>
+                          <CourseTextWrapper>
+                            <p>
+                              <b>班級</b>
+                              <br />
+                              {c.classes.map((classId) => (
+                                <span key={classId}>
+                                  {getClassNameById(classId)}{" "}
+                                </span>
+                              ))}
+                            </p>
+                            <p>
+                              <b>課程</b>
+                              <br /> {c.name}
+                            </p>
+                            <p
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <BiTimeFive
+                                style={{ marginRight: "5px", fontSize: "24px" }}
+                              />
+                              {`${formatDate(c.start_date)}~${formatDate(
+                                c.end_date
+                              )}`}
+                            </p>
+                          </CourseTextWrapper>
+                        </CourseContent>
+                        <BtnContainer>
+                          <MainDarkFilledBtn
+                            type="button"
+                            onClick={() => handleEditCourse(c.id)}
+                            // disabled={!isCourseOutdated(c)}
+                          >
+                            <Link to="/EditCourse">課程編輯</Link>
+                          </MainDarkFilledBtn>
+                          <MainDarkBorderBtn
+                            type="button"
+                            onClick={() => handleScore(c.id)}
+                          >
+                            <Link to="/Score">答題狀況</Link>
+                          </MainDarkBorderBtn>
+                        </BtnContainer>
+                      </OutdatedCourse>
+                    ))}
+                </CourseWrapper>
               </Container2>
 
-              <Container2 style={{ paddingLeft: "50px" }}>
-                <h4>已完成課程</h4>
-                {lessons
-                  .filter((c) => isCourseOutdated(c))
-                  .map((c, index) => (
-                    <OutdatedCourse key={index} outdated>
-                      <VideoImg img={c.img}></VideoImg>
-                      <p>
-                        班級:{" "}
-                        {c.classes.map((classId) => (
-                          <span key={classId}>
-                            {getClassNameById(classId)}{" "}
-                          </span>
-                        ))}
-                      </p>
-                      <p>課程名稱: {c.name}</p>
-                      <p>
-                        課程時間{" "}
-                        {`${formatDate(c.start_date)}~${formatDate(
-                          c.end_date
-                        )}`}
-                      </p>
-
-                      <Btn
-                        type="button"
-                        onClick={() => handleEditCourse(c.id)}
-                        disabled
-                      >
-                        <Link to="/EditCourse">課程編輯</Link>
-                      </Btn>
-
-                      <ScoreBtn type="button" onClick={() => handleScore(c.id)}>
-                        <Link to="/Score">答題狀況</Link>
-                      </ScoreBtn>
-                    </OutdatedCourse>
-                  ))}
+              <Container2>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <BsCheckCircleFill
+                    style={{ color: "#F46868", fontSize: "24px" }}
+                  ></BsCheckCircleFill>
+                  <SubTitle>已完成課程</SubTitle>
+                </div>{" "}
+                <CourseWrapper>
+                  {lessons
+                    .filter((c) => isCourseOutdated(c))
+                    .map((c, index) => (
+                      <OutdatedCourse key={index}>
+                        <CourseContent outdated>
+                          <VideoImg img={c.img}></VideoImg>
+                          <CourseTextWrapper>
+                            <p>
+                              班級
+                              <br />
+                              {c.classes.map((classId) => (
+                                <span key={classId}>
+                                  {getClassNameById(classId)}{" "}
+                                </span>
+                              ))}
+                            </p>
+                            <p>
+                              <b>課程</b>
+                              <br /> {c.name}
+                            </p>
+                            <p
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <BiTimeFive
+                                style={{ marginRight: "5px", fontSize: "24px" }}
+                              />
+                              {`${formatDate(c.start_date)}~${formatDate(
+                                c.end_date
+                              )}`}
+                            </p>
+                          </CourseTextWrapper>
+                        </CourseContent>
+                        <BtnContainer>
+                          <MainDarkBorderBtn
+                            type="button"
+                            onClick={() => handleScore(c.id)}
+                          >
+                            <Link to="/Score">答題狀況</Link>
+                          </MainDarkBorderBtn>
+                        </BtnContainer>
+                      </OutdatedCourse>
+                    ))}
+                </CourseWrapper>
               </Container2>
-            </div>
-          </div>
+            </CourseOutsideWrapper>
+          </MainContent>
         </Container>
-    </div>
+      </Content>
+      <Footer></Footer>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 104px;
-  height: 41px;
-  border-radius: 33px;
-  background-color: #1a1a1a;
-  border: none;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 19px;
-  color: #ffffff;
-  a {
-    color: white;
-    text-decoration: none;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
 `;
 
-const ScoreBtn = styled(Btn)`
-  ${({ faded }) =>
-    faded &&
-    `
-    opacity: 1;
-  `}
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Container = styled.div`
@@ -230,29 +275,124 @@ const Container = styled.div`
   flex-direction: row;
 `;
 
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
+
+const SubTitle = styled.p`
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 19px;
+  color: #000000;
+`;
+
+
+const CourseWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  border-radius: 33px;
+`;
+
+const CourseOutsideWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
+`;
+
 const Container2 = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
 `;
 
 const VideoImg = styled.div`
   width: 300px;
   height: 150px;
-  border: 1px solid black;
+  border-radius: 29px;
   background-image: url(${(props) => props.img});
   background-size: cover;
   background-position: center;
 `;
 
 const OutdatedCourse = styled.div`
+  display: flex;
+  flex-direction: row;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 100%;
+  padding: 30px 60px;
+  & > :last-child {
+    justify-content: flex-end;
+  }
+  ${({ outdated }) =>
+    outdated &&
+    `
+    opacity: 0.5;
+
+    ${MainDarkBorderBtn} {
+      opacity: 1;
+      a {
+        opacity: 1;
+      }
+    }
+  `}
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+`;
+
+const CourseContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
   ${({ outdated }) =>
     outdated &&
     `
     opacity: 0.5;
   `}
+`;
+
+const CourseTextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  p {
+    margin: 0;
+    font-size: 20px;
+  }
 `;
 
 export default TeacherMain;

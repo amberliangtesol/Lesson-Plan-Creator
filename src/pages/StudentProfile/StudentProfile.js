@@ -10,6 +10,7 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
+import Footer from "../../components/Footer";
 
 function StudentProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -164,6 +165,7 @@ function StudentProfile() {
           </Container2>
         </div>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }

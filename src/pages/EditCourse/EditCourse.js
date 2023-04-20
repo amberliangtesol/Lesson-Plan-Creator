@@ -18,6 +18,7 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 function EditCourse() {
   const { lessonId } = useParams();
@@ -244,6 +245,7 @@ useEffect(() => {
           </Btn>
         </Container2>
       </Container>
+      <Footer></Footer>
     </div>
   );
 }
