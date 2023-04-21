@@ -13,12 +13,15 @@ import {
   collection,
   query,
   onSnapshot,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
 
 function EditCourse() {
   const { lessonId } = useParams();
@@ -85,27 +88,26 @@ function EditCourse() {
     return imageURL;
   };
 
-// Fetch the lesson data
-useEffect(() => {
-  const fetchLesson = async () => {
-    const lessonRef = doc(db, "lessons", lessonId);
-    const lessonDoc = await getDoc(lessonRef);
+  // Fetch the lesson data
+  useEffect(() => {
+    const fetchLesson = async () => {
+      const lessonRef = doc(db, "lessons", lessonId);
+      const lessonDoc = await getDoc(lessonRef);
 
-    if (lessonDoc.exists()) {
-      const lessonData = lessonDoc.data();
-      if (lessonData) {
-        setCourseName(lessonData.name);
-        setImageURL(lessonData.img);
-        setStartTimestamp(lessonData.start_date);
-        setEndTimestamp(lessonData.end_date);
-        setClassChoose(lessonData.classes);
+      if (lessonDoc.exists()) {
+        const lessonData = lessonDoc.data();
+        if (lessonData) {
+          setCourseName(lessonData.name);
+          setImageURL(lessonData.img);
+          setStartTimestamp(lessonData.start_date);
+          setEndTimestamp(lessonData.end_date);
+          setClassChoose(lessonData.classes);
+        }
       }
-    }
-  };
+    };
 
-  fetchLesson();
-}, [lessonId]);
-
+    fetchLesson();
+  }, [lessonId]);
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
@@ -152,121 +154,170 @@ useEffect(() => {
     }
   };
 
-  return (
-    <div>
-      <h3>課程編輯</h3>
-      <Container>
-        <Container1>
-          <BtnContainer>
-            <h4>單元列表</h4>
-            {sortedUnits.map((unit, index) => (
-              <p
-                key={unit.id}
-                style={{
-                  color: unit.id === currentUnitId ? "red" : "black",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setCurrentUnitId(unit.id);
-                }}
-              >
-                Unit {index + 1}: {unit.data.unitName}
-              </p>
-            ))}
-            <Btn>
-              <Link to="/TeacherMain">回課程主頁</Link>
-            </Btn>
-          </BtnContainer>
-        </Container1>
-        <Container2 style={{ paddingLeft: "50px" }}>
-          <h4>縮圖上傳</h4>
-          <VideoImg imageURL={imageURL}>
-            <UploadLabel htmlFor="imageUpload">
-              <UploadIcon />
-            </UploadLabel>
-          </VideoImg>
-          <input
-            id="imageUpload"
-            type="file"
-            accept="image/*"
-            name="上傳"
-            cursor="pointer"
-            style={{ display: "none" }}
-            onChange={handleImageUpload}
-          ></input>
-          <h4>課程名稱</h4>
-          <input
-            type="text"
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-          ></input>
-          <h4>班級設定</h4>
-          <select
-            multiple
-            value={classChoose}
-            onChange={(e) => {
-              const selectedOptions = Array.from(e.target.selectedOptions).map(
-                (option) => option.value
-              );
-              setClassChoose(selectedOptions);
-            }}
-          >
-            {/* <option value="" disabled>
-              選擇班級
-            </option> */}
-            {classList.map((classItem) => (
-              <option
-                key={`${classItem.id}_${classItem.index}`}
-                value={classItem.id}
-              >
-                {classItem.name}
-              </option>
-            ))}
-          </select>
+  function setDropdownHeight() {
+    const selectEl = document.querySelector("select");
+    selectEl.setAttribute("size", selectEl.length);
+  }
 
-          <h4>開始時間</h4>
-          <input
-            type="datetime-local"
-            value={new Date(startTimestamp).toISOString().slice(0, 16)}
-            onChange={(e) =>
-              setStartTimestamp(new Date(e.target.value).getTime())
-            }
-          />
-          <h4>結束時間</h4>
-          <input
-            type="datetime-local"
-            value={new Date(endTimestamp).toISOString().slice(0, 16)}
-            onChange={(e) =>
-              setEndTimestamp(new Date(e.target.value).getTime())
-            }
-          />
-          <Btn type="button" onClick={handleUpdate}>
-            <Link to="/EditUnit">單元編輯</Link>
-          </Btn>
-        </Container2>
-      </Container>
+  return (
+    <Body>
+      <Header></Header>
+      <Content>
+        <Container>
+          <MainContent>
+            <Container1>
+              <BtnContainer>
+                <h4>單元列表</h4>
+                {sortedUnits.map((unit, index) => (
+                  <p
+                    key={unit.id}
+                    style={{
+                      color: unit.id === currentUnitId ? "red" : "black",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setCurrentUnitId(unit.id);
+                    }}
+                  >
+                    Unit {index + 1}: {unit.data.unitName}
+                  </p>
+                ))}
+                <MainDarkBorderBtn>
+                  <Link to="/TeacherMain">回首頁</Link>
+                </MainDarkBorderBtn>
+              </BtnContainer>
+            </Container1>
+
+            <Container2>
+              <Title>課程編輯</Title>
+
+              <MainRedFilledBtn
+                type="button"
+                onClick={handleUpdate}
+                style={{ marginLeft: "auto", marginBottom: "30px" }}
+              >
+                <Link to="/EditUnit">單元編輯</Link>
+              </MainRedFilledBtn>
+
+              <CourseDetail>
+                <CourseDetailText>縮圖上傳</CourseDetailText>
+                <VideoImg imageURL={imageURL}>
+                  <UploadLabel htmlFor="imageUpload">
+                    <UploadIcon />
+                  </UploadLabel>
+                </VideoImg>
+                <input
+                  id="imageUpload"
+                  type="file"
+                  accept="image/*"
+                  name="上傳"
+                  cursor="pointer"
+                  style={{ display: "none" }}
+                  onChange={handleImageUpload}
+                ></input>
+                <CourseDetailText>課程名稱</CourseDetailText>
+                <CourseInput
+                  type="text"
+                  value={courseName}
+                  onChange={(e) => setCourseName(e.target.value)}
+                ></CourseInput>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>班級設定</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 按下command或control鍵可多選
+                  </CourseDetailReminder>
+                </div>
+                <SelectOptions
+                  style={{ padding: "10px" }}
+                  multiple
+                  value={classChoose}
+                  onChange={(e) => {
+                    const selectedOptions = Array.from(
+                      e.target.selectedOptions
+                    ).map((option) => option.value);
+                    setClassChoose(selectedOptions);
+                    setDropdownHeight();
+                  }}
+                >
+                  {classList.map((classItem) => (
+                    <option
+                      key={`${classItem.id}_${classItem.index}`}
+                      value={classItem.id}
+                    >
+                      {classItem.name}
+                    </option>
+                  ))}
+                </SelectOptions>
+                <CourseDetailText>開始時間</CourseDetailText>
+                <CourseInput
+                  type="datetime-local"
+                  value={new Date(startTimestamp).toISOString().slice(0, 16)}
+                  onChange={(e) =>
+                    setStartTimestamp(new Date(e.target.value).getTime())
+                  }
+                />
+                <CourseDetailText>結束時間</CourseDetailText>
+                <CourseInput
+                  type="datetime-local"
+                  value={new Date(endTimestamp).toISOString().slice(0, 16)}
+                  onChange={(e) =>
+                    setEndTimestamp(new Date(e.target.value).getTime())
+                  }
+                />
+              </CourseDetail>
+            </Container2>
+          </MainContent>
+        </Container>
+      </Content>
+
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
 
-const UploadLabel = styled.label`
-  cursor: pointer;
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
 `;
 
-const Btn = styled.button`
+const Content = styled.div`
+  flex: 1;
+`;
+
+const Container = styled.div`
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
+
+const UploadLabel = styled.label`
   cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
 `;
 
 const BtnContainer = styled.div`
@@ -274,18 +325,27 @@ const BtnContainer = styled.div`
   flex-direction: column;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
+  width: 400px;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(245, 245, 245);
+  min-height: 100vh;
+  padding-top: 90px;
 `;
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: 90px;
+  width: 50vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
   select {
     pointer-events: auto;
   }
@@ -298,6 +358,90 @@ const VideoImg = styled.div`
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
   background-position: center;
+`;
+
+const StyledParagraphTitle = styled.p`
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.04em;
+  color: black;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0em;
+  @media screen and (max-width: 1279px) {
+  }
+`;
+const StyledParagraph = styled.p`
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.04em;
+  color: black;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0em;
+  @media screen and (max-width: 1279px) {
+  }
+`;
+
+const Btnwrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  :first-child {
+    border-bottom: 3px solid #f46868;
+  }
+  @media screen and (max-width: 1279px) {
+  }
+`;
+
+const CourseInput = styled.input`
+  width: 100%;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  padding-right: 30px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+`;
+
+const CourseDetail = styled.div`
+  width: 100%;
+  border-radius: 33px;
+  background-color: rgb(245, 245, 245);
+  padding: 30px 60px 50px 60px;
+`;
+
+const SelectOptions = styled.select`
+  width: 100%;
+  height: auto;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+`;
+
+const CourseDetailText = styled.p`
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 19px;
+  margin: 15px;
+`;
+
+const CourseDetailReminder = styled.p`
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 19px;
+  margin: 10px;
+  color: #f46868;
 `;
 
 export default EditCourse;
