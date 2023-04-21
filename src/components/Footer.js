@@ -9,6 +9,9 @@ const Container = styled.div`
   align-items: center;
   background-color: #f46868;
   position: relative;
+  position: fixed;
+  bottom:0;
+  z-index: 1000;
   @media screen and (max-width: 1279px) {
   }
 `;

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
 import GameMode from "./components/GameMode";
@@ -52,6 +52,7 @@ function App() {
     <UserInfoProvider>
       <GlobalStyle />
       <Routes>
+        <Route path="/" element={<Main />} />
         <Route
           path="/youtubewithquestion/:lessonId"
           element={<YouTubeWithQuestion />}
@@ -78,10 +79,10 @@ function App() {
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/register" element={<Register />} />
         <Route path="/score/:lessonId" element={<Score />} />
-        <Route path="/" element={<Main />} />
         <Route path="/teachermain" element={<TeacherMain />} />
         <Route path="/studentmain" element={<StudentMain />} />
         <Route path="/hovercomputer" element={<HoverComputer />} />
+        <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
     </UserInfoProvider>
   );

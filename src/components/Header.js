@@ -1,6 +1,6 @@
 import styled from "styled-components/macro";
 import logo from "./logo.png";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -24,13 +24,12 @@ const Logo = styled.div`
   }
 `;
 
-
 const Header = () => {
   return (
-  <Container>
-    <Logo></Logo>
-  </Container>
-  )
+    <Container>
+        <Link to="/"><Logo /></Link>
+    </Container>
+  );
 };
 
 export default Header;

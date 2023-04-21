@@ -370,7 +370,7 @@ const ClassContainer = styled.div`
   border-radius: 33px;
   width: 60vw;
   height: 170px;
-  padding: 30px 60px;
+  padding: 30px 30px;
   align-content: flex-start;
   align-items: flex-start;
   gap: 8px;
@@ -394,7 +394,7 @@ align-items: center;
 `;
 
 const ClassInput = styled.input`
-  width: 10vw;
+  width: 100%;
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
@@ -406,7 +406,7 @@ const ClassInput = styled.input`
 `;
 
 const SelectOptions = styled.select`
-  width: 10vw;
+  width: 100%;
   height: 40px;
   background: #ffffff;
   border-radius: 24px;
@@ -417,8 +417,10 @@ const SelectOptions = styled.select`
   appearance: none;
   background-image: url(${arrow});
   background-repeat: no-repeat;
-  background-position: calc(100% - 20px) center;
+  background-position: calc(100% - 5px) center; /* Adjusted */
   padding-right: 30px;
+  text-overflow: ellipsis;
 `;
+
 
 export default EditClass;

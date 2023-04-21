@@ -7,7 +7,7 @@ const ColorFilledBtn = styled.div`
   height: 40px;
   border-radius: 24px;
   background-color: #f46868;
-  color:#ffffff;
+  color: #ffffff;
   font-weight: 700;
   font-size: 20px;
   line-height: 29px;
@@ -79,7 +79,7 @@ const MainRedFilledBtn = styled.div`
     color: #ffffff;
     font-weight: 700;
     font-size: 16px;
-    line-height: 19px;   
+    line-height: 19px;
     &:hover,
     &:link,
     &:active {
@@ -124,6 +124,41 @@ const MainDarkBorderBtn = styled.div`
   }
 `;
 
+const NoBorderBtn = styled.div`
+  cursor: pointer;
+  min-width: 104px;
+  height: 40px;
+  border-radius: 24px;
+  color: #545454;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 29px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  &::before {
+    content: "✚";
+    color: #f46868;
+    margin-right: 5px;
+  }
+
+  a {
+    color: #545454;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.055em;
+    text-decoration: none;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+`;
+
 const Buttons = () => {
   return (
     <div>
@@ -131,6 +166,7 @@ const Buttons = () => {
       <ColorBorderBtn></ColorBorderBtn>
       <MainRedFilledBtn></MainRedFilledBtn>
       <MainDarkBorderBtn></MainDarkBorderBtn>
+      <NoBorderBtn></NoBorderBtn>
     </div>
   );
 };
@@ -141,5 +177,4 @@ export { ColorBorderBtn };
 export { MainRedFilledBtn };
 export { MainDarkFilledBtn };
 export { MainDarkBorderBtn };
-
-
+export { NoBorderBtn };
