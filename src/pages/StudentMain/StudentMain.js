@@ -14,6 +14,12 @@ import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
+import { BiTimeFive } from "react-icons/bi";
+import { BsFillBookmarkStarFill } from "react-icons/bs";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -100,96 +106,203 @@ function StudentMain() {
   }
 
   return (
-    <div>
+    <Body>
       <Header></Header>
+      <Content>
         <Container>
-        <StudentMainSidebar></StudentMainSidebar>
-          <div>
-          <h3>學生課程主頁</h3>
-            <Container2 style={{ paddingLeft: "50px" }}>
-              <h4>進行中課程</h4>
-              {lessons
-                .filter((c) => !isCourseOutdated(c))
-                .map((c, index) => (
-                  <OutdatedCourse key={index} outdated={false}>
-                    <VideoImg img={c.img}></VideoImg>
-                    <p>
-                      班級:{" "}
-                      {c.classes.map((classId) => (
-                        <span key={classId}>{getClassNameById(classId)} </span>
-                      ))}
-                    </p>
-                    <p>課程名稱: {c.name}</p>
-                    <p>
-                      課程時間{" "}
-                      {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
-                    </p>
-                    <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link>
-                  </OutdatedCourse>
-                ))}
-            </Container2>
+          <StudentMainSidebar></StudentMainSidebar>
+          <MainContent>
+            <Title>課程主頁</Title>
+            <CourseOutsideWrapper>
+              <Container2>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <BsFillBookmarkStarFill
+                    style={{ color: "#F46868", fontSize: "24px" }}
+                  ></BsFillBookmarkStarFill>
+                  <SubTitle>進行中課程</SubTitle>
+                </div>
 
-            <Container2 style={{ paddingLeft: "50px" }}>
-              <h4>已完成課程</h4>
-              {lessons
-                .filter((c) => isCourseOutdated(c))
-                .map((c, index) => (
-                  <OutdatedCourse key={index} outdated>
-                    <VideoImg img={c.img}></VideoImg>
-                    <p>
-                      班級:{" "}
-                      {c.classes.map((classId) => (
-                        <span key={classId}>{getClassNameById(classId)} </span>
-                      ))}
-                    </p>
-                    <p>課程名稱: {c.name}</p>
-                    <p>
-                      課程時間{" "}
-                      {`${formatDate(c.start_date)}~${formatDate(c.end_date)}`}
-                    </p>
-                    <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                  <Btn>進入課程</Btn>
-                </Link>
-                  </OutdatedCourse>
-                ))}
-            </Container2>
-          </div>
+                <CourseWrapper>
+                  {lessons
+                    .filter((c) => !isCourseOutdated(c))
+                    .map((c, index) => (
+                      <OutdatedCourse key={index} outdated={false}>
+                        <CourseContent>
+                          <VideoImg img={c.img}></VideoImg>
+                          <CourseTextWrapper>
+                            <p>
+                              <b>班級</b>
+                              <br />
+                              {c.classes.map((classId) => (
+                                <span key={classId}>
+                                  {getClassNameById(classId)}{" "}
+                                </span>
+                              ))}
+                            </p>
+                            <p>
+                              <b>課程</b>
+                              <br /> {c.name}
+                            </p>
+                            <p
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <BiTimeFive
+                                style={{ marginRight: "5px", fontSize: "24px" }}
+                              />
+                              {`${formatDate(c.start_date)}~${formatDate(
+                                c.end_date
+                              )}`}
+                            </p>
+                          </CourseTextWrapper>
+                        </CourseContent>
+                        <BtnContainer>
+                          <MainDarkFilledBtn>
+                            <Link to={`/YouTubeWithQuestion/${c.id}`}>
+                              進入課程
+                            </Link>
+                          </MainDarkFilledBtn>
+                        </BtnContainer>
+                      </OutdatedCourse>
+                    ))}
+                </CourseWrapper>
+              </Container2>
+
+              <Container2>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <BsCheckCircleFill
+                    style={{ color: "#F46868", fontSize: "24px" }}
+                  ></BsCheckCircleFill>
+                  <SubTitle>已完成課程</SubTitle>
+                </div>
+                <CourseWrapper>
+                  {lessons
+                    .filter((c) => isCourseOutdated(c))
+                    .map((c, index) => (
+                      <OutdatedCourse key={index}>
+                        <CourseContent outdated>
+                          <VideoImg img={c.img}></VideoImg>
+                          <CourseTextWrapper>
+                            <p>
+                              班級
+                              <br />
+                              {c.classes.map((classId) => (
+                                <span key={classId}>
+                                  {getClassNameById(classId)}{" "}
+                                </span>
+                              ))}
+                            </p>
+                            <p>
+                              <b>課程</b>
+                              <br /> {c.name}
+                            </p>
+                            <p
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <BiTimeFive
+                                style={{ marginRight: "5px", fontSize: "24px" }}
+                              />
+                              {`${formatDate(c.start_date)}~${formatDate(
+                                c.end_date
+                              )}`}
+                            </p>
+                          </CourseTextWrapper>
+                        </CourseContent>
+                        <BtnContainer>
+                          {/* <MainDarkBorderBtn disabled>
+                            <Link to={`/YouTubeWithQuestion/${c.id}`}>
+                              進入課程
+                            </Link>
+                          </MainDarkBorderBtn> */}
+                        </BtnContainer>
+                      </OutdatedCourse>
+                    ))}
+                </CourseWrapper>
+              </Container2>
+            </CourseOutsideWrapper>
+          </MainContent>
         </Container>
-        <Footer></Footer>
-    </div>
+      </Content>
+
+      <Footer></Footer>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
+const Body = styled.div`
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const Container1 = styled.div`
+
+const MainContent = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+`;
+
+const SubTitle = styled.p`
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 19px;
+  color: #000000;
+`;
+
+const CourseWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  border-radius: 33px;
+`;
+
+const CourseOutsideWrapper = styled.div`
+  width: 60vw;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
 `;
 
 const Container2 = styled.div`
@@ -197,38 +310,71 @@ const Container2 = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
 `;
 
 const VideoImg = styled.div`
   width: 300px;
   height: 150px;
-  border: 1px solid black;
+  border-radius: 29px;
   background-image: url(${(props) => props.img});
   background-size: cover;
   background-position: center;
 `;
 
-const ProfileImg = styled.div`
-  width: 150px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-`;
-
 const OutdatedCourse = styled.div`
+  display: flex;
+  flex-direction: row;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 100%;
+  padding: 30px 60px;
+  & > :last-child {
+    justify-content: flex-end;
+  }
   ${({ outdated }) =>
     outdated &&
     `
     opacity: 0.5;
-    pointer-events: none;
+
+    ${MainDarkBorderBtn} {
+      opacity: 1;
+      a {
+        opacity: 1;
+      }
+    }
   `}
+`;
+
+const BtnContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+`;
+
+const CourseContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  ${({ outdated }) =>
+    outdated &&
+    `
+    opacity: 0.5;
+  `}
+`;
+
+const CourseTextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  p {
+    margin: 0;
+    font-size: 20px;
+  }
 `;
 
 export default StudentMain;

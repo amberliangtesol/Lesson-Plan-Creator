@@ -234,7 +234,7 @@ const Title = styled.p`
   line-height: 29px;
   letter-spacing: 0em;
   margin-top: 0;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 50px;

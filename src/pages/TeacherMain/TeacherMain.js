@@ -116,12 +116,12 @@ function TeacherMain() {
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
           <MainContent>
-              <Title>課程主頁</Title>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <MainRedFilledBtn style={{ marginLeft: "auto"}}>
-                  <Link to="/CreateCourse">課程建立</Link>
-                </MainRedFilledBtn>
-              </div>
+            <Title>課程主頁</Title>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <MainRedFilledBtn style={{ marginLeft: "auto" }}>
+                <Link to="/CreateCourse">課程建立</Link>
+              </MainRedFilledBtn>
+            </div>
             <CourseOutsideWrapper>
               <Container2>
                 <div
@@ -204,7 +204,7 @@ function TeacherMain() {
                     style={{ color: "#F46868", fontSize: "24px" }}
                   ></BsCheckCircleFill>
                   <SubTitle>已完成課程</SubTitle>
-                </div>{" "}
+                </div>
                 <CourseWrapper>
                   {lessons
                     .filter((c) => isCourseOutdated(c))
@@ -305,7 +305,6 @@ const SubTitle = styled.p`
   line-height: 19px;
   color: #000000;
 `;
-
 
 const CourseWrapper = styled.div`
   display: flex;

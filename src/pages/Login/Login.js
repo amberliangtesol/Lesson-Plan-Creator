@@ -74,7 +74,9 @@ function Login() {
               onChange={handleRoleChange}
               placeholder="請輸入帳號"
             >
-              <option value="" disabled>請選擇身份</option>
+              <option value="" disabled>
+                請選擇身份
+              </option>
               <option value="student">student</option>
               <option value="teacher">teacher</option>
             </RegisterSelect>
@@ -113,7 +115,7 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin-top:90px;
+  margin-top: 90px;
 `;
 
 const Content = styled.div`
@@ -152,6 +154,9 @@ const RegisterInput = styled.input`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const RegisterSelect = styled.select`
@@ -168,6 +173,15 @@ const RegisterSelect = styled.select`
   background-repeat: no-repeat;
   background-position: calc(100% - 20px) center;
   padding-right: 30px;
+  option:checked {
+    background-color: #febebe;
+  }
+  option:hover {
+    background-color: #febebe;
+  }
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const BtnContainer = styled.div`
@@ -199,7 +213,7 @@ const Text1 = styled.p`
 
 const Text2 = styled(Text1)`
   font-weight: 700;
-  color: #F46868;
+  color: #f46868;
 `;
 
 export default Login;

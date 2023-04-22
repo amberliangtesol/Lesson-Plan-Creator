@@ -18,6 +18,7 @@ import usedbadge2 from "./usedbadge2.png";
 import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
 import Footer from "../../components/Footer";
+import arrow from "../Login/arrow.png";
 
 function Badge() {
   const { user, setUser } = useContext(UserContext);
@@ -102,80 +103,91 @@ function Badge() {
   };
 
   return (
-    <div>
+    <Body>
       <Header></Header>
-      <Container>
-        <StudentMainSidebar></StudentMainSidebar>
-        <div>
-          <h3>徽章搜集</h3>
-          <Container2 style={{ paddingLeft: "50px" }}>
-            <h4>我的徽章</h4>
-            <BadgeContainer>
-              {collectedBadges.map((badgeId, index) =>
-                renderBadge(badgeId, index)
-              )}
-            </BadgeContainer>
-          </Container2>
+      <Content>
+        <Container>
+          <StudentMainSidebar></StudentMainSidebar>
+          <MainContent>
+            <Title>徽章搜集</Title>
+            <Container2>
+              <h4>我的徽章</h4>
+              <BadgeContainer>
+                {collectedBadges.map((badgeId, index) =>
+                  renderBadge(badgeId, index)
+                )}
+              </BadgeContainer>
+            </Container2>
 
-          <Container2 style={{ paddingLeft: "50px" }}>
-            <h4>兌換紀錄</h4>
-            <BadgeContainer>
-              {usedBadges.map((badgeId, index) => renderBadge(badgeId, index))}
-            </BadgeContainer>
-          </Container2>
-        </div>
-      </Container>
+            <Container2>
+              <h4>兌換紀錄</h4>
+              <BadgeContainer>
+                {usedBadges.map((badgeId, index) =>
+                  renderBadge(badgeId, index)
+                )}
+              </BadgeContainer>
+            </Container2>
+          </MainContent>
+        </Container>
+      </Content>
+
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
-
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
-`;
-
-const BtnContainer = styled.div`
+const Body = styled.div`
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const Container1 = styled.div`
+
+const MainContent = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
+  width: 70%;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const Container2 = styled.div`
+  gap: 20px;
+  width: 100%;
+  padding: 30px 60px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: row;
-`;
-
-const ProfileImg = styled.div`
-  width: 150px;
-  height: 150px;
-  border: 1px solid black;
-  background-image: url(${(props) => props.imageURL});
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
+  flex-wrap: wrap;
+  align-items: flex-start;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  background-color: #f5f5f5;
+  border-radius: 33px;
 `;
 
 const BadgeContainer = styled.div`
