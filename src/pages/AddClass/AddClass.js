@@ -294,15 +294,13 @@ function AddClass() {
                 onBlur={handleTeacherInputBlur}
                 placeholder="輸入教師信箱"
               />
-              
-                <CheckboxInput
-                  type="checkbox"
-                  checked={useLoggedInUserEmail}
-                  onChange={handleCheckboxChange}
-                  style={{ alignitems: "center" }}
-                />
-                <p>指派自己
-              </p>
+              <CheckboxInput
+                type="checkbox"
+                checked={useLoggedInUserEmail}
+                onChange={handleCheckboxChange}
+                style={{ alignitems: "center" }}
+              />
+              <p>指派自己</p>
               <CustomFileInputButton
                 onClick={triggerFileInput}
                 style={{ marginLeft: "auto" }}
@@ -394,6 +392,9 @@ const ClassInput = styled.input`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const CheckboxInput = styled.input`
@@ -404,11 +405,11 @@ const CheckboxInput = styled.input`
   font-size: 18px;
   padding-left: 15px;
   border: none;
-  ${'' /* box-shadow: 0px 1px 4px 0px #00000033; */}
+  ${"" /* box-shadow: 0px 1px 4px 0px #00000033; */}
   outline: none;
 
-  &:focus {
-    border: none;
+  :focus {
+    outline: 2px solid #f46868;
   }
 `;
 

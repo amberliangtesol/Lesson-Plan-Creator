@@ -59,8 +59,21 @@ function CreateCourse() {
 
   const UploadIcon = () => {
     return (
-      <span style={{ display: "flex", justifyContent: "center", position:"relative"}}>
-        <BsCloudUpload style={{ color: "#A3A1A1", fontSize: "40px", position:"absolute",top:"52px"}}/>
+      <span
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
+        <BsCloudUpload
+          style={{
+            color: "#f46868",
+            fontSize: "40px",
+            position: "absolute",
+            top: "52px",
+          }}
+        />
       </span>
     );
   };
@@ -139,8 +152,8 @@ function CreateCourse() {
   }, [lessonId]);
 
   function setDropdownHeight() {
-    const selectEl = document.querySelector('select');
-    selectEl.setAttribute('size', selectEl.length);
+    const selectEl = document.querySelector("select");
+    selectEl.setAttribute("size", selectEl.length);
   }
 
   return (
@@ -233,12 +246,20 @@ function CreateCourse() {
                   type="text"
                   onChange={(e) => setCourseName(e.target.value)}
                 ></CourseInput>
-                <div style={{ display:"flex", flexDirection:"row", alignItems:"center"}}>
-                <CourseDetailText>班級設定</CourseDetailText>
-                <CourseDetailReminder>* 按下command或control鍵可多選</CourseDetailReminder>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>班級設定</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 按下command或control鍵可多選
+                  </CourseDetailReminder>
                 </div>
                 <SelectOptions
-                  style={{ padding:"10px" }}
+                  style={{ padding: "10px" }}
                   multiple
                   value={classChoose}
                   onChange={(e) => {
@@ -358,7 +379,7 @@ const VideoImg = styled.div`
   width: 300px;
   height: 150px;
   background: #ffffff;
-  box-shadow: 0px 1px 4px 0px #00000033;  
+  box-shadow: 0px 1px 4px 0px #00000033;
   border-radius: 29px;
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
@@ -412,8 +433,11 @@ const CourseInput = styled.input`
   font-size: 18px;
   padding-left: 15px;
   padding-right: 30px;
-  border: none;  
+  border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const CourseDetail = styled.div`
@@ -432,8 +456,10 @@ const SelectOptions = styled.select`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
-
 
 const CourseDetailText = styled.p`
   font-weight: 700;
@@ -447,7 +473,7 @@ const CourseDetailReminder = styled.p`
   font-size: 15px;
   line-height: 19px;
   margin: 10px;
-  color:#f46868;
+  color: #f46868;
 `;
 
 export default CreateCourse;

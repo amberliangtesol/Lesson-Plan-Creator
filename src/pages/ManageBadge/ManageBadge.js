@@ -157,7 +157,9 @@ function ManageBadge() {
             setSelectedBadge("");
           }}
         >
-          <option value="" disabled>選擇班級</option>
+          <option value="" disabled>
+            選擇班級
+          </option>
           {classDetails.map((classItem, index) => (
             <option key={index} value={classItem.name}>
               {classItem.name}
@@ -168,7 +170,9 @@ function ManageBadge() {
           value={selectedStudent}
           onChange={(e) => setSelectedStudent(e.target.value)}
         >
-          <option value="" disabled>選擇學生</option>
+          <option value="" disabled>
+            選擇學生
+          </option>
           {students.map((student, index) => (
             <option key={index} value={student}>
               {student}
@@ -179,7 +183,9 @@ function ManageBadge() {
           value={selectedBadge}
           onChange={(e) => setSelectedBadge(e.target.value)}
         >
-          <option value="" disabled>選擇徽章</option>
+          <option value="" disabled>
+            選擇徽章
+          </option>
           <option value="準時完成作業">準時完成作業</option>
           <option value="挑戰打怪成功">挑戰打怪成功</option>
         </SelectOptions>
@@ -277,6 +283,9 @@ const SelectOptions = styled.select`
   background-repeat: no-repeat;
   background-position: calc(100% - 20px) center;
   padding-right: 30px;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 export default ManageBadge;

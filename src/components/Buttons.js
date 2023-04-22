@@ -144,6 +144,10 @@ const NoBorderBtn = styled.div`
     margin-right: 5px;
   }
 
+  &:hover {
+    transform: scale(1.1);
+  }
+
   a {
     color: #545454;
     font-weight: 700;

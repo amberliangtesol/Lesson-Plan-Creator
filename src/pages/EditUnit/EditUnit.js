@@ -14,7 +14,12 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
+import { NoBorderBtn } from "../../components/Buttons";
+import arrow from "../Login/arrow.png";
 
 function chunk(array, chunk) {
   let result = [];
@@ -36,12 +41,11 @@ function EditUnit() {
   const [currentUnitId, setCurrentUnitId] = useState();
   const [lessonData, setLessonData] = useState({});
 
-
   useEffect(() => {
     const fetchLessonData = async () => {
       const lessonDocRef = doc(db, "lessons", lessonId, "units", currentUnitId);
       const lessonSnapshot = await getDoc(lessonDocRef);
-      console.log("lessonDocRef",lessonDocRef);
+      console.log("lessonDocRef", lessonDocRef);
       if (lessonSnapshot.exists()) {
         setLessonData(lessonSnapshot.data());
         setUnitName(lessonSnapshot.data().unitName);
@@ -54,11 +58,10 @@ function EditUnit() {
       }
       console.log(lessonSnapshot.data());
     };
-  
+
     fetchLessonData();
   }, [lessonId, currentUnitId]);
 
-  
   const createTest = (type) => {
     const init = {
       explanation: "",
@@ -97,9 +100,15 @@ function EditUnit() {
   ]);
 
   const handleUpdate = async () => {
+    let videoId = "";
+    if (inputLink) {
+      const url = new URL(inputLink);
+      videoId = url.searchParams.get("v");
+    }
+
     try {
       const lessonDocRef = doc(db, `lessons/${lessonId}/units`, currentUnitId);
-  
+
       await updateDoc(lessonDocRef, {
         // timestamp: new Date().valueOf(),
         description: description,
@@ -114,13 +123,12 @@ function EditUnit() {
         video: videoId,
         explanation: explanation,
       });
-  
+
       console.log("Document updated with ID: ", currentUnitId);
     } catch (e) {
       console.error("Error updating document: ", e);
     }
   };
-  
 
   const handleAddTest = (e) => {
     const newTest = createTest();
@@ -176,7 +184,6 @@ function EditUnit() {
     setVideoId(videoId);
   };
 
-
   useEffect(() => {
     const fetchSortedUnits = async () => {
       console.log(`lessons/${lessonId}/units`);
@@ -199,344 +206,455 @@ function EditUnit() {
   }, [lessonId]);
 
   return (
-    <div>
-      <h3>單元編輯</h3>
-      <Container>
-        <Container1>
-          <BtnContainer>
-            <h4>單元列表</h4>
-            {sortedUnits.map((unit, index) => (
-              <p
-                key={unit.id}
+    <Body>
+      <Header></Header>
+      <Content>
+        <Container>
+          <Container1>
+            <BtnContainer>
+              <Title
                 style={{
-                  color: unit.id === currentUnitId ? "red" : "black",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setCurrentUnitId(unit.id);
+                  marginBottom: "50px",
                 }}
               >
-                Unit {index + 1}: {unit.data.unitName}
-              </p>
-            ))}
-            <Btn>
-              <Link to="/TeacherMain">回課程主頁</Link>
-            </Btn>
-          </BtnContainer>
-        </Container1>
-        <Container2 style={{ paddingLeft: "50px" }}>
-          <Link to="/TeacherMain">
-            <button type="button" onClick={handleUpdate}>
-              完成送出
-            </button>
-          </Link>
-
-          <form>
-            <p>單元名稱</p>
-            <input
-              type="text"
-              value={unitName}
-              onChange={(e) => setUnitName(e.target.value)}
-            ></input>
-
-            <p>影音資料</p>
-            <input
-              type="text"
-              value={videoId}
-              onChange={handleInputChange}
-              placeholder="請貼上YouTube連結"
-            ></input>
-            <button type="button" onClick={extractVideoId}>
-              確認連結
-            </button>
-
-            <p>單元小標</p>
-            <input
-              type="text"
-              value={subTitle}
-              onChange={(e) => setSubTitle(e.target.value)}
-            ></input>
-
-            <p>補充說明</p>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></input>
-
-            <p>加入測驗</p>
-            <Splict></Splict>
-
-            {totalTestArray.map((item, index) => (
-              <div key={`test_${index}`}>
-                <p>選擇題型</p>
-                <select
-                  value={item.type}
-                  onChange={(e) => handleSelectType(e.target.value, index)}
+                單元列表
+              </Title>
+              {sortedUnits.map((unit, index) => (
+                <CourseDetailText
+                  key={unit.id}
+                  style={{
+                    color: unit.id === currentUnitId ? "red" : "black",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setCurrentUnitId(unit.id);
+                  }}
                 >
-                  <option value="">選擇題型</option>
-                  <option value="multiple-choice">選擇題</option>
-                  <option value="matching">翻翻牌</option>
-                  <option value="sorting">排序題</option>
-                </select>
-                {item.type === "multiple-choice" && (
-                  <div>
-                    '選擇題'
-                    <p>插入時間</p>
-                    <input
-                      type="number"
-                      value={item.data.time}
-                      onChange={(e) => {
-                        let timeArray = [...totalTestArray];
-                        timeArray[index].data.time = e.target.value;
-                        setTotalTestArray(timeArray);
-                      }}
-                    />
-                    <p>對戰模式</p>
-                    <select
-                      value={item.data.gameMode}
-                      onChange={(e) => {
-                        let gameModeArray = [...totalTestArray];
-                        gameModeArray[index].data.gameMode = e.target.value;
-                        setTotalTestArray(gameModeArray);
-                      }}
+                  Unit {index + 1}: {unit.data.unitName}
+                </CourseDetailText>
+              ))}
+              <MainDarkBorderBtn
+                style={{
+                  marginTop: "100px",
+                }}
+              >
+                <Link to="/TeacherMain">回首頁</Link>
+              </MainDarkBorderBtn>
+            </BtnContainer>
+          </Container1>
+          <Container2>
+            <Title>單元編輯</Title>
+            <MainRedFilledBtn
+              type="button"
+              onClick={handleUpdate}
+              style={{ marginLeft: "auto", marginBottom: "30px" }}
+            >
+              <Link to="/TeacherMain">完成送出</Link>
+            </MainRedFilledBtn>
+
+            <form>
+              <UnitInfo>
+                <CourseDetailText>單元名稱</CourseDetailText>
+                <CourseInput
+                  type="text"
+                  value={unitName}
+                  onChange={(e) => setUnitName(e.target.value)}
+                ></CourseInput>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>影音資料</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 請檢查YouTube影片權限是否為公開
+                  </CourseDetailReminder>
+                </div>
+                <CourseInput
+                  type="text"
+                  value={videoId}
+                  onChange={handleInputChange}
+                  placeholder="請貼上YouTube連結"
+                ></CourseInput>
+
+                {/* <MainRedFilledBtn type="button" onClick={extractVideoId}>
+                確認連結
+              </MainRedFilledBtn> */}
+                <CourseDetailText>單元小標</CourseDetailText>
+                <CourseInput
+                  type="text"
+                  value={subTitle}
+                  onChange={(e) => setSubTitle(e.target.value)}
+                ></CourseInput>
+                <CourseDetailText>補充說明</CourseDetailText>
+                <CourseInput
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                ></CourseInput>
+              </UnitInfo>
+              <Title
+                style={{
+                  textAlign: "center",
+                  marginTop: "30px",
+                  marginBottom: "30px",
+                }}
+              >
+                加入測驗
+              </Title>
+              <div>
+                {totalTestArray.map((item, index) => (
+                  <Addtest
+                    key={`test_${index}`}
+                    style={{
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <CourseDetailText>選擇題型</CourseDetailText>
+                    <SelectOptions
+                      value={item.type}
+                      onChange={(e) => handleSelectType(e.target.value, index)}
                     >
-                      <option value="true">開啟</option>
-                      <option value="false">關閉</option>
-                    </select>
-                    <p>問題</p>
-                    <input
-                      type="text"
-                      value={item.data.question}
-                      onChange={(e) => {
-                        let questionArray = [...totalTestArray];
-                        questionArray[index].data.question = e.target.value;
-                        setTotalTestArray(questionArray);
-                      }}
-                    ></input>
-                    <p>詳解</p>
-                    <input
-                      type="text"
-                      value={item.data.explanation}
-                      onChange={(e) => {
-                        let explanationArray = [...totalTestArray];
-                        explanationArray[index].data.explanation =
-                          e.target.value;
-                        setTotalTestArray(explanationArray);
-                      }}
-                    ></input>
-                    <p>選項</p>
-                    <label htmlFor="ans">解答</label>
-                    {(item.data.options || []).map((option, idx) => (
+                      <option value="">選擇題型</option>
+                      <option value="multiple-choice">選擇題</option>
+                      <option value="matching">翻翻牌</option>
+                      <option value="sorting">排序題</option>
+                    </SelectOptions>
+                    {item.type === "multiple-choice" && (
                       <div>
-                        <input
-                          key={`multiple_choice_checkbox_${idx}`}
-                          type="checkbox"
-                          checked={option.correct}
-                          value="true"
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CourseDetailText>插入時間</CourseDetailText>
+                          <CourseDetailReminder>
+                            * 請輸入該題目在影片出現的秒數
+                          </CourseDetailReminder>
+                        </div>
+                        <CourseInput
+                          type="number"
+                          value={item.data.time}
                           onChange={(e) => {
-                            const options = [...item.data.options];
-                            options[idx] = {
-                              ...options[idx],
-                              correct: e.target.value,
-                            };
-                            handleChange(index, "options", options);
+                            let timeArray = [...totalTestArray];
+                            timeArray[index].data.time = e.target.value;
+                            setTotalTestArray(timeArray);
                           }}
                         />
-                        <input
-                          key={`multiple_choice_text_${idx}`}
+                        <CourseDetailText>對戰模式</CourseDetailText>
+                        <SelectOptions
+                          value={item.data.gameMode}
+                          onChange={(e) => {
+                            let gameModeArray = [...totalTestArray];
+                            gameModeArray[index].data.gameMode = e.target.value;
+                            setTotalTestArray(gameModeArray);
+                          }}
+                        >
+                          <option value="true">開啟</option>
+                          <option value="false">關閉</option>
+                        </SelectOptions>
+                        <CourseDetailText>問題</CourseDetailText>
+                        <CourseInput
                           type="text"
-                          value={option.text}
+                          value={item.data.question}
                           onChange={(e) => {
-                            const options = [...item.data.options];
-                            options[idx] = {
-                              ...options[idx],
-                              text: e.target.value,
-                            };
-                            handleChange(index, "options", options);
+                            let questionArray = [...totalTestArray];
+                            questionArray[index].data.question = e.target.value;
+                            setTotalTestArray(questionArray);
                           }}
-                        />
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => handleAddOption(index)}
-                    >
-                      再加一個選項
-                    </button>
-                  </div>
-                )}
-                {item.type === "matching" && (
-                  <div>
-                    '翻翻牌'
-                    <p>插入時間</p>
-                    <input
-                      type="number"
-                      value={item.data.time}
-                      onChange={(e) => {
-                        let timeArray = [...totalTestArray];
-                        timeArray[index].data.time = e.target.value;
-                        setTotalTestArray(timeArray);
-                      }}
-                    />
-                    <p>對戰模式</p>
-                    <select
-                      value={item.data.gameMode}
-                      onChange={(e) => {
-                        let gameModeArray = [...totalTestArray];
-                        gameModeArray[index].data.gameMode = e.target.value;
-                        setTotalTestArray(gameModeArray);
-                      }}
-                    >
-                      <option value="true">開啟</option>
-                      <option value="false">關閉</option>
-                    </select>
-                    <p>問題</p>
-                    <input
-                      type="text"
-                      value={item.data.question}
-                      onChange={(e) => {
-                        let questionArray = [...totalTestArray];
-                        questionArray[index].data.question = e.target.value;
-                        setTotalTestArray(questionArray);
-                      }}
-                    ></input>
-                    <p>詳解</p>
-                    <input
-                      type="text"
-                      value={item.data.explanation}
-                      onChange={(e) => {
-                        let explanationArray = [...totalTestArray];
-                        explanationArray[index].data.explanation =
-                          e.target.value;
-                        setTotalTestArray(explanationArray);
-                      }}
-                    ></input>
-                    <p>配對</p>
-                    {chunk(item.data.cards || [], 2).map(
-                      (chunkedCards, idx) => {
-                        return chunkedCards.map((card, iidx) => (
-                          <div>
-                            <input
-                              key={`matching_question_${idx}_${iidx}`}
-                              type="text"
-                              value={card.text}
+                        ></CourseInput>
+                        <CourseDetailText>詳解</CourseDetailText>
+                        <CourseInput
+                          type="text"
+                          value={item.data.explanation}
+                          onChange={(e) => {
+                            let explanationArray = [...totalTestArray];
+                            explanationArray[index].data.explanation =
+                              e.target.value;
+                            setTotalTestArray(explanationArray);
+                          }}
+                        ></CourseInput>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CourseDetailText>選項</CourseDetailText>
+                          <CourseDetailReminder>
+                            * 請將選項為解答的項目打勾
+                          </CourseDetailReminder>
+                        </div>
+
+                        {/* <label htmlFor="ans">解答</label> */}
+                        {(item.data.options || []).map((option, idx) => (
+                          <MultipleChoiceQuestion>
+                            <CheckboxInput
+                              key={`multiple_choice_checkbox_${idx}`}
+                              type="checkbox"
+                              checked={option.correct}
+                              value="true"
                               onChange={(e) => {
-                                const cards = [...item.data.cards];
-                                const current = idx * 2 + iidx;
-                                cards[current] = {
-                                  ...cards[current],
+                                const options = [...item.data.options];
+                                options[idx] = {
+                                  ...options[idx],
+                                  correct: e.target.value,
+                                };
+                                handleChange(index, "options", options);
+                              }}
+                            />
+                            <CourseInput
+                              key={`multiple_choice_text_${idx}`}
+                              type="text"
+                              placeholder="輸入選項"
+                              value={option.text}
+                              onChange={(e) => {
+                                const options = [...item.data.options];
+                                options[idx] = {
+                                  ...options[idx],
                                   text: e.target.value,
                                 };
-                                handleChange(index, "cards", cards);
+                                handleChange(index, "options", options);
+                              }}
+                            />
+                          </MultipleChoiceQuestion>
+                        ))}
+                        <NoBorderBtn
+                          type="button"
+                          onClick={() => handleAddOption(index)}
+                        >
+                          再加一個選項
+                        </NoBorderBtn>
+                      </div>
+                    )}
+                    {item.type === "matching" && (
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CourseDetailText>插入時間</CourseDetailText>
+                          <CourseDetailReminder>
+                            * 請輸入該題目在影片出現的秒數
+                          </CourseDetailReminder>
+                        </div>
+                        <CourseInput
+                          type="number"
+                          value={item.data.time}
+                          onChange={(e) => {
+                            let timeArray = [...totalTestArray];
+                            timeArray[index].data.time = e.target.value;
+                            setTotalTestArray(timeArray);
+                          }}
+                        />
+                        <CourseDetailText>對戰模式</CourseDetailText>
+                        <SelectOptions
+                          value={item.data.gameMode}
+                          onChange={(e) => {
+                            let gameModeArray = [...totalTestArray];
+                            gameModeArray[index].data.gameMode = e.target.value;
+                            setTotalTestArray(gameModeArray);
+                          }}
+                        >
+                          <option value="true">開啟</option>
+                          <option value="false">關閉</option>
+                        </SelectOptions>
+                        <CourseDetailText>問題</CourseDetailText>
+                        <CourseInput
+                          type="text"
+                          value={item.data.question}
+                          onChange={(e) => {
+                            let questionArray = [...totalTestArray];
+                            questionArray[index].data.question = e.target.value;
+                            setTotalTestArray(questionArray);
+                          }}
+                        ></CourseInput>
+                        <CourseDetailText>詳解</CourseDetailText>
+                        <CourseInput
+                          type="text"
+                          value={item.data.explanation}
+                          onChange={(e) => {
+                            let explanationArray = [...totalTestArray];
+                            explanationArray[index].data.explanation =
+                              e.target.value;
+                            setTotalTestArray(explanationArray);
+                          }}
+                        ></CourseInput>
+                        <CourseDetailText>配對</CourseDetailText>
+                        {chunk(item.data.cards || [], 2).map(
+                          (chunkedCards, idx) => {
+                            return chunkedCards.map((card, iidx) => (
+                              <CourseInput
+                                key={`matching_question_${idx}_${iidx}`}
+                                type="text"
+                                placeholder="輸入對應內容"
+                                value={card.text}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
+                                }}
+                                onChange={(e) => {
+                                  const cards = [...item.data.cards];
+                                  const current = idx * 2 + iidx;
+                                  cards[current] = {
+                                    ...cards[current],
+                                    text: e.target.value,
+                                  };
+                                  handleChange(index, "cards", cards);
+                                }}
+                              />
+                            ));
+                          }
+                        )}
+                        <NoBorderBtn
+                          type="button"
+                          onClick={() => handleAddOption(index)}
+                        >
+                          再加一個組合
+                        </NoBorderBtn>
+                      </div>
+                    )}
+                    {item.type === "sorting" && (
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CourseDetailText>插入時間</CourseDetailText>
+                          <CourseDetailReminder>
+                            * 請輸入該題目在影片出現的秒數
+                          </CourseDetailReminder>
+                        </div>
+                        <CourseInput
+                          type="number"
+                          value={item.data.time}
+                          onChange={(e) => {
+                            let timeArray = [...totalTestArray];
+                            timeArray[index].data.time = e.target.value;
+                            setTotalTestArray(timeArray);
+                          }}
+                        />
+                        <CourseDetailText>對戰模式</CourseDetailText>
+                        <SelectOptions
+                          value={item.data.gameMode}
+                          onChange={(e) => {
+                            let gameModeArray = [...totalTestArray];
+                            gameModeArray[index].data.gameMode = e.target.value;
+                            setTotalTestArray(gameModeArray);
+                          }}
+                        >
+                          <option value="true">開啟</option>
+                          <option value="false">關閉</option>
+                        </SelectOptions>
+                        <CourseDetailText>問題</CourseDetailText>
+                        <CourseInput
+                          type="text"
+                          value={item.data.question}
+                          onChange={(e) => {
+                            let questionArray = [...totalTestArray];
+                            questionArray[index].data.question = e.target.value;
+                            setTotalTestArray(questionArray);
+                          }}
+                        ></CourseInput>
+                        <CourseDetailText>詳解</CourseDetailText>
+                        <CourseInput
+                          type="text"
+                          value={item.data.explanation}
+                          onChange={(e) => {
+                            let explanationArray = [...totalTestArray];
+                            explanationArray[index].data.explanation =
+                              e.target.value;
+                            setTotalTestArray(explanationArray);
+                          }}
+                        ></CourseInput>
+                        <CourseDetailText>選項</CourseDetailText>
+                        {(item.data.sorted || []).map((sorted, idx) => (
+                          <div>
+                            <CourseInput
+                              key={`sorting_text_${idx}`}
+                              type="text"
+                              placeholder="請依序輸入排序內容"
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
+                              value={sorted}
+                              onChange={(e) => {
+                                const sorted = [...item.data.sorted];
+                                sorted[idx] = e.target.value;
+                                handleChange(index, "sorted", sorted);
                               }}
                             />
                           </div>
-                        ));
-                      }
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => handleAddOption(index)}
-                    >
-                      再加一個選項
-                    </button>
-                  </div>
-                )}
-                {item.type === "sorting" && (
-                  <div>
-                    '排序題'
-                    <p>插入時間</p>
-                    <input
-                      type="number"
-                      value={item.data.time}
-                      onChange={(e) => {
-                        let timeArray = [...totalTestArray];
-                        timeArray[index].data.time = e.target.value;
-                        setTotalTestArray(timeArray);
-                      }}
-                    />
-                    <p>對戰模式</p>
-                    <select
-                      value={item.data.gameMode}
-                      onChange={(e) => {
-                        let gameModeArray = [...totalTestArray];
-                        gameModeArray[index].data.gameMode = e.target.value;
-                        setTotalTestArray(gameModeArray);
-                      }}
-                    >
-                      <option value="true">開啟</option>
-                      <option value="false">關閉</option>
-                    </select>
-                    <p>問題</p>
-                    <input
-                      type="text"
-                      value={item.data.question}
-                      onChange={(e) => {
-                        let questionArray = [...totalTestArray];
-                        questionArray[index].data.question = e.target.value;
-                        setTotalTestArray(questionArray);
-                      }}
-                    ></input>
-                    <p>詳解</p>
-                    <input
-                      type="text"
-                      value={item.data.explanation}
-                      onChange={(e) => {
-                        let explanationArray = [...totalTestArray];
-                        explanationArray[index].data.explanation =
-                          e.target.value;
-                        setTotalTestArray(explanationArray);
-                      }}
-                    ></input>
-                    <p>選項</p>
-                    {(item.data.sorted || []).map((sorted, idx) => (
-                      <div>
-                        <input
-                          key={`sorting_text_${idx}`}
-                          type="text"
-                          value={sorted}
-                          onChange={(e) => {
-                            const sorted = [...item.data.sorted];
-                            sorted[idx] = e.target.value;
-                            handleChange(index, "sorted", sorted);
-                          }}
-                        />
+                        ))}
+                        <NoBorderBtn
+                          type="button"
+                          onClick={() => handleAddOption(index)}
+                        >
+                          再加一個順序
+                        </NoBorderBtn>
                       </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => handleAddOption(index)}
-                    >
-                      再加一個選項
-                    </button>
-                  </div>
-                )}{" "}
+                    )}
+                  </Addtest>
+                ))}
               </div>
-            ))}
+              <MainDarkBorderBtn
+                onClick={handleAddTest}
+                style={{ marginTop: "15px" }}
+              >
+                再加一題
+              </MainDarkBorderBtn>{" "}
+            </form>
+          </Container2>
+        </Container>
+      </Content>
+      <CourseDetailText>單元編輯</CourseDetailText>
 
-            <button onClick={handleAddTest}>再加一題</button>
-          </form>
-        </Container2>
-      </Container>
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
+
+const Container = styled.div`
+  padding-top: 40px;
+  display: flex;
+  flex-direction: row;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const BtnContainer = styled.div`
@@ -544,26 +662,116 @@ const BtnContainer = styled.div`
   flex-direction: column;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
+  width: 400px;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(245, 245, 245);
+  min-height: 100vh;
+  padding-top: 90px;
 `;
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: 90px;
+  width: 50vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
   select {
     pointer-events: auto;
   }
 `;
 
-const Splict = styled.div`
-  width: 500px;
-  border-top: 1px solid;
+const CourseInput = styled.input`
+  width: 100%;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  padding-right: 30px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
+`;
+
+const SelectOptions = styled.select`
+  width: 100%;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  font-size: 18px;
+  padding-left: 15px;
+  border: none;
+  box-shadow: 0px 1px 4px 0px #00000033;
+  appearance: none;
+  background-image: url(${arrow});
+  background-repeat: no-repeat;
+  background-position: calc(100% - 20px) center;
+  padding-right: 30px;
+  :focus {
+    outline: 2px solid #f46868;
+  }
+`;
+
+const CourseDetailText = styled.p`
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 19px;
+  margin: 15px;
+`;
+
+const CourseDetailReminder = styled.p`
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 19px;
+  margin: 10px;
+  color: #f46868;
+`;
+
+const UnitInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 100%;
+  padding: 30px 60px 50px 60px;
+`;
+
+const Addtest = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 100%;
+  padding: 30px 60px 50px 60px;
+`;
+
+const CheckboxInput = styled.input`
+  width: 30px;
+  height: 30px;
+  background: #ffffff;
+  border-radius: 40px;
+  font-size: 18px;
+  margin-right: 15px;
+  border: none;
+  outline: none;
+  :focus {
+    outline: 2px solid #f46868;
+  }
+`;
+const MultipleChoiceQuestion = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export default EditUnit;

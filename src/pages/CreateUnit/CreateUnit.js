@@ -210,7 +210,7 @@ function CreateUnit() {
                 <CourseDetailText
                   key={unit.id}
                   style={{
-                    color: unit.id === currentUnitId ? "red" : "black",
+                    // color: unit.id === currentUnitId ? "red" : "black",
                     cursor: "pointer",
                     marginTop: "30px",
                   }}
@@ -292,9 +292,14 @@ function CreateUnit() {
               >
                 加入測驗
               </Title>
-              <Addtest>
+              <div>
                 {totalTestArray.map((item, index) => (
-                  <div key={`test_${index}`}>
+                  <Addtest
+                    key={`test_${index}`}
+                    style={{
+                      marginBottom: "20px",
+                    }}
+                  >
                     <CourseDetailText>選擇題型</CourseDetailText>
                     <SelectOptions
                       value={item.type}
@@ -392,7 +397,6 @@ function CreateUnit() {
                                 };
                                 handleChange(index, "options", options);
                               }}
-                              style={{ margin: "10px" }}
                             />
                             <CourseInput
                               key={`multiple_choice_text_${idx}`}
@@ -432,7 +436,7 @@ function CreateUnit() {
                           <CourseDetailReminder>
                             * 請輸入該題目在影片出現的秒數
                           </CourseDetailReminder>
-                        </div>{" "}
+                        </div>
                         <CourseInput
                           type="number"
                           value={item.data.time}
@@ -484,7 +488,10 @@ function CreateUnit() {
                                 type="text"
                                 placeholder="輸入對應內容"
                                 value={card.text}
-                                style={{ margin: "10px" }}
+                                style={{
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
+                                }}
                                 onChange={(e) => {
                                   const cards = [...item.data.cards];
                                   const current = idx * 2 + iidx;
@@ -519,7 +526,7 @@ function CreateUnit() {
                           <CourseDetailReminder>
                             * 請輸入該題目在影片出現的秒數
                           </CourseDetailReminder>
-                        </div>{" "}
+                        </div>
                         <CourseInput
                           type="number"
                           value={item.data.time}
@@ -569,7 +576,10 @@ function CreateUnit() {
                               key={`sorting_text_${idx}`}
                               type="text"
                               placeholder="請依序輸入排序內容"
-                              style={{ margin: "10px" }}
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
                               value={sorted}
                               onChange={(e) => {
                                 const sorted = [...item.data.sorted];
@@ -587,9 +597,9 @@ function CreateUnit() {
                         </NoBorderBtn>
                       </div>
                     )}
-                  </div>
+                  </Addtest>
                 ))}
-              </Addtest>
+              </div>
 
               <MainDarkBorderBtn
                 onClick={handleAddTest}
@@ -678,6 +688,9 @@ const CourseInput = styled.input`
   padding-right: 30px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const SelectOptions = styled.select`
@@ -694,6 +707,9 @@ const SelectOptions = styled.select`
   background-repeat: no-repeat;
   background-position: calc(100% - 20px) center;
   padding-right: 30px;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const CourseDetailText = styled.p`
@@ -737,11 +753,9 @@ const CheckboxInput = styled.input`
   font-size: 18px;
   margin-right: 15px;
   border: none;
-  ${"" /* box-shadow: 0px 1px 4px 0px #00000033; */}
   outline: none;
-
-  &:focus {
-    border: none;
+  :focus {
+    outline: 2px solid #f46868;
   }
 `;
 const MultipleChoiceQuestion = styled.div`

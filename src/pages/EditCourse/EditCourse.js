@@ -409,6 +409,9 @@ const CourseInput = styled.input`
   padding-right: 30px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const CourseDetail = styled.div`
@@ -427,6 +430,9 @@ const SelectOptions = styled.select`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  :focus {
+    outline: 2px solid #f46868;
+  }
 `;
 
 const CourseDetailText = styled.p`

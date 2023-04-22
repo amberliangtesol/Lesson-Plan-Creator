@@ -13,6 +13,7 @@ import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
+import { NoBorderBtn } from "../../components/Buttons";
 
 function TeacherProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -172,12 +173,16 @@ function TeacherProfile() {
 
                 <ProfileDetailContainer>
                   <ProfileText>密碼</ProfileText>
-                  <MainDarkBorderBtn
+                  <CustomNoBorderBtn
                     onClick={handleResetPassword}
-                    style={{ height: "30px", width: "80px" }}
+                    style={{
+                      height: "30px",
+                      width: "80px",
+                      justifyContent: "flex-start",
+                    }}
                   >
                     變更
-                  </MainDarkBorderBtn>
+                  </CustomNoBorderBtn>
                 </ProfileDetailContainer>
               </ProfileDetail>
             </Container2>
@@ -241,7 +246,7 @@ const Container2 = styled.div`
   flex-direction: column;
   align-items: center;
   border-radius: 33px;
-  padding: 50px 100px;
+  padding: 40px 80px 10px 80px;
   box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
 `;
 
@@ -293,6 +298,14 @@ const ButtonContainer = styled.div`
   margin-top: 30px;
   align-items: center;
   justify-content: center;
+`;
+
+const CustomNoBorderBtn = styled(NoBorderBtn)`
+  &::before {
+    content: "✎";
+    color: #f46868;
+    margin-right: 5px;
+  }
 `;
 
 export default TeacherProfile;
