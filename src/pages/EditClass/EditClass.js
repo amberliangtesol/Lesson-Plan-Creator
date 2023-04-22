@@ -406,6 +406,9 @@ const ClassInput = styled.input`
   :focus {
     outline: 2px solid #f46868;
   }
+  option:checked {
+    background-color: #febebe;
+  }
 `;
 
 const SelectOptions = styled.select`
@@ -425,6 +428,9 @@ const SelectOptions = styled.select`
   text-overflow: ellipsis;
   :focus {
     outline: 2px solid #f46868;
+  }
+  option:checked {
+    background-color: #febebe;
   }
 `;
 

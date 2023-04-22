@@ -392,6 +392,9 @@ const ClassInput = styled.input`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  option:checked {
+    background-color: #febebe;
+  }
   :focus {
     outline: 2px solid #f46868;
   }
@@ -407,7 +410,9 @@ const CheckboxInput = styled.input`
   border: none;
   ${"" /* box-shadow: 0px 1px 4px 0px #00000033; */}
   outline: none;
-
+  option:checked {
+    background-color: #febebe;
+  }
   :focus {
     outline: 2px solid #f46868;
   }

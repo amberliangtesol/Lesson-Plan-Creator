@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
 import GameMode from "./components/GameMode";
@@ -46,7 +51,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-
 function App() {
   return (
     <UserInfoProvider>
@@ -72,17 +76,19 @@ function App() {
 
         <Route path="/addclass" element={<AddClass />} />
         <Route path="/edit-class/:classId" element={<EditClass />} />
+
+        <Route path="/score/:lessonId" element={<Score />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/managebadge" element={<ManageBadge />} />
         <Route path="/manageclass" element={<ManageClass />} />
         <Route path="/teacherprofile" element={<TeacherProfile />} />
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/score/:lessonId" element={<Score />} />
         <Route path="/teachermain" element={<TeacherMain />} />
         <Route path="/studentmain" element={<StudentMain />} />
         <Route path="/hovercomputer" element={<HoverComputer />} />
-        <Route path='*' element={<Navigate to='/' replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </UserInfoProvider>
   );

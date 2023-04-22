@@ -184,31 +184,33 @@ function CreateCourse() {
                   <MdOutlineTipsAndUpdates
                     style={{ color: "black", fontSize: "24px" }}
                   />
-                  <StyledParagraphTitle>Reminder</StyledParagraphTitle>
+                  <StyledParagraphTitle>Tips</StyledParagraphTitle>
                 </Btnwrapper>
 
                 <Btnwrapper style={{ marginTop: "50px" }}>
                   <TbCircleNumber1
                     style={{ color: "#f46868", fontSize: "24px" }}
                   />
-                  <StyledParagraph>縮圖最佳尺寸為300*150px</StyledParagraph>
+                  <StyledParagraph>確認課程總體目標</StyledParagraph>
                 </Btnwrapper>
 
                 <Btnwrapper>
                   <TbCircleNumber2
                     style={{ color: "#f46868", fontSize: "24px" }}
                   />
-                  <StyledParagraph>課程日期務必超過建立日期</StyledParagraph>
+                  <StyledParagraph>切分目標至小單元</StyledParagraph>
                 </Btnwrapper>
 
                 <Btnwrapper style={{ marginBottom: "100px" }}>
                   <TbCircleNumber3
                     style={{ color: "#f46868", fontSize: "24px" }}
                   />
-                  <StyledParagraph>YouTube影片連結設定公開</StyledParagraph>
+                  <StyledParagraph>每個單元一段影片</StyledParagraph>
                 </Btnwrapper>
 
-                <MainDarkBorderBtn>
+                <MainDarkBorderBtn
+                  style={{ width: "104px", alignSelf: "center" }}
+                >
                   <Link to="/TeacherMain">回首頁</Link>
                 </MainDarkBorderBtn>
               </BtnContainer>
@@ -226,7 +228,18 @@ function CreateCourse() {
               </MainRedFilledBtn>
 
               <CourseDetail>
-                <CourseDetailText>縮圖上傳</CourseDetailText>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>縮圖上傳</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 最佳尺寸為300*150px
+                  </CourseDetailReminder>
+                </div>
                 <VideoImg imageURL={imageURL}>
                   <UploadLabel htmlFor="imageUpload">
                     <UploadIcon />
@@ -255,7 +268,7 @@ function CreateCourse() {
                 >
                   <CourseDetailText>班級設定</CourseDetailText>
                   <CourseDetailReminder>
-                    * 按下command或control鍵可多選
+                    * ⌘ 或 Ctrl 可多選
                   </CourseDetailReminder>
                 </div>
                 <SelectOptions
@@ -288,7 +301,18 @@ function CreateCourse() {
                     setStartTimestamp(new Date(e.target.value).getTime())
                   }
                 />
-                <CourseDetailText>結束時間</CourseDetailText>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>結束時間</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 請選擇超過建立日期
+                  </CourseDetailReminder>
+                </div>
                 <CourseInput
                   type="datetime-local"
                   value={new Date(endTimestamp).toISOString().slice(0, 16)}
@@ -352,7 +376,7 @@ const BtnContainer = styled.div`
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 350px;
   align-items: center;
   text-align: center;
   background-color: rgb(245, 245, 245);
@@ -363,7 +387,7 @@ const Container1 = styled.div`
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 90px;
+  padding-top: 50px;
   width: 50vw;
   margin-left: auto;
   margin-right: auto;
@@ -438,6 +462,9 @@ const CourseInput = styled.input`
   :focus {
     outline: 2px solid #f46868;
   }
+  option:checked {
+    background-color: #febebe;
+  }
 `;
 
 const CourseDetail = styled.div`
@@ -458,6 +485,9 @@ const SelectOptions = styled.select`
   box-shadow: 0px 1px 4px 0px #00000033;
   :focus {
     outline: 2px solid #f46868;
+  }
+  option:checked {
+    background-color: #febebe;
   }
 `;
 

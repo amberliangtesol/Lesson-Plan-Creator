@@ -286,6 +286,9 @@ const SelectOptions = styled.select`
   :focus {
     outline: 2px solid #f46868;
   }
+  option:checked {
+    background-color: #febebe;
+  }
 `;
 
 export default ManageBadge;

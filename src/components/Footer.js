@@ -3,14 +3,14 @@ import hat from "./hat.png";
 
 const Container = styled.div`
   width: 100%;
-  height: 66px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f46868;
   position: relative;
   position: fixed;
-  bottom:0;
+  bottom: 0;
   z-index: 1000;
   @media screen and (max-width: 1279px) {
   }
@@ -18,7 +18,7 @@ const Container = styled.div`
 
 const Copywright = styled.p`
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   color: #ffffff;
   @media screen and (max-width: 1279px) {
@@ -35,7 +35,6 @@ const Hat = styled.div`
   @media screen and (max-width: 1279px) {
   }
 `;
-
 
 const Footer = () => {
   return (

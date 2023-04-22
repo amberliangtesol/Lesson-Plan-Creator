@@ -13,7 +13,10 @@ import {
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
+import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
 
 function Score() {
   const { lessonId } = useParams();
@@ -27,22 +30,22 @@ function Score() {
       const lessonRef = doc(db, "lessons", lessonId);
       const lessonDoc = await getDoc(lessonRef);
       const classesIds = lessonDoc.data().classes;
-    
+
       const studentsData = {};
-    
+
       for (const classId of classesIds) {
         const classRef = doc(db, "classes", classId);
         const classDoc = await getDoc(classRef);
         const studentsInClass = classDoc.data().students;
-    
+
         for (const studentId of studentsInClass) {
           studentsData[studentId] = [];
         }
       }
-    
+
       setClasses(classesIds);
       setStudents(studentsData);
-    };       
+    };
 
     fetchClassesAndStudents();
   }, [lessonId]);
@@ -66,53 +69,59 @@ function Score() {
 
   const useFirestoreData = (lessonId, currentUnitId, students) => {
     const [data, setData] = useState(null);
-  
+
     useEffect(() => {
       const fetchData = async () => {
         if (!currentUnitId || !students) {
           return;
         }
-  
+
         const fetchedData = { ...students };
-  
+
         const unitRef = doc(db, "lessons", lessonId, "units", currentUnitId);
-        const studentsSubmissionCollection = collection(unitRef, "students_submission");
+        const studentsSubmissionCollection = collection(
+          unitRef,
+          "students_submission"
+        );
         const q = query(studentsSubmissionCollection);
         const querySnapshot = await getDocs(q);
-  
+
         querySnapshot.forEach((doc) => {
           fetchedData[doc.id] = doc.data();
         });
         console.log("fetchedData after loop", fetchedData);
         setData(fetchedData);
       };
-  
+
       fetchData();
     }, [lessonId, currentUnitId, students]);
-  
+
     return data;
-  };  
+  };
 
   const fetchedData = useFirestoreData(lessonId, currentUnitId, students);
 
   const currentUnit = sortedUnits.find((unit) => unit.id === currentUnitId);
   const unitQuestions = currentUnit ? currentUnit.data.test.length : 0;
-  
+
   // Function to generate an array of empty objects
   const generateEmptyAnswers = (count) => {
     return new Array(count).fill(null).map(() => ({}));
   };
-  
+
   // Initialize an empty data object
   const data = {};
-  
+
   // Loop through the fetched data object
   for (const student in fetchedData) {
     if (fetchedData.hasOwnProperty(student)) {
       const studentData = fetchedData[student];
-      
+
       // Check if studentData has an 'answered' property and it's an array
-      if (studentData.hasOwnProperty('answered') && Array.isArray(studentData.answered)) {
+      if (
+        studentData.hasOwnProperty("answered") &&
+        Array.isArray(studentData.answered)
+      ) {
         data[student] = studentData.answered;
       } else {
         // If studentData doesn't have an 'answered' property, set a default value
@@ -120,78 +129,100 @@ function Score() {
       }
     }
   }
-  
-  console.log("data", data);
-  
 
-  if (fetchedData === null) {
-    return (
-      <div>
-        <p>尚未有學生答題</p>
-        <Link to="/TeacherMain">
-          <Btn>回首頁</Btn>
-        </Link>
-      </div>
-    );
-  }
+  console.log("data", data);
 
   const isDataValid = Object.values(data).every(
     (studentData) => Array.isArray(studentData) && studentData.length > 0
   );
 
-  return (
-    <div>
-      <h3>答題狀況</h3>
-      <Container>
-        <Container1>
-          <BtnContainer>
-            <h4>單元列表</h4>
-            {sortedUnits.map((unit, index) => (
-              <p
-                key={unit.id}
-                style={{
-                  color: unit.id === currentUnitId ? "red" : "black",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setCurrentUnitId(unit.id);
-                }}
-              >
-                Unit {index + 1}: {unit.data.unitName}
-              </p>
-            ))}
+  const isDataEmpty = Object.values(data).every(
+    (studentData) => studentData.length === 0
+  );
 
-            <Link to="/TeacherMain">
-              <Btn>回首頁</Btn>
-            </Link>
-          </BtnContainer>
-        </Container1>
-        <Container2 style={{ paddingLeft: "50px", width: "1000px" }}>
-          {isDataValid ? (
-            <Chart data={data} students={students} />
-          ) : (
-            <div>Invalid data, please check your Firestore data structure.</div>
-          )}
-        </Container2>
-      </Container>
+  return (
+    <Body>
+      <Header></Header>
+      <Content>
+        <Container>
+          <MainContent>
+            <Container1>
+              <BtnContainer>
+                <h4>單元列表</h4>
+                {sortedUnits.map((unit, index) => (
+                  <p
+                    key={unit.id}
+                    style={{
+                      color: unit.id === currentUnitId ? "red" : "black",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setCurrentUnitId(unit.id);
+                    }}
+                  >
+                    Unit {index + 1}: {unit.data.unitName}
+                  </p>
+                ))}
+
+                <MainDarkBorderBtn>
+                  <Link to="/TeacherMain">回首頁</Link>
+                </MainDarkBorderBtn>
+              </BtnContainer>
+            </Container1>
+
+            <Container2>
+              <Title>單元成績</Title>
+              {isDataValid ? (
+                <Chart data={data} students={students} />
+              ) : (
+                <div>
+                  Invalid data, please check your Firestore data structure.
+                </div>
+              )}
+              {isDataEmpty && <div>尚未有學生答題.</div>}
+            </Container2>
+          </MainContent>
+        </Container>
+      </Content>
+
       <Footer></Footer>
-    </div>
+    </Body>
   );
 }
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
+
+const Container = styled.div`
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const BtnContainer = styled.div`
@@ -199,18 +230,27 @@ const BtnContainer = styled.div`
   flex-direction: column;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
+  width: 350px;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(245, 245, 245);
+  min-height: 100vh;
+  padding-top: 90px;
 `;
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: 50px;
+  width: 50vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
   select {
     pointer-events: auto;
   }

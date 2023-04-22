@@ -655,7 +655,7 @@ const BtnContainer = styled.div`
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 350px;
   align-items: center;
   text-align: center;
   background-color: rgb(245, 245, 245);
@@ -666,7 +666,7 @@ const Container1 = styled.div`
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 90px;
+  padding-top: 50px;
   width: 50vw;
   margin-left: auto;
   margin-right: auto;
@@ -691,6 +691,9 @@ const CourseInput = styled.input`
   :focus {
     outline: 2px solid #f46868;
   }
+  option:checked {
+    background-color: #febebe;
+  }
 `;
 
 const SelectOptions = styled.select`
@@ -709,6 +712,9 @@ const SelectOptions = styled.select`
   padding-right: 30px;
   :focus {
     outline: 2px solid #f46868;
+  }
+  option:checked {
+    background-color: #febebe;
   }
 `;
 
@@ -756,6 +762,9 @@ const CheckboxInput = styled.input`
   outline: none;
   :focus {
     outline: 2px solid #f46868;
+  }
+  option:checked {
+    background-color: #febebe;
   }
 `;
 const MultipleChoiceQuestion = styled.div`

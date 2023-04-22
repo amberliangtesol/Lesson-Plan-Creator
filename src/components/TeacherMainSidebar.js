@@ -7,7 +7,6 @@ import { BsFillPeopleFill } from "react-icons/bs";
 import { BsFillPersonFill } from "react-icons/bs";
 import { BiBadgeCheck } from "react-icons/bi";
 
-
 const TeacherMainSidebar = () => {
   const { user, setUser } = useContext(UserContext);
   const location = useLocation();
@@ -58,7 +57,7 @@ const TeacherMainSidebar = () => {
           onClick={() => handleLinkClick("/ManageBadge")}
         >
           <Btnwrapper className={activeLink === "/ManageBadge" ? "active" : ""}>
-            <BiBadgeCheck style={{ color: "black"}} />
+            <BiBadgeCheck style={{ color: "black" }} />
             <StyledParagraph>徽章管理</StyledParagraph>
           </Btnwrapper>
         </Link>
@@ -96,10 +95,10 @@ const Container1 = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px;
+  width: 350px;
   background-color: #f5f5f5;
   padding-top: 100px;
-  min-height:100vh;
+  min-height: 100vh;
   @media screen and (max-width: 1279px) {
   }
 `;

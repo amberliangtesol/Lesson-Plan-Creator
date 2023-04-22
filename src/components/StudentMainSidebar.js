@@ -15,7 +15,7 @@ const StudentMainSidebar = () => {
     setActiveLink(link);
   };
 
-  return ( 
+  return (
     <Container1>
       <ProfileImg imageURL={user.image}></ProfileImg>
       <Greeting>{user.name}</Greeting>
@@ -75,10 +75,10 @@ const Container1 = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px;
+  width: 350px;
   background-color: #f5f5f5;
   padding-top: 100px;
-  min-height:100vh;
+  min-height: 100vh;
   @media screen and (max-width: 1279px) {
   }
 `;

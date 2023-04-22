@@ -126,16 +126,16 @@ const Chart = ({ data }) => {
     if (studentIds.length === 0) {
       return null;
     }
-  
+
     const numQuestions = data[studentIds[0]] ? data[studentIds[0]].length : 0;
-  
+
     return (
       <StyledTable>
         <thead>
           <tr>
-            <th>Student</th>
+            <th>學生帳號</th>
             {Array.from({ length: numQuestions }, (_, i) => (
-              <th key={`question-${i}`}>Question {i + 1}</th>
+              <th key={`question-${i}`}>第{i + 1}題</th>
             ))}
           </tr>
         </thead>
@@ -169,9 +169,6 @@ const Chart = ({ data }) => {
       </StyledTable>
     );
   };
-  
-  
-
 
   return (
     <div>
@@ -206,19 +203,23 @@ const Chart = ({ data }) => {
 };
 
 const StyledTable = styled.table`
-  border-collapse: collapse;
-  width: 80%;
-  margin-bottom: 2rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 14px;
+  margin-top: 50px;
 
-  th,
   td {
-    border: 1px solid #ccc;
     padding: 8px;
     text-align: center;
   }
 
   th {
-    background-color: #f2f2f2;
+    padding: 15px 30px;
+    text-align: center;
+    font-size: 18px;
+    color: #f46868;
+    border-bottom: dashed 2px #e4e1e1;
   }
 `;
 
@@ -228,7 +229,8 @@ const DonutChartsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 80%;
+  width: 100%;
+  margin-bottom: 20px;
 `;
 
 const DonutChartContainer = styled.div`
