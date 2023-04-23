@@ -205,7 +205,8 @@ function EditCourse() {
                 onClick={handleUpdate}
                 style={{ marginLeft: "auto", marginBottom: "30px" }}
               >
-                <Link to="/EditUnit">單元編輯</Link>
+                單元編輯
+                {/* <Link to="/EditUnit">單元編輯</Link> */}
               </MainRedFilledBtn>
 
               <CourseDetail>

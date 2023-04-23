@@ -5,6 +5,7 @@ import { MainRedFilledBtn } from "./Buttons";
 
 function Sorting(props) {
   const [resultMessage, setResultMessage] = useState("");
+  const [win, setWin] = useState("");
   const { sorted, questionData, onWin } = props; // destructure props here
   const correctOrder = props.sorted || [];
   const explanation = props.explanation; // Get the explanation prop
@@ -53,14 +54,16 @@ function Sorting(props) {
   const handleSubmitClick = () => {
     if (checkWin(boxes)) {
       setResultMessage("You win!");
+      setWin(true);
       props.onWin(true);
     } else {
       setResultMessage(questionData.explanation);
-      props.onWin(false);
+      setWin(false);
     }
-    setTimeout(() => {
-      setResultMessage("");
-    }, 5000);
+  };
+
+  const handleNextClick = () => {
+    props.onWin(win);
   };
 
   const Box = ({ boxColor, boxNumber, handleDrag, handleDrop }) => {
@@ -129,6 +132,11 @@ function Sorting(props) {
           }}
         >
           {resultMessage}
+          {resultMessage !== "" && (
+            <MainRedFilledBtn onClick={handleNextClick}>
+              下一題
+            </MainRedFilledBtn>
+          )}
         </div>
       </OptionContainer>
     </div>

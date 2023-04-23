@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./Matching.css";
 import styled from "styled-components/macro";
+import { MainRedFilledBtn } from "../Buttons";
 
 const Card = ({ id, name, flipped, matched, clicked }) => {
   return (
@@ -21,7 +22,8 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
 
 const Matching = (props) => {
   // remove destructuring of questionData
-  const { cards, questionData, explanation, onWin } = props; // destructure props here
+  const { cards, questionData, onWin } = props; // destructure props here
+  const [win, setWin] = useState("");
 
   const shuffle = (array) => {
     let currentIndex = array.length,
@@ -121,12 +123,16 @@ const Matching = (props) => {
   //   props.onWin();
   // };
 
-  useEffect(() => {
-    if (gameOver && typeof onWin === "function") {
-      // access onWin from props
-      onWin(); // call onWin function
-    }
-  }, [gameOver]);
+  // useEffect(() => {
+  //   if (gameOver && typeof onWin === "function") {
+  //     // access onWin from props
+  //     onWin(); // call onWin function
+  //   }
+  // }, [gameOver]);
+
+  const handleNextClick = () => {
+    props.onWin(true);
+  };
 
   return (
     <div id="question-container">
@@ -141,23 +147,29 @@ const Matching = (props) => {
         </h3>
         <p>{questionData.question}</p>
         <div className="game-board">
-          {!gameOver &&
-            cardList.map((card, index) => (
-              <Card
-                key={index}
-                id={index}
-                name={card.name}
-                flipped={card.flipped}
-                matched={card.matched}
-                clicked={
-                  flippedCards.length === 2
-                    ? () => {}
-                    : () => handleClick(card.name, card.groupId, index)
-                }
-              />
-            ))}
+          {cardList.map((card, index) => (
+            <Card
+              key={index}
+              id={index}
+              name={card.name}
+              flipped={card.flipped}
+              matched={card.matched}
+              clicked={
+                flippedCards.length === 2
+                  ? () => {}
+                  : () => handleClick(card.name, card.groupId, index)
+              }
+            />
+          ))}
         </div>
-        {gameOver && <WinMessage>{questionData.explanation}</WinMessage>}
+        {gameOver && (
+          <>
+            <WinMessage>{questionData.explanation}</WinMessage>
+            <MainRedFilledBtn onClick={handleNextClick}>
+              下一題
+            </MainRedFilledBtn>
+          </>
+        )}
       </OptionContainer>
     </div>
   );

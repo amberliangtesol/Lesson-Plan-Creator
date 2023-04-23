@@ -327,6 +327,7 @@ function CreateUnit() {
 
                         <CourseInput
                           type="number"
+                          min={1}
                           value={item.data.time}
                           onChange={(e) => {
                             let timeArray = [...totalTestArray];
@@ -388,12 +389,11 @@ function CreateUnit() {
                               key={`multiple_choice_checkbox_${idx}`}
                               type="checkbox"
                               checked={option.correct}
-                              value="true"
                               onChange={(e) => {
                                 const options = [...item.data.options];
                                 options[idx] = {
                                   ...options[idx],
-                                  correct: e.target.value,
+                                  correct: e.target.checked,
                                 };
                                 handleChange(index, "options", options);
                               }}
@@ -439,6 +439,7 @@ function CreateUnit() {
                         </div>
                         <CourseInput
                           type="number"
+                          min={1}
                           value={item.data.time}
                           onChange={(e) => {
                             let timeArray = [...totalTestArray];
@@ -529,6 +530,7 @@ function CreateUnit() {
                         </div>
                         <CourseInput
                           type="number"
+                          min={1}
                           value={item.data.time}
                           onChange={(e) => {
                             let timeArray = [...totalTestArray];

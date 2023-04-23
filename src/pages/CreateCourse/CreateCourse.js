@@ -164,22 +164,6 @@ function CreateCourse() {
           <MainContent>
             <Container1>
               <BtnContainer>
-                {/* <h4>單元列表</h4>
-                {sortedUnits.map((unit, index) => (
-                  <p
-                    key={unit.id}
-                    style={{
-                      color: unit.id === currentUnitId ? "red" : "black",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      setCurrentUnitId(unit.id);
-                    }}
-                  >
-                    Unit {index + 1}: {unit.data.unitName}
-                  </p>
-                ))} */}
-
                 <Btnwrapper>
                   <MdOutlineTipsAndUpdates
                     style={{ color: "black", fontSize: "24px" }}
@@ -224,7 +208,7 @@ function CreateCourse() {
                 onClick={handleCreate}
                 style={{ marginLeft: "auto", marginBottom: "30px" }}
               >
-                <Link to="/CreateUnit">單元建立</Link>
+                單元建立
               </MainRedFilledBtn>
 
               <CourseDetail>

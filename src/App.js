@@ -1,18 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   BrowserRouter as Router,
   Navigate,
   Route,
   Routes,
+  Outlet,
 } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
-import GameMode from "./components/GameMode";
-import Matching from "./components/Matching/Matching";
-import MultipleChoice from "./components/MultipleChoice";
-import Sorting from "./components/Sorting";
 import Badge from "./pages/Badge/Badge";
-import Course from "./pages/Course/Course";
 import CreateCourse from "./pages/CreateCourse/CreateCourse";
 import CreateUnit from "./pages/CreateUnit/CreateUnit";
 import EditCourse from "./pages/EditCourse/EditCourse";
@@ -29,8 +25,7 @@ import Score from "./pages/Score/Score";
 import Main from "./pages/Main/Main";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
-import UserInfoProvider from "./UserInfoProvider";
-import HoverComputer from "./components/HoverComputer/HoverComputer";
+import UserInfoProvider, { UserContext } from "./UserInfoProvider";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -51,44 +46,58 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const TeacherRouter = () => {
+  const { user } = useContext(UserContext);
+  if (user.role && user.role !== "teacher") {
+    return <Navigate to="/" replace />;
+  }
+  return <Outlet />;
+};
+
+const StudentRouter = () => {
+  const { user } = useContext(UserContext);
+  if (user.role && user.role !== "student") {
+    return <Navigate to="/" replace />;
+  }
+  return <Outlet />;
+};
+
 function App() {
   return (
     <UserInfoProvider>
       <GlobalStyle />
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route
-          path="/youtubewithquestion/:lessonId"
-          element={<YouTubeWithQuestion />}
-        />
-        <Route path="/gamemode" element={<GameMode />} />
-        <Route path="/matching" element={<Matching />} />
-        <Route path="/multiplechoice" element={<MultipleChoice />} />
-        <Route path="/sorting" element={<Sorting />} />
-        <Route path="/badge" element={<Badge />} />
-        <Route path="/course" element={<Course />} />
-
-        <Route path="/createcourse" element={<CreateCourse />} />
-        <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
-
-        <Route path="/editcourse/:lessonId" element={<EditCourse />} />
-        <Route path="/edit-unit/:lessonId" element={<EditUnit />} />
-
-        <Route path="/addclass" element={<AddClass />} />
-        <Route path="/edit-class/:classId" element={<EditClass />} />
-
-        <Route path="/score/:lessonId" element={<Score />} />
-
-        <Route path="/login" element={<Login />} />
-        <Route path="/managebadge" element={<ManageBadge />} />
-        <Route path="/manageclass" element={<ManageClass />} />
-        <Route path="/teacherprofile" element={<TeacherProfile />} />
-        <Route path="/studentprofile" element={<StudentProfile />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/teachermain" element={<TeacherMain />} />
-        <Route path="/studentmain" element={<StudentMain />} />
-        <Route path="/hovercomputer" element={<HoverComputer />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/" element={<Main />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route element={<StudentRouter />}>
+          <Route path="/studentmain" element={<StudentMain />} />
+          <Route path="/badge" element={<Badge />} />
+          <Route path="/studentprofile" element={<StudentProfile />} />
+          <Route
+            path="/youtubewithquestion/:lessonId"
+            element={<YouTubeWithQuestion />}
+          />
+        </Route>
+
+        <Route element={<TeacherRouter />}>
+          <Route path="/teachermain" element={<TeacherMain />} />
+          <Route path="/createcourse" element={<CreateCourse />} />
+          <Route path="/create-unit/:lessonId" element={<CreateUnit />} />
+          <Route path="/createunit" element={<CreateUnit />} />
+          <Route path="/editcourse/:lessonId" element={<EditCourse />} />
+          <Route path="/edit-unit/:lessonId" element={<EditUnit />} />
+          <Route path="/editunit/:lessonId" element={<EditUnit />} />
+          <Route path="/addclass" element={<AddClass />} />
+          <Route path="/edit-class/:classId" element={<EditClass />} />
+          <Route path="/score/:lessonId" element={<Score />} />
+          <Route path="/score" element={<Score />} />
+          <Route path="/managebadge" element={<ManageBadge />} />
+          <Route path="/manageclass" element={<ManageClass />} />
+          <Route path="/teacherprofile" element={<TeacherProfile />} />
+        </Route>
       </Routes>
     </UserInfoProvider>
   );

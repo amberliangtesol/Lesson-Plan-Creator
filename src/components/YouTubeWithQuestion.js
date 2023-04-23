@@ -42,6 +42,7 @@ const YouTubeWithQuestions = () => {
   const [currentUnitName, setCurrentUnitName] = useState("");
   const [currentUnitSubtitle, setCurrentUnitSubtitle] = useState("");
   const [currentUnitDescription, setCurrentUnitDescription] = useState("");
+  const [resultMessage, setResultMessage] = useState("");
 
   console.log("currentUnitId", currentUnitId);
   useEffect(() => {
@@ -229,54 +230,20 @@ const YouTubeWithQuestions = () => {
   };
 
   const handleAnswerClick = (option) => {
-    const feedbackDiv = document.createElement("div");
-    const feedbackText = document.createTextNode("");
-    feedbackDiv.appendChild(feedbackText);
-
-    const questionContainer = document.getElementById("question-container");
-    if (questionContainer) {
-      questionContainer.appendChild(feedbackDiv);
-      console.log("hi");
-    }
-
     if (option.correct) {
-      feedbackDiv.textContent = "Congratulations! Correct answer.";
-      feedbackDiv.style.color = "green";
       updatedQuestions(currentQuestion.id, true);
-
+      setResultMessage("You win!");
       if (countdown > 0) {
         updateUserBadgeData("badge2");
       }
     } else {
-      feedbackDiv.textContent = currentQuestion.explanation;
-      feedbackDiv.style.color = "red";
-      updatedQuestions(currentQuestion.id, false);
+      setResultMessage(currentQuestion.explanation);
     }
-
-    // const nextQuestionBtn = document.createElement("button");
-    // const nextQuestionText = document.createTextNode("下一題");
-    // nextQuestionBtn.appendChild(nextQuestionText);
-    // nextQuestionBtn.addEventListener("click", handleNextQuestionClick);
-    // questionContainer.appendChild(nextQuestionBtn);
   };
 
-  const handleNextQuestionClick = () => {
-    // code to go to the next question goes here
+  const handleNextClick = () => {
+    updatedQuestions(currentQuestion.id, false);
   };
-
-  // const handleAnswerClick = (option) => {
-  //   if (option.correct) {
-  //     alert("Congratulations! Correct answer.");
-  //     updatedQuestions(currentQuestion.id, true);
-
-  //     if (countdown > 0) {
-  //       updateUserBadgeData("badge2");
-  //     }
-  //   } else {
-  //     alert(currentQuestion.explanation);
-  //     updatedQuestions(currentQuestion.id, false);
-  //   }
-  // };
 
   const handleNextUnitClick = async () => {
     setShowNextButton(false); // Add this line to hide the button when clicked
@@ -397,6 +364,19 @@ const YouTubeWithQuestions = () => {
                       questionData={currentQuestion}
                       onAnswerClick={handleAnswerClick}
                     />
+                    <div
+                      style={{
+                        marginTop: "20px",
+                        color: resultMessage === "You win!" ? "green" : "red",
+                      }}
+                    >
+                      {resultMessage}
+                      {resultMessage !== "" && (
+                        <MainRedFilledBtn onClick={handleNextClick}>
+                          下一題
+                        </MainRedFilledBtn>
+                      )}
+                    </div>
                   </div>
                 )}
               {currentQuestion && currentQuestion.type === "sorting" && (

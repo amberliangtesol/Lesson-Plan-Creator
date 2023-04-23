@@ -100,10 +100,15 @@ function EditUnit() {
   ]);
 
   const handleUpdate = async () => {
-    let videoId = "";
-    if (inputLink) {
-      const url = new URL(inputLink);
-      videoId = url.searchParams.get("v");
+    let id = "";
+    if (videoId) {
+      let url;
+      try {
+        url = new URL(videoId);
+      } catch (e) {}
+      if (url) {
+        id = url.searchParams.get("v");
+      }
     }
 
     try {
@@ -120,7 +125,7 @@ function EditUnit() {
           };
         }),
         unitName: unitName,
-        video: videoId,
+        video: id,
         explanation: explanation,
       });
 
@@ -175,7 +180,7 @@ function EditUnit() {
   };
 
   const handleInputChange = (e) => {
-    setInputLink(e.target.value);
+    setVideoId(e.target.value);
   };
 
   const extractVideoId = () => {
@@ -337,6 +342,7 @@ function EditUnit() {
                         </div>
                         <CourseInput
                           type="number"
+                          min={1}
                           value={item.data.time}
                           onChange={(e) => {
                             let timeArray = [...totalTestArray];
@@ -398,12 +404,11 @@ function EditUnit() {
                               key={`multiple_choice_checkbox_${idx}`}
                               type="checkbox"
                               checked={option.correct}
-                              value="true"
                               onChange={(e) => {
                                 const options = [...item.data.options];
                                 options[idx] = {
                                   ...options[idx],
-                                  correct: e.target.value,
+                                  correct: e.target.checked,
                                 };
                                 handleChange(index, "options", options);
                               }}
@@ -448,6 +453,7 @@ function EditUnit() {
                         </div>
                         <CourseInput
                           type="number"
+                          min={1}
                           value={item.data.time}
                           onChange={(e) => {
                             let timeArray = [...totalTestArray];
@@ -538,6 +544,7 @@ function EditUnit() {
                         </div>
                         <CourseInput
                           type="number"
+                          min={1}
                           value={item.data.time}
                           onChange={(e) => {
                             let timeArray = [...totalTestArray];
