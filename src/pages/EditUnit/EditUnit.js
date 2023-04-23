@@ -212,32 +212,31 @@ function EditUnit() {
         <Container>
           <Container1>
             <BtnContainer>
-              <Title
+              <h3
                 style={{
-                  marginBottom: "50px",
+                  borderBottom: "3px solid #f46868",
+                  paddingBottom: "18px",
                 }}
               >
                 單元列表
-              </Title>
+              </h3>
               {sortedUnits.map((unit, index) => (
-                <CourseDetailText
+                <h3
                   key={unit.id}
                   style={{
-                    color: unit.id === currentUnitId ? "red" : "black",
+                    color: unit.id === currentUnitId ? "#F46868" : "black",
+                    fontWeight: unit.id === currentUnitId ? "700" : "400",
+                    alignSelf: "flex-start",
                     cursor: "pointer",
                   }}
                   onClick={() => {
                     setCurrentUnitId(unit.id);
                   }}
                 >
-                  Unit {index + 1}: {unit.data.unitName}
-                </CourseDetailText>
+                  Unit {index + 1} : {unit.data.unitName}
+                </h3>
               ))}
-              <MainDarkBorderBtn
-                style={{
-                  marginTop: "100px",
-                }}
-              >
+              <MainDarkBorderBtn>
                 <Link to="/TeacherMain">回首頁</Link>
               </MainDarkBorderBtn>
             </BtnContainer>

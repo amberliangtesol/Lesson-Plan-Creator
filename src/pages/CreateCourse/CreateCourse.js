@@ -184,7 +184,7 @@ function CreateCourse() {
                   <MdOutlineTipsAndUpdates
                     style={{ color: "black", fontSize: "24px" }}
                   />
-                  <StyledParagraphTitle>Tips</StyledParagraphTitle>
+                  <h3>Tips</h3>
                 </Btnwrapper>
 
                 <Btnwrapper style={{ marginTop: "50px" }}>
@@ -422,6 +422,7 @@ const StyledParagraphTitle = styled.p`
   @media screen and (max-width: 1279px) {
   }
 `;
+
 const StyledParagraph = styled.p`
   display: flex;
   align-items: center;

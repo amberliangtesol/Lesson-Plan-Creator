@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import "./Matching.css";
+import styled from "styled-components/macro";
 
 const Card = ({ id, name, flipped, matched, clicked }) => {
   return (
@@ -19,8 +20,8 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
 };
 
 const Matching = (props) => {
-  const cards = props.cards || [];
-  const explanation = props.explanation; // Get the explanation prop
+  // remove destructuring of questionData
+  const { cards, questionData, explanation, onWin } = props; // destructure props here
 
   const shuffle = (array) => {
     let currentIndex = array.length,
@@ -59,9 +60,8 @@ const Matching = (props) => {
       index,
     };
 
-        // Log click
-        setClickHistory([...clickHistory, currentCard]);
-
+    // Log click
+    setClickHistory([...clickHistory, currentCard]);
 
     //update card is flipped
     let updateCards = cardList.map((card) => {
@@ -116,44 +116,70 @@ const Matching = (props) => {
   //   );
   // };
 
-
   // const GameOver = () => {
   //   alert("you win!");
-  //   props.onWin();    
+  //   props.onWin();
   // };
 
-
   useEffect(() => {
-    if (gameOver) {
-      console.log('Number of clicks:', clickHistory.length);
-      alert(explanation);
-      props.onWin();
+    if (gameOver && typeof onWin === "function") {
+      // access onWin from props
+      onWin(); // call onWin function
     }
   }, [gameOver]);
 
-
   return (
-    <div>
-    <div className="game-board">
-      {!gameOver &&
-        cardList.map((card, index) => (
-          <Card
-            key={index}
-            id={index}
-            name={card.name}
-            flipped={card.flipped}
-            matched={card.matched}
-            clicked={
-              flippedCards.length === 2
-                ? () => {}
-                : () => handleClick(card.name, card.groupId, index)
-            }
-          />
-        ))}
-      {gameOver}
-    </div>
+    <div id="question-container">
+      <OptionContainer>
+        <h3
+          style={{
+            marginBottom: "0px",
+            color: "#F46868",
+          }}
+        >
+          第 {questionData.id} 題
+        </h3>
+        <p>{questionData.question}</p>
+        <div className="game-board">
+          {!gameOver &&
+            cardList.map((card, index) => (
+              <Card
+                key={index}
+                id={index}
+                name={card.name}
+                flipped={card.flipped}
+                matched={card.matched}
+                clicked={
+                  flippedCards.length === 2
+                    ? () => {}
+                    : () => handleClick(card.name, card.groupId, index)
+                }
+              />
+            ))}
+        </div>
+        {gameOver && <WinMessage>{questionData.explanation}</WinMessage>}
+      </OptionContainer>
     </div>
   );
 };
+
+const OptionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 5px;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 100%;
+  padding: 30px 60px 50px 60px;
+`;
+
+const WinMessage = styled.div`
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 20px;
+`;
 
 export default Matching;

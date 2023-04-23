@@ -1,26 +1,18 @@
 import React from "react";
 import { useState } from "react";
 import styled from "styled-components/macro";
-
-const BoxContainer = styled.div`
-  text-align: center;
-  display: inline-flex;
-  width: 1000px;
-  justify-content: space-evenly;
-`;
-
-const SingleBox = styled.div`
-  cursor: pointer;
-`;
+import { MainRedFilledBtn } from "./Buttons";
 
 function Sorting(props) {
+  const [resultMessage, setResultMessage] = useState("");
+  const { sorted, questionData, onWin } = props; // destructure props here
   const correctOrder = props.sorted || [];
   const explanation = props.explanation; // Get the explanation prop
   const [dragId, setDragId] = useState();
   const [boxes, setBoxes] = useState(
     correctOrder.map((id) => ({
       id,
-      order: Math.random()
+      order: Math.random(),
     }))
   );
 
@@ -60,12 +52,15 @@ function Sorting(props) {
 
   const handleSubmitClick = () => {
     if (checkWin(boxes)) {
-      alert("You win!");
+      setResultMessage("You win!");
       props.onWin(true);
     } else {
-      alert(explanation);
+      setResultMessage(questionData.explanation);
       props.onWin(false);
     }
+    setTimeout(() => {
+      setResultMessage("");
+    }, 5000);
   };
 
   const Box = ({ boxColor, boxNumber, handleDrag, handleDrop }) => {
@@ -83,7 +78,7 @@ function Sorting(props) {
           borderRadius: "5px",
           color: "#FFF",
           width: "30%",
-          height: "100px"
+          height: "100px",
         }}
       >
         {boxNumber}
@@ -92,23 +87,74 @@ function Sorting(props) {
   };
 
   return (
-    <>
-      <BoxContainer>
-        {boxes
-          .sort((a, b) => a.order - b.order)
-          .map((box) => (
-            <Box
-              key={box.id}
-              boxColor="#3f3f3a"
-              boxNumber={box.id}
-              handleDrag={handleDrag}
-              handleDrop={handleDrop}
-            />
-          ))}
-      </BoxContainer>
-      <button onClick={handleSubmitClick}>送出答案</button>
-    </>
+    <div id="question-container">
+      <OptionContainer>
+        <h3
+          style={{
+            marginBottom: "0px",
+            color: "#F46868",
+          }}
+        >
+          第 {questionData.id} 題
+        </h3>
+        <p>{questionData.question}</p>
+        <BoxContainer>
+          {boxes
+            .sort((a, b) => a.order - b.order)
+            .map((box) => (
+              <Box
+                key={box.id}
+                boxColor="#3f3f3a"
+                boxNumber={box.id}
+                handleDrag={handleDrag}
+                handleDrop={handleDrop}
+              />
+            ))}
+        </BoxContainer>
+        <MainRedFilledBtn
+          onClick={handleSubmitClick}
+          style={{
+            width: "104px",
+            height: "40px",
+            marginTop: "10px",
+            alignSelf: "flex-end",
+          }}
+        >
+          送出答案
+        </MainRedFilledBtn>
+        <div
+          style={{
+            marginTop: "20px",
+            color: resultMessage === "You win!" ? "green" : "red",
+          }}
+        >
+          {resultMessage}
+        </div>
+      </OptionContainer>
+    </div>
   );
 }
+
+const BoxContainer = styled.div`
+  text-align: center;
+  display: inline-flex;
+  width: 1000px;
+  justify-content: space-evenly;
+`;
+
+const SingleBox = styled.div`
+  cursor: pointer;
+`;
+
+const OptionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 5px;
+  background-color: #f5f5f5;
+  border-radius: 33px;
+  width: 100%;
+  padding: 30px 60px 50px 60px;
+`;
 
 export default Sorting;

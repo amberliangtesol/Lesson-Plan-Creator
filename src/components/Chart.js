@@ -150,9 +150,9 @@ const Chart = ({ data }) => {
                     style={{
                       color:
                         Object.values(q)[0] === true
-                          ? "black"
+                          ? "#545454"
                           : Object.values(q)[0] === false
-                          ? "red"
+                          ? "#f46868"
                           : "lightgray",
                     }}
                   >
@@ -217,9 +217,10 @@ const StyledTable = styled.table`
   th {
     padding: 15px 30px;
     text-align: center;
-    font-size: 18px;
-    color: #f46868;
+    font-size: 16px;
+    color: #000000;
     border-bottom: dashed 2px #e4e1e1;
+    font-weight: 500;
   }
 `;
 

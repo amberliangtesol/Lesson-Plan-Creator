@@ -199,27 +199,27 @@ function CreateUnit() {
         <Container>
           <Container1>
             <BtnContainer>
-              <Title
+              <h3
                 style={{
                   marginBottom: "50px",
                 }}
               >
                 單元列表
-              </Title>
+              </h3>
               {sortedUnits.map((unit, index) => (
-                <CourseDetailText
+                <h3
                   key={unit.id}
                   style={{
-                    // color: unit.id === currentUnitId ? "red" : "black",
-                    cursor: "pointer",
+                    fontWeight: "700",
+                    alignSelf: "flex-start",
                     marginTop: "30px",
                   }}
                   onClick={() => {
                     setCurrentUnitId(unit.id);
                   }}
                 >
-                  Unit {index + 1}: {unit.data.unitName}
-                </CourseDetailText>
+                  Unit {index + 1} : {unit.data.unitName}
+                </h3>
               ))}
               <MainDarkBorderBtn
                 style={{

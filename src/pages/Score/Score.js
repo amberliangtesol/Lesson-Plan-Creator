@@ -148,23 +148,38 @@ function Score() {
           <MainContent>
             <Container1>
               <BtnContainer>
-                <h4>單元列表</h4>
+                <h3
+                  style={{
+                    borderBottom: "3px solid #f46868",
+                    paddingBottom: "18px",
+                  }}
+                >
+                  單元列表
+                </h3>
                 {sortedUnits.map((unit, index) => (
-                  <p
+                  <h3
                     key={unit.id}
                     style={{
-                      color: unit.id === currentUnitId ? "red" : "black",
+                      color: unit.id === currentUnitId ? "#F46868" : "black",
+                      fontWeight: unit.id === currentUnitId ? "700" : "400",
+                      alignSelf: "flex-start",
                       cursor: "pointer",
                     }}
                     onClick={() => {
                       setCurrentUnitId(unit.id);
                     }}
                   >
-                    Unit {index + 1}: {unit.data.unitName}
-                  </p>
+                    Unit {index + 1} : {unit.data.unitName}
+                  </h3>
                 ))}
 
-                <MainDarkBorderBtn>
+                <MainDarkBorderBtn
+                  style={{
+                    position: "absolute",
+                    bottom: "250px",
+                    alignSelf: "center",
+                  }}
+                >
                   <Link to="/TeacherMain">回首頁</Link>
                 </MainDarkBorderBtn>
               </BtnContainer>
@@ -245,7 +260,7 @@ const Container2 = styled.div`
   display: flex;
   flex-direction: column;
   padding-top: 50px;
-  width: 50vw;
+  width: 60vw;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 90px;

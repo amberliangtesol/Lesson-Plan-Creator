@@ -163,6 +163,42 @@ const NoBorderBtn = styled.div`
   }
 `;
 
+const MultipleChoiceOptionCard = styled.div`
+  cursor: pointer;
+  min-width: 100px;
+  height: 50px;
+  border-radius: 7px;
+  background-color: transparent;
+  color: #666666;
+  border: solid 2px #666666;
+  font-weight: 400;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  &:focus,
+  &.selected {
+    background-color: transparent !important;
+    border-color: #f46868;
+  }
+
+  a {
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: #ffffff;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+
+  @media screen and (max-width: 1279px) {
+  }
+`;
+
 const Buttons = () => {
   return (
     <div>
@@ -171,6 +207,7 @@ const Buttons = () => {
       <MainRedFilledBtn></MainRedFilledBtn>
       <MainDarkBorderBtn></MainDarkBorderBtn>
       <NoBorderBtn></NoBorderBtn>
+      <MultipleChoiceOptionCard></MultipleChoiceOptionCard>
     </div>
   );
 };
@@ -182,3 +219,4 @@ export { MainRedFilledBtn };
 export { MainDarkFilledBtn };
 export { MainDarkBorderBtn };
 export { NoBorderBtn };
+export { MultipleChoiceOptionCard };

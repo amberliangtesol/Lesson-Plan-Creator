@@ -20,6 +20,11 @@ import Matching from "./Matching/Matching";
 import GameMode from "./GameMode";
 import styled from "styled-components/macro";
 import { Link } from "react-router-dom";
+import Header from "./Header";
+import Footer from "./Footer";
+import { MainRedFilledBtn } from "./Buttons";
+import { MainDarkBorderBtn } from "./Buttons";
+import { HiOutlineHome } from "react-icons/hi";
 
 const YouTubeWithQuestions = () => {
   const { lessonId } = useParams();
@@ -34,7 +39,11 @@ const YouTubeWithQuestions = () => {
   const [playerReady, setPlayerReady] = useState(false);
   const [sortedUnits, setSortedUnits] = useState([]);
   const [countdown, setCountdown] = useState(null);
+  const [currentUnitName, setCurrentUnitName] = useState("");
+  const [currentUnitSubtitle, setCurrentUnitSubtitle] = useState("");
+  const [currentUnitDescription, setCurrentUnitDescription] = useState("");
 
+  console.log("currentUnitId", currentUnitId);
   useEffect(() => {
     const fetchSortedUnits = async () => {
       console.log(`lessons/${lessonId}/units`);
@@ -66,8 +75,13 @@ const YouTubeWithQuestions = () => {
           };
         });
 
-        console.log(unitData);
-        console.log("Video ID:", unitData.video);
+        // Set the current unit name to the state variable
+        setCurrentUnitName(unitData.unitName);
+        setCurrentUnitSubtitle(unitData.subtitle);
+        setCurrentUnitDescription(unitData.description);
+
+        console.log("sortedUnits", sortedUnits);
+        // console.log("Video ID:", unitData.video);
 
         if (playerRef.current && playerReady) {
           playerRef.current.cueVideoById({ videoId: unitData.video });
@@ -137,8 +151,8 @@ const YouTubeWithQuestions = () => {
 
   window.onYouTubeIframeAPIReady = () => {
     playerRef.current = new window.YT.Player("player", {
-      height: "360",
-      width: "640",
+      height: "100%",
+      width: "100%",
       events: {
         onReady: () => {
           setPlayerReady(true);
@@ -215,18 +229,54 @@ const YouTubeWithQuestions = () => {
   };
 
   const handleAnswerClick = (option) => {
+    const feedbackDiv = document.createElement("div");
+    const feedbackText = document.createTextNode("");
+    feedbackDiv.appendChild(feedbackText);
+
+    const questionContainer = document.getElementById("question-container");
+    if (questionContainer) {
+      questionContainer.appendChild(feedbackDiv);
+      console.log("hi");
+    }
+
     if (option.correct) {
-      alert("Congratulations! Correct answer.");
+      feedbackDiv.textContent = "Congratulations! Correct answer.";
+      feedbackDiv.style.color = "green";
       updatedQuestions(currentQuestion.id, true);
 
       if (countdown > 0) {
         updateUserBadgeData("badge2");
       }
     } else {
-      alert(currentQuestion.explanation);
+      feedbackDiv.textContent = currentQuestion.explanation;
+      feedbackDiv.style.color = "red";
       updatedQuestions(currentQuestion.id, false);
     }
+
+    // const nextQuestionBtn = document.createElement("button");
+    // const nextQuestionText = document.createTextNode("下一題");
+    // nextQuestionBtn.appendChild(nextQuestionText);
+    // nextQuestionBtn.addEventListener("click", handleNextQuestionClick);
+    // questionContainer.appendChild(nextQuestionBtn);
   };
+
+  const handleNextQuestionClick = () => {
+    // code to go to the next question goes here
+  };
+
+  // const handleAnswerClick = (option) => {
+  //   if (option.correct) {
+  //     alert("Congratulations! Correct answer.");
+  //     updatedQuestions(currentQuestion.id, true);
+
+  //     if (countdown > 0) {
+  //       updateUserBadgeData("badge2");
+  //     }
+  //   } else {
+  //     alert(currentQuestion.explanation);
+  //     updatedQuestions(currentQuestion.id, false);
+  //   }
+  // };
 
   const handleNextUnitClick = async () => {
     setShowNextButton(false); // Add this line to hide the button when clicked
@@ -284,82 +334,136 @@ const YouTubeWithQuestions = () => {
   console.log("currentQuestion", currentQuestion);
 
   return (
-    <div>
-      <h3>課程畫面</h3>
-      <Container>
-        <Container1>
-          <BtnContainer>
-            <h4>單元列表</h4>
-            {sortedUnits.map((unit, index) => (
-              <p
-                key={unit.id}
+    <Body>
+      <Header></Header>
+      <Content>
+        <Container>
+          <MainContent>
+            <Container1>
+              <BtnContainer>
+                <h3
+                  style={{
+                    borderBottom: "3px solid #f46868",
+                    paddingBottom: "18px",
+                  }}
+                >
+                  單元列表
+                </h3>
+                {sortedUnits.map((unit, index) => (
+                  <h3
+                    key={unit.id}
+                    style={{
+                      color: unit.id === currentUnitId ? "#F46868" : "black",
+                      fontWeight: unit.id === currentUnitId ? "700" : "400",
+                      alignSelf: "flex-start",
+                    }}
+                  >
+                    Unit {index + 1} : {unit.data.unitName}
+                  </h3>
+                ))}
+
+                <MainDarkBorderBtn
+                  style={{
+                    position: "absolute",
+                    bottom: "250px",
+                  }}
+                >
+                  <Link to="/StudentMain">回首頁</Link>
+                </MainDarkBorderBtn>
+              </BtnContainer>
+            </Container1>
+
+            <Container2>
+              <Title>{currentUnitName}</Title>
+              <h4
                 style={{
-                  color: unit.id === currentUnitId ? "red" : "black",
+                  marginBottom: "0px",
                 }}
               >
-                Unit {index + 1}: {unit.data.unitName}
-              </p>
-            ))}
-            <Btn>
-              <Link to="/StudentMain">回課程主頁</Link>
-            </Btn>
-          </BtnContainer>
-        </Container1>
-        <Container2 style={{ paddingLeft: "50px" }}>
-          <div id="player"></div>
-          {showNextButton && (
-            <button onClick={handleNextUnitClick}>Go to next unit</button>
-          )}
-          {currentQuestion && currentQuestion.gameMode && (
-            <GameMode countdown={countdown} setCountdown={setCountdown} />
-          )}
-          {currentQuestion && currentQuestion.type === "multiple-choice" && (
-            <div>
-              <MultipleChoice
-                questionData={currentQuestion}
-                onAnswerClick={handleAnswerClick}
-              />
-            </div>
-          )}
-          {currentQuestion && currentQuestion.type === "sorting" && (
-            <div>
-              <Sorting
-                sorted={currentQuestion.sorted}
-                onWin={(isCorrect) =>
-                  updatedQuestions(currentQuestion.id, isCorrect)
-                }
-                explanation={currentQuestion.explanation}
-              />
-            </div>
-          )}
-          {currentQuestion && currentQuestion.type === "matching" && (
-            <div>
-              <Matching
-                cards={currentQuestion.cards}
-                onWin={() => updatedQuestions(currentQuestion.id, true)}
-                explanation={currentQuestion.explanation}
-              />
-            </div>
-          )}
-        </Container2>
-      </Container>
-    </div>
+                {currentUnitSubtitle}
+              </h4>
+              <p>{currentUnitDescription}</p>
+              <div id="player"></div>
+              {showNextButton && (
+                <button onClick={handleNextUnitClick}>Go to next unit</button>
+              )}
+              {currentQuestion && currentQuestion.gameMode && (
+                <GameMode countdown={countdown} setCountdown={setCountdown} />
+              )}
+              {currentQuestion &&
+                currentQuestion.type === "multiple-choice" && (
+                  <div>
+                    <MultipleChoice
+                      questionData={currentQuestion}
+                      onAnswerClick={handleAnswerClick}
+                    />
+                  </div>
+                )}
+              {currentQuestion && currentQuestion.type === "sorting" && (
+                <div>
+                  <Sorting
+                    questionData={currentQuestion}
+                    sorted={currentQuestion.sorted}
+                    onWin={(isCorrect) =>
+                      updatedQuestions(currentQuestion.id, isCorrect)
+                    }
+                    explanation={currentQuestion.explanation}
+                  />
+                </div>
+              )}
+              {currentQuestion && currentQuestion.type === "matching" && (
+                <div>
+                  <Matching
+                    questionData={currentQuestion}
+                    cards={currentQuestion.cards}
+                    onWin={() => updatedQuestions(currentQuestion.id, true)}
+                    explanation={currentQuestion.explanation}
+                  />
+                </div>
+              )}
+            </Container2>
+          </MainContent>
+        </Container>
+      </Content>
+
+      <Footer></Footer>
+    </Body>
   );
 };
 
-const Btn = styled.button`
-  cursor: pointer;
-  width: 100px;
-  height: 25px;
-  a {
-    text-decoration: none;
-    color: #000000;
-    &:hover,
-    &:link,
-    &:active {
-      text-decoration: none;
-    }
-  }
+const Body = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
+
+const Container = styled.div`
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const Title = styled.p`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  letter-spacing: 0em;
+  margin-top: 0;
+  margin-bottom: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const BtnContainer = styled.div`
@@ -367,18 +471,27 @@ const BtnContainer = styled.div`
   flex-direction: column;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
 const Container1 = styled.div`
   display: flex;
   flex-direction: column;
+  width: 350px;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(245, 245, 245);
+  min-height: 100vh;
+  padding-top: 90px;
 `;
 
 const Container2 = styled.div`
   display: flex;
   flex-direction: column;
+  padding-top: 50px;
+  width: 65vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 90px;
+  padding-right: 30px;
+  padding-left: 30px;
   select {
     pointer-events: auto;
   }

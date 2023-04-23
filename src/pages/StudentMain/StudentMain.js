@@ -163,11 +163,11 @@ function StudentMain() {
                           </CourseTextWrapper>
                         </CourseContent>
                         <BtnContainer>
-                          <MainDarkFilledBtn>
+                          <MainRedFilledBtn>
                             <Link to={`/YouTubeWithQuestion/${c.id}`}>
                               進入課程
                             </Link>
-                          </MainDarkFilledBtn>
+                          </MainRedFilledBtn>
                         </BtnContainer>
                       </OutdatedCourse>
                     ))}
