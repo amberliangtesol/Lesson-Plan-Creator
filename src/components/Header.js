@@ -12,7 +12,7 @@ const Container = styled.div`
   background-color: #ffffff;
   position: fixed;
   top: 0;
-  z-index: 1000;
+  z-index: 10000;
 `;
 
 const Logo = styled.div`
@@ -27,7 +27,9 @@ const Logo = styled.div`
 const Header = () => {
   return (
     <Container>
-        <Link to="/"><Logo /></Link>
+      <Link to="/">
+        <Logo />
+      </Link>
     </Container>
   );
 };

@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import { MainRedFilledBtn } from "./Buttons";
+import { MainDarkFilledBtn } from "./Buttons";
 import { MainDarkBorderBtn } from "./Buttons";
 import { HiOutlineHome } from "react-icons/hi";
 
@@ -352,7 +353,14 @@ const YouTubeWithQuestions = () => {
               <p>{currentUnitDescription}</p>
               <div id="player"></div>
               {showNextButton && (
-                <button onClick={handleNextUnitClick}>Go to next unit</button>
+                <MainDarkFilledBtn
+                  onClick={handleNextUnitClick}
+                  style={{
+                    marginTop: "20px",
+                  }}
+                >
+                  繼續觀看下個單元
+                </MainDarkFilledBtn>
               )}
               {currentQuestion && currentQuestion.gameMode && (
                 <GameMode countdown={countdown} setCountdown={setCountdown} />
@@ -367,14 +375,21 @@ const YouTubeWithQuestions = () => {
                     <div
                       style={{
                         marginTop: "20px",
-                        color: resultMessage === "You win!" ? "green" : "red",
+                        color:
+                          resultMessage === "You win!" ? "#338168" : "#545454",
                       }}
                     >
                       {resultMessage}
                       {resultMessage !== "" && (
-                        <MainRedFilledBtn onClick={handleNextClick}>
-                          下一題
-                        </MainRedFilledBtn>
+                        <MainDarkFilledBtn
+                          onClick={handleNextClick}
+                          style={{
+                            marginTop: "20px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          繼續播放
+                        </MainDarkFilledBtn>
                       )}
                     </div>
                   </div>

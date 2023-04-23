@@ -5,37 +5,38 @@ import macbooktop from "./macbooktop.png";
 import { useState, useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 
+const HoverComputer = () => {
+  const [isOpened, setIsOpened] = useState(false);
+  const videoRef = useRef(null);
+  const { ref, inView } = useInView({ threshold: 0.5 });
 
-  const HoverComputer = () => {
-    const [isOpened, setIsOpened] = useState(false);
-    const videoRef = useRef(null);
-    const { ref, inView } = useInView({ threshold: 0.5 });
+  const handleIntersection = (entries) => {
+    if (entries[0].isIntersecting) {
+      setIsOpened(true);
+    }
+  };
 
-    const handleIntersection = (entries) => {
-      if (entries[0].isIntersecting) {
-        setIsOpened(true);
-      }
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.5,
     };
-  
-    useEffect(() => {
-      const options = {
-        root: null,
-        rootMargin: "0px",
-        threshold: 0.5,
-      };
-  
-      const observer = new IntersectionObserver(handleIntersection, options);
-      observer.observe(videoRef.current);
-  
-      return () => {
-        observer.disconnect();
-      };
-    }, []);
+
+    const observer = new IntersectionObserver(handleIntersection, options);
+    observer.observe(videoRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <Container>
-      <div style={{ height: "1000px" }}></div>
-      <Mockup className={`mockup mockup-macbook loaded ${isOpened ? "isOpened" : ""}`} ref={ref}>
+      <Mockup
+        className={`mockup mockup-macbook loaded ${isOpened ? "isOpened" : ""}`}
+        ref={ref}
+      >
         <div className="part top">
           <img src={macbooktop} alt="" className="top" />
           <img src={macbookcover} alt="" className="cover" />
@@ -53,7 +54,6 @@ import { useInView } from "react-intersection-observer";
           <img src={macbookbottom} alt="" className="bottom" />
         </div>
       </Mockup>
-      <div style={{ height: "1000px" }}></div>
     </Container>
   );
 };

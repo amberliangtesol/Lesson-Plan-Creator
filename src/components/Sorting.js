@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import styled from "styled-components/macro";
 import { MainRedFilledBtn } from "./Buttons";
+import { MainDarkFilledBtn } from "./Buttons";
 
 function Sorting(props) {
   const [resultMessage, setResultMessage] = useState("");
@@ -75,13 +76,11 @@ function Sorting(props) {
         onDragStart={handleDrag}
         onDrop={handleDrop}
         style={{
-          backgroundColor: boxColor,
-          border: "1px solid",
-          borderColor: boxColor,
-          borderRadius: "5px",
-          color: "#FFF",
-          width: "30%",
-          height: "100px",
+          backgroundColor: "#7D7A7A",
+          borderRadius: "7px",
+          color: "#ffffff",
+          width: "40%",
+          padding: "20px",
         }}
       >
         {boxNumber}
@@ -90,7 +89,12 @@ function Sorting(props) {
   };
 
   return (
-    <div id="question-container">
+    <div
+      id="question-container"
+      style={{
+        marginTop: "20px",
+      }}
+    >
       <OptionContainer>
         <h3
           style={{
@@ -117,8 +121,7 @@ function Sorting(props) {
         <MainRedFilledBtn
           onClick={handleSubmitClick}
           style={{
-            width: "104px",
-            height: "40px",
+            width: "100%",
             marginTop: "10px",
             alignSelf: "flex-end",
           }}
@@ -128,14 +131,20 @@ function Sorting(props) {
         <div
           style={{
             marginTop: "20px",
-            color: resultMessage === "You win!" ? "green" : "red",
+            color: resultMessage === "You win!" ? "#338168" : "#545454",
           }}
         >
           {resultMessage}
           {resultMessage !== "" && (
-            <MainRedFilledBtn onClick={handleNextClick}>
-              下一題
-            </MainRedFilledBtn>
+            <MainDarkFilledBtn
+              onClick={handleNextClick}
+              style={{
+                marginTop: "20px",
+                marginBottom: "20px",
+              }}
+            >
+              繼續播放
+            </MainDarkFilledBtn>
           )}
         </div>
       </OptionContainer>
@@ -145,8 +154,11 @@ function Sorting(props) {
 
 const BoxContainer = styled.div`
   text-align: center;
-  display: inline-flex;
-  width: 1000px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
   justify-content: space-evenly;
 `;
 

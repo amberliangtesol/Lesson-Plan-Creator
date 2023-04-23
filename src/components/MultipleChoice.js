@@ -20,7 +20,12 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
   };
 
   return (
-    <div id="question-container">
+    <div
+      id="question-container"
+      style={{
+        marginTop: "20px",
+      }}
+    >
       <OptionContainer>
         <h3
           style={{
@@ -35,11 +40,6 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
           <MultipleChoiceOptionCard
             key={index}
             onClick={() => handleOptionClick(option)}
-            style={
-              selectedOption === option
-                ? { backgroundColor: "lightyellow" }
-                : {}
-            }
             className={selectedOption === option ? "selected" : ""}
           >
             {option.text}
@@ -48,8 +48,7 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
         <MainRedFilledBtn
           onClick={handleSubmitClick}
           style={{
-            width: "104px",
-            height: "40px",
+            width: "100%",
             marginTop: "10px",
             alignSelf: "flex-end",
           }}

@@ -402,6 +402,10 @@ function CreateUnit() {
                               key={`multiple_choice_text_${idx}`}
                               type="text"
                               placeholder="輸入選項"
+                              style={{
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                              }}
                               value={option.text}
                               onChange={(e) => {
                                 const options = [...item.data.options];

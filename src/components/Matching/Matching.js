@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./Matching.css";
 import styled from "styled-components/macro";
-import { MainRedFilledBtn } from "../Buttons";
+import { MainDarkFilledBtn } from "../Buttons";
 
 const Card = ({ id, name, flipped, matched, clicked }) => {
   return (
@@ -13,7 +13,18 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
       }
     >
       <div className="back">?</div>
-      <div className="front">
+      <div
+        className="front"
+        style={{
+          lineHeight: "20px",
+          fontSize: "16px",
+          justifyContent: "center",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          padding: "10px",
+        }}
+      >
         <span>{name}</span>
       </div>
     </div>
@@ -135,7 +146,12 @@ const Matching = (props) => {
   };
 
   return (
-    <div id="question-container">
+    <div
+      id="question-container"
+      style={{
+        marginTop: "20px",
+      }}
+    >
       <OptionContainer>
         <h3
           style={{
@@ -165,9 +181,9 @@ const Matching = (props) => {
         {gameOver && (
           <>
             <WinMessage>{questionData.explanation}</WinMessage>
-            <MainRedFilledBtn onClick={handleNextClick}>
-              下一題
-            </MainRedFilledBtn>
+            <MainDarkFilledBtn onClick={handleNextClick}>
+              繼續播放
+            </MainDarkFilledBtn>
           </>
         )}
       </OptionContainer>
@@ -188,10 +204,9 @@ const OptionContainer = styled.div`
 
 const WinMessage = styled.div`
   padding: 10px;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1.5rem;
+  font-size: 16px;
   margin-top: 20px;
+  color: #545454;
 `;
 
 export default Matching;
