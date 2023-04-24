@@ -366,6 +366,7 @@ const OutdatedCourse = styled.div`
 const BtnContainer = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 5px;
   align-items: center;
   justify-content: center;

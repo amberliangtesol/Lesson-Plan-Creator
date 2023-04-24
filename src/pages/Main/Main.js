@@ -209,8 +209,8 @@ const Arrow = styled.div`
 const ConversationWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-right: 150px;
-  padding-left: 150px;
+  padding-right: 300px;
+  padding-left: 300px;
 `;
 
 const ConversationInsideWrapper = styled.div`
@@ -281,6 +281,7 @@ const FooterSlogenWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
+  margin-top: 50px;
   margin-bottom: 150px;
 `;
 
