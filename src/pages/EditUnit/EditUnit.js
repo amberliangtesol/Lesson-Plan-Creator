@@ -247,15 +247,15 @@ function EditUnit() {
             </BtnContainer>
           </Container1>
           <Container2>
-            <Title>單元編輯</Title>
-            <MainRedFilledBtn
-              type="button"
-              onClick={handleUpdate}
-              style={{ marginLeft: "auto", marginBottom: "30px" }}
+            <Title
+              style={{
+                textAlign: "center",
+                marginTop: "30px",
+                marginBottom: "30px",
+              }}
             >
-              <Link to="/TeacherMain">完成送出</Link>
-            </MainRedFilledBtn>
-
+              單元編輯
+            </Title>
             <form>
               <UnitInfo>
                 <CourseDetailText>單元名稱</CourseDetailText>
@@ -625,7 +625,14 @@ function EditUnit() {
                 style={{ marginTop: "10px", marginBottom: "10px" }}
               >
                 再加一題
-              </MainDarkBorderBtn>{" "}
+              </MainDarkBorderBtn>
+              <MainRedFilledBtn
+                type="button"
+                onClick={handleUpdate}
+                style={{ width: "100%", marginTop: "20px" }}
+              >
+                <Link to="/TeacherMain">完成送出</Link>
+              </MainRedFilledBtn>
             </form>
           </Container2>
         </Container>

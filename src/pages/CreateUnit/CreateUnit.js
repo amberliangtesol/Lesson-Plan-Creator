@@ -231,15 +231,15 @@ function CreateUnit() {
             </BtnContainer>
           </Container1>
           <Container2>
-            <Title>單元編輯</Title>
-            <MainRedFilledBtn
-              type="button"
-              onClick={handleCreate}
-              style={{ marginLeft: "auto", marginBottom: "30px" }}
+            <Title
+              style={{
+                textAlign: "center",
+                marginTop: "30px",
+                marginBottom: "30px",
+              }}
             >
-              完成送出
-            </MainRedFilledBtn>
-
+              單元編輯
+            </Title>
             <form>
               <UnitInfo>
                 <CourseDetailText>單元名稱</CourseDetailText>
@@ -613,6 +613,13 @@ function CreateUnit() {
               >
                 再加一題
               </MainDarkBorderBtn>
+              <MainRedFilledBtn
+                type="button"
+                onClick={handleCreate}
+                style={{ width: "100%", marginTop: "20px" }}
+              >
+                完成送出
+              </MainRedFilledBtn>
             </form>
           </Container2>
         </Container>

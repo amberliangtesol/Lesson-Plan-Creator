@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
-import { UserContext } from "../../UserInfoProvider";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
-  getDoc,
-  doc,
   orderBy,
   getDocs,
   addDoc,
@@ -22,9 +20,12 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
+import { MdOutlineTipsAndUpdates } from "react-icons/md";
+import { TbCircleNumber1 } from "react-icons/tb";
+import { TbCircleNumber2 } from "react-icons/tb";
+import { TbCircleNumber3 } from "react-icons/tb";
 
-function EditCourse() {
-  const { user, setUser } = useContext(UserContext);
+function CreateCourse() {
   const { lessonId } = useParams();
   const [startTimestamp, setStartTimestamp] = useState(Date.now());
   const [endTimestamp, setEndTimestamp] = useState(Date.now());
@@ -37,47 +38,42 @@ function EditCourse() {
   const [currentUnitId, setCurrentUnitId] = useState();
   const navigate = useNavigate();
 
-  async function fetchUserData() {
-    if (user.classNames) return;
-
-    const docRef = doc(db, "users", user.account);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      if (userData) {
-        // Add this condition to check if userData is defined
-        // Fetch class names
-        const classNames = await Promise.all(
-          userData.classes.map(async (classId) => {
-            const classDoc = await getDoc(doc(db, "classes", classId));
-            return classDoc.data() && classDoc.data().name;
-          })
-        );
-        setUser({
-          ...user,
-          image: userData.image,
-          name: userData.name,
-          classes: userData.classes,
-          classNames,
+  useEffect(() => {
+    const fetchClasses = async () => {
+      const classQuery = query(collection(db, "classes"));
+      const unsubscribe = onSnapshot(classQuery, (querySnapshot) => {
+        const classes = [];
+        querySnapshot.forEach((doc) => {
+          classes.push({ id: doc.id, ...doc.data() });
         });
-      }
-    }
-  }
+        setClassList(classes);
+      });
 
-  useEffect(() => {
-    // Call fetchUserData on page load
-    fetchUserData();
+      return () => {
+        unsubscribe();
+      };
+    };
+
+    fetchClasses();
   }, []);
-
-  useEffect(() => {
-    // Set the classList state after the classNames property has been set
-    setClassList(user.classNames || []);
-  }, [user.classNames]);
 
   const UploadIcon = () => {
     return (
-      <span>
-        <BsCloudUpload />
+      <span
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
+        <BsCloudUpload
+          style={{
+            color: "#f46868",
+            fontSize: "40px",
+            position: "absolute",
+            top: "52px",
+          }}
+        />
       </span>
     );
   };
@@ -94,6 +90,33 @@ function EditCourse() {
     }
   };
 
+  const handleCreate = async () => {
+    try {
+      // Upload the image to Firebase Storage and get its URL
+      const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
+
+      // Create the document in Firestore with the image URL
+      const docRef = await addDoc(collection(db, "lessons"), {
+        name: courseName,
+        img: imageURL,
+        start_date: startTimestamp,
+        end_date: endTimestamp,
+        classes: classChoose,
+      });
+      await updateDoc(docRef, {
+        id: docRef.id,
+      });
+
+      console.log(docRef.id);
+      const lessonDocId = docRef.id;
+      navigate(`/create-unit/${lessonDocId}`);
+
+      console.log("Document created with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error creating document: ", e);
+    }
+  };
+
   const uploadImageAndGetURL = async (imageFile) => {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${imageFile.name}`);
@@ -106,27 +129,6 @@ function EditCourse() {
 
     return imageURL;
   };
-
-  // Fetch the lesson data
-  useEffect(() => {
-    const fetchLesson = async () => {
-      const lessonRef = doc(db, "lessons", lessonId);
-      const lessonDoc = await getDoc(lessonRef);
-
-      if (lessonDoc.exists()) {
-        const lessonData = lessonDoc.data();
-        if (lessonData) {
-          setCourseName(lessonData.name);
-          setImageURL(lessonData.img);
-          setStartTimestamp(lessonData.start_date);
-          setEndTimestamp(lessonData.end_date);
-          setClassChoose(lessonData.classes);
-        }
-      }
-    };
-
-    fetchLesson();
-  }, [lessonId]);
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
@@ -149,30 +151,6 @@ function EditCourse() {
     fetchSortedUnits();
   }, [lessonId]);
 
-  const handleUpdate = async () => {
-    try {
-      let imgUrl = imageURL;
-      if (imageFile) {
-        // Upload the image to Firebase Storage and get its URL
-        imgUrl = await uploadImageAndGetURL(imageFile);
-      }
-
-      // Update the existing lesson document in Firestore
-      const lessonRef = doc(db, "lessons", lessonId);
-      await updateDoc(lessonRef, {
-        name: courseName,
-        img: imgUrl,
-        start_date: startTimestamp,
-        end_date: endTimestamp,
-        classes: classChoose,
-      });
-      navigate(`/edit-unit/${lessonId}`);
-      console.log("Document updated with ID: ", lessonId);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }
-  };
-
   function setDropdownHeight() {
     const selectEl = document.querySelector("select");
     selectEl.setAttribute("size", selectEl.length);
@@ -186,40 +164,66 @@ function EditCourse() {
           <MainContent>
             <Container1>
               <BtnContainer>
-                <h3
-                  style={{
-                    borderBottom: "3px solid #f46868",
-                    paddingBottom: "18px",
-                  }}
+                <Btnwrapper>
+                  <MdOutlineTipsAndUpdates
+                    style={{ color: "black", fontSize: "24px" }}
+                  />
+                  <h3>Tips</h3>
+                </Btnwrapper>
+
+                <Btnwrapper style={{ marginTop: "50px" }}>
+                  <TbCircleNumber1
+                    style={{ color: "#f46868", fontSize: "24px" }}
+                  />
+                  <StyledParagraph>確認課程總體目標</StyledParagraph>
+                </Btnwrapper>
+
+                <Btnwrapper>
+                  <TbCircleNumber2
+                    style={{ color: "#f46868", fontSize: "24px" }}
+                  />
+                  <StyledParagraph>切分目標至小單元</StyledParagraph>
+                </Btnwrapper>
+
+                <Btnwrapper style={{ marginBottom: "100px" }}>
+                  <TbCircleNumber3
+                    style={{ color: "#f46868", fontSize: "24px" }}
+                  />
+                  <StyledParagraph>每個單元一段影片</StyledParagraph>
+                </Btnwrapper>
+
+                <MainDarkBorderBtn
+                  style={{ width: "104px", alignSelf: "center" }}
                 >
-                  單元列表
-                </h3>
-                {sortedUnits.map((unit, index) => (
-                  <h3
-                    key={unit.id}
-                    style={{
-                      color: unit.id === currentUnitId ? "#F46868" : "black",
-                      fontWeight: unit.id === currentUnitId ? "700" : "400",
-                      alignSelf: "flex-start",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      setCurrentUnitId(unit.id);
-                    }}
-                  >
-                    Unit {index + 1} : {unit.data.unitName}
-                  </h3>
-                ))}
-                <MainDarkBorderBtn>
                   <Link to="/TeacherMain">回首頁</Link>
                 </MainDarkBorderBtn>
               </BtnContainer>
             </Container1>
 
             <Container2>
-              <Title>課程編輯</Title>
+              <Title>課程建立</Title>
+
+              <MainRedFilledBtn
+                type="button"
+                onClick={handleCreate}
+                style={{ marginLeft: "auto", marginBottom: "30px" }}
+              >
+                單元建立
+              </MainRedFilledBtn>
+
               <CourseDetail>
-                <CourseDetailText>縮圖上傳</CourseDetailText>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>縮圖上傳</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 最佳尺寸為300*150px
+                  </CourseDetailReminder>
+                </div>
                 <VideoImg imageURL={imageURL}>
                   <UploadLabel htmlFor="imageUpload">
                     <UploadIcon />
@@ -237,7 +241,6 @@ function EditCourse() {
                 <CourseDetailText>課程名稱</CourseDetailText>
                 <CourseInput
                   type="text"
-                  value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
                 ></CourseInput>
                 <div
@@ -249,10 +252,9 @@ function EditCourse() {
                 >
                   <CourseDetailText>班級設定</CourseDetailText>
                   <CourseDetailReminder>
-                    * 按下command或control鍵可多選
+                    * ⌘ 或 Ctrl 可多選
                   </CourseDetailReminder>
                 </div>
-
                 <SelectOptions
                   style={{ padding: "10px" }}
                   multiple
@@ -266,8 +268,11 @@ function EditCourse() {
                   }}
                 >
                   {classList.map((classItem) => (
-                    <option key={classItem} value={classItem}>
-                      {classItem}
+                    <option
+                      key={`${classItem.id}_${classItem.index}`}
+                      value={classItem.id}
+                    >
+                      {classItem.name}
                     </option>
                   ))}
                 </SelectOptions>
@@ -280,7 +285,18 @@ function EditCourse() {
                     setStartTimestamp(new Date(e.target.value).getTime())
                   }
                 />
-                <CourseDetailText>結束時間</CourseDetailText>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <CourseDetailText>結束時間</CourseDetailText>
+                  <CourseDetailReminder>
+                    * 請選擇超過建立日期
+                  </CourseDetailReminder>
+                </div>
                 <CourseInput
                   type="datetime-local"
                   value={new Date(endTimestamp).toISOString().slice(0, 16)}
@@ -289,23 +305,14 @@ function EditCourse() {
                   }
                 />
               </CourseDetail>
-              <MainRedFilledBtn
-                type="button"
-                onClick={handleUpdate}
-                style={{ width: "100%", marginLeft: "auto", marginTop: "30px" }}
-              >
-                單元編輯
-              </MainRedFilledBtn>
             </Container2>
           </MainContent>
         </Container>
       </Content>
-
       <Footer></Footer>
     </Body>
   );
 }
-
 const Body = styled.div`
   min-height: 100vh;
   display: flex;
@@ -334,7 +341,7 @@ const Title = styled.p`
   line-height: 29px;
   letter-spacing: 0em;
   margin-top: 0;
-  margin-bottom: 30px;
+  margin-bottom: 0;
   margin-left: auto;
   margin-right: auto;
   padding-left: 50px;
@@ -365,7 +372,7 @@ const Container2 = styled.div`
   display: flex;
   flex-direction: column;
   padding-top: 50px;
-  width: 65vw;
+  width: 50vw;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 90px;
@@ -379,7 +386,9 @@ const Container2 = styled.div`
 const VideoImg = styled.div`
   width: 300px;
   height: 150px;
-  border: 1px solid black;
+  background: #ffffff;
+  box-shadow: 0px 1px 4px 0px #00000033;
+  border-radius: 29px;
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
   background-position: center;
@@ -397,6 +406,7 @@ const StyledParagraphTitle = styled.p`
   @media screen and (max-width: 1279px) {
   }
 `;
+
 const StyledParagraph = styled.p`
   display: flex;
   align-items: center;
@@ -458,9 +468,6 @@ const SelectOptions = styled.select`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
-  option:checked {
-    background-color: #febebe;
-  }
   :focus {
     outline: 2px solid #f46868;
   }
@@ -484,4 +491,4 @@ const CourseDetailReminder = styled.p`
   color: #f46868;
 `;
 
-export default EditCourse;
+export default CreateCourse;

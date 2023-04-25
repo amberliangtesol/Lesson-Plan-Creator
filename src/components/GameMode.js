@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components/macro";
+import styled, { keyframes, css } from "styled-components/macro";
 import monster1 from "./Monster/1.png";
 import monster2 from "./Monster/2.png";
 import monster3 from "./Monster/3.png";
@@ -11,6 +11,8 @@ import monster8 from "./Monster/8.png";
 import monster9 from "./Monster/9.png";
 import monster10 from "./Monster/10.png";
 import user from "./Monster/user.png";
+import spinnerImage from "./Monster/spinnerImage.png";
+import vs from "./Monster/vs.png";
 
 const monsterImages = [
   monster1,
@@ -33,15 +35,15 @@ const shuffleArray = (array) => {
   return array;
 };
 
-
-const GameMode = ({ countdown, setCountdown}) => {
+const GameMode = ({ countdown, setCountdown }) => {
   const [gamemode, setGamemode] = useState(true);
-  // const [countdown, setCountdown] = useState(null);
   const [npcCountdown, setNpcCountdown] = useState(null);
   const [currentMonster, setCurrentMonster] = useState(monsterImages[0]);
+  const [initialUserCountdown, setInitialUserCountdown] = useState(null);
+  const [initialNpcCountdown, setInitialNpcCountdown] = useState(null);
 
-  const randomCountdown = () => {
-    return [10, 15, 20][Math.floor(Math.random() * 3)];
+  const randomCountdown = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
   useEffect(() => {
@@ -50,11 +52,17 @@ const GameMode = ({ countdown, setCountdown}) => {
 
   useEffect(() => {
     if (gamemode) {
-      setCountdown(randomCountdown());
-      setNpcCountdown(randomCountdown());
+      const userCountdown = randomCountdown(10, 20); // For example, user countdown range: 10 - 20 seconds
+      const npcCountdown = randomCountdown(5, 25); // For example, NPC countdown range: 5 - 25 seconds
+      setCountdown(userCountdown);
+      setNpcCountdown(npcCountdown);
+      setInitialUserCountdown(userCountdown);
+      setInitialNpcCountdown(npcCountdown);
     } else {
       setCountdown(null);
       setNpcCountdown(null);
+      setInitialUserCountdown(null);
+      setInitialNpcCountdown(null);
     }
   }, [gamemode]);
 
@@ -76,37 +84,60 @@ const GameMode = ({ countdown, setCountdown}) => {
     }
   }, [npcCountdown]);
 
-
   return (
     <div>
       {gamemode && (
-        <div>
-          <CountdownWrapper>剩餘作答時間 {countdown} 秒</CountdownWrapper>
+        <GameWrapper>
+          <Sidebar>
+            <CountdownBar
+              countdown={countdown}
+              initialCountdown={initialUserCountdown}
+            />
+          </Sidebar>
           <ImagesWrapper>
-            <div>
-              <Sidebar>
-                <CountdownBar countdown={countdown} />
-              </Sidebar>
+            <CountdownWrapper countdown={countdown}>
+              剩餘作答時間 {countdown} 秒
+            </CountdownWrapper>
+            <ImageContainer>
               <UserImage src={user} alt="User" />
-            </div>
-            <div>
-              <Sidebar>
-                <CountdownBar countdown={npcCountdown} isNpc />
-              </Sidebar>
+              <SpinnerContainer>
+                <Vs src={vs} alt="User" />
+                <SpinnerImage src={spinnerImage} alt="Spinner" />
+              </SpinnerContainer>
               <NpcImage src={currentMonster} alt="NPC" />
-            </div>
+            </ImageContainer>
           </ImagesWrapper>
-        </div>
+          <Sidebar>
+            <CountdownBar
+              countdown={npcCountdown}
+              initialCountdown={initialNpcCountdown}
+              isNpc
+            />
+          </Sidebar>
+        </GameWrapper>
       )}
     </div>
   );
 };
 
+const GameWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 30px 50px;
+  background: #d9d9d9;
+  border-radius: 33px;
+  margin-top: 30px;
+`;
+
 const Sidebar = styled.div`
   position: relative;
   width: 30px;
-  height: 100px;
-  background-color: lightgray;
+  height: 350px;
+  background-color: #ffffff;
+  border-radius: 33px;
   margin-right: 10px;
 `;
 
@@ -121,29 +152,169 @@ const countdownAnimation = keyframes`
 
 const CountdownBar = styled.div`
   position: absolute;
+  border-radius: 33px;
   bottom: 0;
   width: 100%;
-  height: 100%;
-  background-color: ${(props) => (props.isNpc ? "red" : "blue")};
-  animation: ${(props) => props.countdown}s ${countdownAnimation} linear
-    forwards;
+  height: ${(props) => (props.isNpc ? "100%" : "100%")};
+  background-color: ${(props) => (props.isNpc ? "#F46868" : "#F46868")};
+  animation: ${(props) => css`
+    ${props.initialCountdown}s ${countdownAnimation} linear forwards
+  `};
+`;
+
+const ImageContainer = styled.div`
+  width: 70%;
+  height: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+  position: relative;
+  p {
+    font-size: 20px;
+    font-weight: 600;
+  }
+`;
+
+const bounce = keyframes`
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+`;
+
+const flyInFromLeft = keyframes`
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+`;
+
+const flyInFromRight = keyframes`
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+`;
+
+const flyInAnimation = keyframes`
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const vsAnimation = keyframes`
+  0% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const spinnerRotation = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+const Vs = styled.img`
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  z-index: 100;
+`;
+
+const scaleSpinner = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+const SpinnerImage = styled.img`
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  animation: ${spinnerRotation} 2s linear infinite,
+    ${scaleSpinner} 2s linear infinite;
 `;
 
 const NpcImage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 70%;
+  height: 70%;
+  animation: ${flyInFromRight} 1s ease forwards, ${bounce} 1s ease 1s infinite;
 `;
 
 const UserImage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 70%;
+  height: 70%;
+  animation: ${flyInFromLeft} 1s ease forwards, ${bounce} 2s ease 1s infinite;
 `;
 
 const ImagesWrapper = styled.div`
+  width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
   padding: 20px 0;
+  align-items: center;
+  gap: 50px;
+`;
+
+const shakeAnimation = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+`;
+
+const redShake = css`
+  background-color: #f46868;
+  animation: ${shakeAnimation} 0.5s linear infinite;
 `;
 
 const CountdownWrapper = styled.div`
@@ -152,6 +323,13 @@ const CountdownWrapper = styled.div`
   align-items: center;
   font-size: 24px;
   font-weight: bold;
+  animation: ${flyInAnimation} 1s ease-out forwards;
+  background-color: #a3a1a1;
+  padding: 10px;
+  border-radius: 33px;
+  width: 250px;
+  color: #ffffff;
+  ${(props) => props.countdown !== null && props.countdown <= 5 && redShake}
 `;
 
 export default GameMode;

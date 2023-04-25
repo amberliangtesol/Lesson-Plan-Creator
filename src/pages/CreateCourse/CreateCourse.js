@@ -1,12 +1,14 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+import { UserContext } from "../../UserInfoProvider";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   orderBy,
   getDocs,
+  doc,
+  getDoc,
   addDoc,
   collection,
   query,
@@ -26,6 +28,7 @@ import { TbCircleNumber2 } from "react-icons/tb";
 import { TbCircleNumber3 } from "react-icons/tb";
 
 function CreateCourse() {
+  const { user, setUser } = useContext(UserContext);
   const { lessonId } = useParams();
   const [startTimestamp, setStartTimestamp] = useState(Date.now());
   const [endTimestamp, setEndTimestamp] = useState(Date.now());
@@ -38,24 +41,66 @@ function CreateCourse() {
   const [currentUnitId, setCurrentUnitId] = useState();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      const classQuery = query(collection(db, "classes"));
-      const unsubscribe = onSnapshot(classQuery, (querySnapshot) => {
-        const classes = [];
-        querySnapshot.forEach((doc) => {
-          classes.push({ id: doc.id, ...doc.data() });
-        });
-        setClassList(classes);
-      });
+  // Call fetchUserData directly inside the component function
+  async function fetchUserData() {
+    if (user.classNames) return;
 
-      return () => {
-        unsubscribe();
-      };
+    const docRef = doc(db, "users", user.account);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      if (userData) {
+        // Add this condition to check if userData is defined
+        // Fetch class names
+        const classNames = await Promise.all(
+          userData.classes.map(async (classId) => {
+            const classDoc = await getDoc(doc(db, "classes", classId));
+            return classDoc.data() && classDoc.data().name;
+          })
+        );
+        setUser({
+          ...user,
+          image: userData.image,
+          name: userData.name,
+          classes: userData.classes,
+          classNames,
+        });
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Call fetchUserData on page load
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    // Set the classList state after the classNames property has been set
+    setClassList(user.classNames || []);
+  }, [user.classNames]);
+
+  useEffect(() => {
+    const fetchSortedUnits = async () => {
+      console.log(`lessons/${lessonId}/units`);
+      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
+      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
+      const querySnapshot = await getDocs(unitsQuery);
+      const units = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setSortedUnits(units);
+
+      // Add a conditional check to make sure the units array is not empty
+      if (units.length > 0) {
+        setCurrentUnitId(units[0].id);
+      }
     };
 
-    fetchClasses();
-  }, []);
+    fetchSortedUnits();
+  }, [lessonId]);
+
+  console.log("classList", classList);
 
   const UploadIcon = () => {
     return (
@@ -130,27 +175,6 @@ function CreateCourse() {
     return imageURL;
   };
 
-  useEffect(() => {
-    const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
-      const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
-      const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
-      const querySnapshot = await getDocs(unitsQuery);
-      const units = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        data: doc.data(),
-      }));
-      setSortedUnits(units);
-
-      // Add a conditional check to make sure the units array is not empty
-      if (units.length > 0) {
-        setCurrentUnitId(units[0].id);
-      }
-    };
-
-    fetchSortedUnits();
-  }, [lessonId]);
-
   function setDropdownHeight() {
     const selectEl = document.querySelector("select");
     selectEl.setAttribute("size", selectEl.length);
@@ -202,15 +226,6 @@ function CreateCourse() {
 
             <Container2>
               <Title>課程建立</Title>
-
-              <MainRedFilledBtn
-                type="button"
-                onClick={handleCreate}
-                style={{ marginLeft: "auto", marginBottom: "30px" }}
-              >
-                單元建立
-              </MainRedFilledBtn>
-
               <CourseDetail>
                 <div
                   style={{
@@ -268,11 +283,8 @@ function CreateCourse() {
                   }}
                 >
                   {classList.map((classItem) => (
-                    <option
-                      key={`${classItem.id}_${classItem.index}`}
-                      value={classItem.id}
-                    >
-                      {classItem.name}
+                    <option key={classItem} value={classItem}>
+                      {classItem}
                     </option>
                   ))}
                 </SelectOptions>
@@ -305,6 +317,16 @@ function CreateCourse() {
                   }
                 />
               </CourseDetail>
+              <MainRedFilledBtn
+                type="button"
+                onClick={handleCreate}
+                style={{
+                  width: "100%",
+                  marginTop: "30px",
+                }}
+              >
+                單元建立
+              </MainRedFilledBtn>
             </Container2>
           </MainContent>
         </Container>
@@ -341,7 +363,7 @@ const Title = styled.p`
   line-height: 29px;
   letter-spacing: 0em;
   margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 30px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 50px;
@@ -372,7 +394,7 @@ const Container2 = styled.div`
   display: flex;
   flex-direction: column;
   padding-top: 50px;
-  width: 50vw;
+  width: 65vw;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 90px;
