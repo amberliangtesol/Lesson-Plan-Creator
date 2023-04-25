@@ -26,6 +26,7 @@ import Main from "./pages/Main/Main";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
 import UserInfoProvider, { UserContext } from "./UserInfoProvider";
+import CongratsModal from "./components/CongratsModal";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -80,6 +81,7 @@ function App() {
             path="/youtubewithquestion/:lessonId"
             element={<YouTubeWithQuestion />}
           />
+          <Route path="/congratsmodal" element={<CongratsModal />} />
         </Route>
 
         <Route element={<TeacherRouter />}>

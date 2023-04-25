@@ -41,6 +41,7 @@ const GameMode = ({ countdown, setCountdown }) => {
   const [currentMonster, setCurrentMonster] = useState(monsterImages[0]);
   const [initialUserCountdown, setInitialUserCountdown] = useState(null);
   const [initialNpcCountdown, setInitialNpcCountdown] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   const randomCountdown = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -84,30 +85,44 @@ const GameMode = ({ countdown, setCountdown }) => {
     }
   }, [npcCountdown]);
 
+  useEffect(() => {
+    if (countdown === 0) {
+      setShowPopup(true);
+    } else {
+      setShowPopup(false);
+    }
+  }, [countdown]);
+
   return (
     <div>
       {gamemode && (
         <GameWrapper>
-          <Sidebar>
+          <Sidebar countdown={countdown}>
             <CountdownBar
               countdown={countdown}
               initialCountdown={initialUserCountdown}
             />
           </Sidebar>
-          <ImagesWrapper>
+          {showPopup && <PopupText>Times Up!</PopupText>}
+          <ImagesWrapper countdown={countdown}>
             <CountdownWrapper countdown={countdown}>
               剩餘作答時間 {countdown} 秒
             </CountdownWrapper>
-            <ImageContainer>
-              <UserImage src={user} alt="User" />
+            <ImageContainer countdown={countdown}>
+              <UserImage countdown={countdown} src={user} alt="User" />
               <SpinnerContainer>
                 <Vs src={vs} alt="User" />
-                <SpinnerImage src={spinnerImage} alt="Spinner" />
+                <SpinnerImage
+                  countdown={countdown}
+                  src={spinnerImage}
+                  alt="Spinner"
+                />
               </SpinnerContainer>
-              <NpcImage src={currentMonster} alt="NPC" />
+              <NpcImage countdown={countdown} src={currentMonster} alt="NPC" />
             </ImageContainer>
           </ImagesWrapper>
-          <Sidebar>
+
+          <Sidebar countdown={countdown}>
             <CountdownBar
               countdown={npcCountdown}
               initialCountdown={initialNpcCountdown}
@@ -139,6 +154,11 @@ const Sidebar = styled.div`
   background-color: #ffffff;
   border-radius: 33px;
   margin-right: 10px;
+  ${(props) =>
+    props.countdown === 0 &&
+    css`
+      opacity: 20%;
+    `}
 `;
 
 const countdownAnimation = keyframes`
@@ -160,9 +180,15 @@ const CountdownBar = styled.div`
   animation: ${(props) => css`
     ${props.initialCountdown}s ${countdownAnimation} linear forwards
   `};
+  ${(props) =>
+    props.countdown === 0 &&
+    css`
+      opacity: 20%;
+    `}
 `;
 
 const ImageContainer = styled.div`
+  z-index: 350;
   width: 70%;
   height: 70%;
   display: flex;
@@ -249,6 +275,7 @@ const Vs = styled.img`
   width: 80px;
   height: 80px;
   z-index: 100;
+  animation: ${vsAnimation} 1s ease-out forwards;
 `;
 
 const scaleSpinner = keyframes`
@@ -267,21 +294,35 @@ const SpinnerImage = styled.img`
   position: absolute;
   width: 150px;
   height: 150px;
-  transform: translate(-50%, -50%);
-  animation: ${spinnerRotation} 2s linear infinite,
+  animation: ${(props) =>
+    props.countdown === 0
+      ? "none"
+      : css`
+          ${spinnerRotation} 2s linear infinite,
     ${scaleSpinner} 2s linear infinite;
+        `};
 `;
 
 const NpcImage = styled.img`
   width: 70%;
   height: 70%;
-  animation: ${flyInFromRight} 1s ease forwards, ${bounce} 1s ease 1s infinite;
+  animation: ${(props) =>
+    props.countdown === 0
+      ? "none"
+      : css`
+          ${flyInFromRight} 1s ease forwards, ${bounce} 1s ease 1s infinite
+        `};
 `;
 
 const UserImage = styled.img`
   width: 70%;
   height: 70%;
-  animation: ${flyInFromLeft} 1s ease forwards, ${bounce} 2s ease 1s infinite;
+  animation: ${(props) =>
+    props.countdown === 0
+      ? "none"
+      : css`
+          ${flyInFromLeft} 1s ease forwards, ${bounce} 2s ease 1s infinite
+        `};
 `;
 
 const ImagesWrapper = styled.div`
@@ -292,6 +333,11 @@ const ImagesWrapper = styled.div`
   padding: 20px 0;
   align-items: center;
   gap: 50px;
+  ${(props) =>
+    props.countdown === 0 &&
+    css`
+      opacity: 20%;
+    `}
 `;
 
 const shakeAnimation = keyframes`
@@ -314,7 +360,12 @@ const shakeAnimation = keyframes`
 
 const redShake = css`
   background-color: #f46868;
-  animation: ${shakeAnimation} 0.5s linear infinite;
+  animation: ${(props) =>
+    props.countdown === 0
+      ? "none"
+      : css`
+          ${shakeAnimation} 0.5s linear infinite
+        `};
 `;
 
 const CountdownWrapper = styled.div`
@@ -330,6 +381,27 @@ const CountdownWrapper = styled.div`
   width: 250px;
   color: #ffffff;
   ${(props) => props.countdown !== null && props.countdown <= 5 && redShake}
+`;
+
+const popupAnimation = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50px);
+  }
+`;
+
+const PopupText = styled.div`
+  position: absolute;
+  font-size: 40px;
+  font-weight: 700;
+  color: #a3a1a1;
+  animation: ${popupAnimation} 1s ease forwards;
+  z-index: 400;
+  opacity: 1;
 `;
 
 export default GameMode;

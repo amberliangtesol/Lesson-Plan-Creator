@@ -85,16 +85,18 @@ function Badge() {
         return (
           <img
             key={`usedbadge1-${index}`}
-            src={usedbadge1}
+            src={badge1}
             alt="Used Badge 1"
+            style={{ opacity: 0.5 }}
           />
         );
       case "usedbadge2":
         return (
           <img
             key={`usedbadge2-${index}`}
-            src={usedbadge2}
+            src={badge2}
             alt="Used Badge 2"
+            style={{ opacity: 0.5 }}
           />
         );
       default:
