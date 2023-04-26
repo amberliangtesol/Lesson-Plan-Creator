@@ -18,7 +18,6 @@ import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching/Matching";
 import GameMode from "./GameMode";
-import CongratsModal from "./CongratsModal";
 import styled from "styled-components/macro";
 import { Link } from "react-router-dom";
 import Header from "./Header";
@@ -27,6 +26,9 @@ import { MainDarkBorderBtn } from "./Buttons";
 import { MainRedFilledBtn } from "./Buttons";
 import { MainDarkFilledBtn } from "./Buttons";
 import { HiOutlineHome } from "react-icons/hi";
+import Badge1 from "./badge1.gif";
+import Badge2 from "./badge2.gif";
+import Swal from "sweetalert2";
 
 const YouTubeWithQuestions = () => {
   const { lessonId } = useParams();
@@ -46,6 +48,8 @@ const YouTubeWithQuestions = () => {
   const [currentUnitDescription, setCurrentUnitDescription] = useState("");
   const [resultMessage, setResultMessage] = useState("");
   const [showCongratsModal, setShowCongratsModal] = useState(false);
+  const [icon, setIcon] = useState("");
+  const [hasShownCongratsModal, setHasShownCongratsModal] = useState(false);
 
   console.log("currentUnitId", currentUnitId);
   useEffect(() => {
@@ -236,15 +240,19 @@ const YouTubeWithQuestions = () => {
   };
 
   const handleAnswerClick = (option) => {
+    console.log("handleAnswerClick called");
     if (option.correct) {
       updatedQuestions(currentQuestion.id, true);
       setResultMessage("You win!");
-      if (countdown > 0) {
+      setIcon("✓");
+      if (countdown > 0 && !hasShownCongratsModal) {
         updateUserBadgeData("badge2");
         setShowCongratsModal(true); // Show the CongratsModal
+        setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
       }
     } else {
       setResultMessage(currentQuestion.explanation);
+      setIcon("✕");
     }
   };
 
@@ -308,6 +316,36 @@ const YouTubeWithQuestions = () => {
 
   console.log("currentQuestion", currentQuestion);
 
+  const CongratsModal = ({ show }) => {
+    console.log("CongratsModal show prop:", show); // Log the value of the show prop
+    useEffect(() => {
+      if (show) {
+        let timerInterval;
+        Swal.fire({
+          title: "恭喜你獲得徽章!",
+          imageUrl: Badge2,
+          imageWidth: 250,
+          imageHeight: 250,
+          imageAlt: "Badge image",
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          padding: "30px",
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        }).then((result) => {
+          if (result.dismiss === Swal.DismissReason.timer) {
+          }
+        });
+
+        return () => clearInterval(timerInterval);
+      }
+    }, [show]);
+
+    return <ModalWrapper></ModalWrapper>;
+  };
+
   return (
     <Body>
       <Header></Header>
@@ -369,10 +407,7 @@ const YouTubeWithQuestions = () => {
                   繼續觀看下個單元
                 </MainDarkFilledBtn>
               )}
-              <CongratsModal
-                show={showCongratsModal}
-                onTimeout={() => setShowCongratsModal(false)}
-              />
+              <CongratsModal show={showCongratsModal} />
 
               {currentQuestion && currentQuestion.gameMode && (
                 <GameMode countdown={countdown} setCountdown={setCountdown} />
@@ -437,6 +472,17 @@ const YouTubeWithQuestions = () => {
     </Body>
   );
 };
+
+const ModalWrapper = styled.div`
+  display: ${(props) => (props.show ? "block" : "none")};
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
 
 const Body = styled.div`
   min-height: 100vh;

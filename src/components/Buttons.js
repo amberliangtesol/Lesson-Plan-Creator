@@ -180,7 +180,7 @@ const MultipleChoiceOptionCard = styled.div`
 
   &:focus,
   &.selected {
-    background-color: transparent !important;
+    background-color: transparent;
     border-color: #f46868;
   }
 

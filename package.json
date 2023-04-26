@@ -20,6 +20,9 @@
     "react-scripts": "5.0.1",
     "read-excel-file": "^5.6.1",
     "svg-to-dataurl": "^1.0.0",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.7.3",
+    "sweetalert2-react-content": "^5.0.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

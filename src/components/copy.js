@@ -22,9 +22,9 @@ import styled from "styled-components/macro";
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
+import { MainDarkBorderBtn } from "./Buttons";
 import { MainRedFilledBtn } from "./Buttons";
 import { MainDarkFilledBtn } from "./Buttons";
-import { MainDarkBorderBtn } from "./Buttons";
 import { HiOutlineHome } from "react-icons/hi";
 
 const YouTubeWithQuestions = () => {
@@ -44,6 +44,8 @@ const YouTubeWithQuestions = () => {
   const [currentUnitSubtitle, setCurrentUnitSubtitle] = useState("");
   const [currentUnitDescription, setCurrentUnitDescription] = useState("");
   const [resultMessage, setResultMessage] = useState("");
+  const [showCongratsModal, setShowCongratsModal] = useState(false);
+  const [icon, setIcon] = useState("");
 
   console.log("currentUnitId", currentUnitId);
   useEffect(() => {
@@ -237,11 +239,14 @@ const YouTubeWithQuestions = () => {
     if (option.correct) {
       updatedQuestions(currentQuestion.id, true);
       setResultMessage("You win!");
+      setIcon("✓");
       if (countdown > 0) {
         updateUserBadgeData("badge2");
+        setShowCongratsModal(true); // Show the CongratsModal
       }
     } else {
       setResultMessage(currentQuestion.explanation);
+      setIcon("✕");
     }
   };
 
@@ -257,6 +262,7 @@ const YouTubeWithQuestions = () => {
     if (answeredQuestions.length === questions.current.length) {
       // Give the user badge1 if they have answered all questions
       updateUserBadgeData("badge1");
+      alert("恭喜你準時完成作業！");
     }
 
     // Fetch the current unit's timestamp
@@ -365,6 +371,11 @@ const YouTubeWithQuestions = () => {
                   繼續觀看下個單元
                 </MainDarkFilledBtn>
               )}
+              <CongratsModal
+                show={showCongratsModal}
+                // onTimeout={() => setShowCongratsModal(false)}
+              />
+
               {currentQuestion && currentQuestion.gameMode && (
                 <GameMode countdown={countdown} setCountdown={setCountdown} />
               )}

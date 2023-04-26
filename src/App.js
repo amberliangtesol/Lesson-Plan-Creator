@@ -26,7 +26,6 @@ import Main from "./pages/Main/Main";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
 import UserInfoProvider, { UserContext } from "./UserInfoProvider";
-import CongratsModal from "./components/CongratsModal";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -44,6 +43,14 @@ const GlobalStyle = createGlobalStyle`
     position: relative;
     @media screen and (max-width: 1200px) {
     }
+  }
+  .swal2-title {
+    font-size: 24px;
+    padding: 0;
+  }
+  .swal2-image {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 `;
 
@@ -81,7 +88,6 @@ function App() {
             path="/youtubewithquestion/:lessonId"
             element={<YouTubeWithQuestion />}
           />
-          <Route path="/congratsmodal" element={<CongratsModal />} />
         </Route>
 
         <Route element={<TeacherRouter />}>
