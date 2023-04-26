@@ -23,7 +23,6 @@ import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
-import { NoBorderBtn } from "../../components/Buttons";
 
 const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
@@ -39,82 +38,13 @@ function AddClass() {
   const [rows, setRows] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState("");
-  const [selectedTeachers, setSelectedTeachers] = useState([]);
   const [teacherInput, setTeacherInput] = useState("");
   const [teachers, setTeachers] = useState([]);
-  const [teachersName, setTeachersName] = useState([]);
   const [useLoggedInUserEmail, setUseLoggedInUserEmail] = useState(false);
   const fileInputRef = useRef();
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
-  const [studentEmailInput, setStudentEmailInput] = useState("");
-  const [studentNameInput, setStudentNameInput] = useState("");
-  const [teacherEmailInput, setTeacherEmailInput] = useState("");
-
-  const handleAddStudentEmail = () => {
-    if (studentEmailInput && studentNameInput) {
-      setRows([...rows, [studentNameInput, studentEmailInput]]);
-      setStudentNameInput("");
-      setStudentEmailInput("");
-    }
-  };
-
-  const handleAddTeacherEmail = () => {
-    if (teacherEmailInput && !selectedTeachers.includes(teacherEmailInput)) {
-      setSelectedTeachers([...selectedTeachers, teacherEmailInput]);
-      setTeachersName([...teachersName, teacherEmailInput]);
-      setTeacherEmailInput("");
-    }
-  };
-
-  const renderStudentTable = () => {
-    return (
-      <table className="ExcelTable2007">
-        <thead>
-          <tr className="heading">
-            <th>姓名</th>
-            <th>帳號</th>
-            {rows.length > 0 && <th>刪除</th>}
-          </tr>
-        </thead>
-        <tbody>{renderRows()}</tbody>
-      </table>
-    );
-  };
-
-  const renderTeacherTable = () => {
-    return (
-      <table className="ExcelTable2007">
-        <thead>
-          <tr className="heading">
-            <th>姓名</th>
-            <th>帳號</th>
-            {rows.length > 0 && <th>刪除</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {selectedTeachers.map((teacher, index) => (
-            <tr key={index}>
-              <td>{teachersName[teachers.indexOf(teacher)]}</td>
-              <td>{teacher}</td>
-              <td>
-                <DeleteIcon
-                  onDelete={() => {
-                    setSelectedTeachers(
-                      selectedTeachers.filter((_, i) => i !== index)
-                    );
-                    setTeacherInput("");
-                  }}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
-
   useEffect(() => {
     const fetchTeachers = async () => {
       const teachersQuery = query(
@@ -123,23 +53,25 @@ function AddClass() {
       );
       const querySnapshot = await getDocs(teachersQuery);
       const teacherEmails = querySnapshot.docs.map((doc) => doc.data().account);
-      const teacherNames = querySnapshot.docs.map((doc) => doc.data().name);
       setTeachers(teacherEmails);
-      setTeachersName(teacherNames);
     };
     fetchTeachers();
   }, []);
+
+  const handleTeacherInputChange = (e) => {
+    setTeacherInput(e.target.value);
+  };
 
   const handleClassNameChange = (e) => {
     setSelectedClass(e.target.value);
   };
 
   const handleTeacherInputBlur = () => {
-    if (teachers.includes(teacherEmailInput)) {
-      // setSelectedTeacher(teacherEmailInput);
-      alert("有此教師帳號");
+    if (teachers.includes(teacherInput)) {
+      setSelectedTeacher(teacherInput);
     } else {
       alert("無此教師帳號");
+      setTeacherInput("");
     }
   };
 
@@ -160,14 +92,11 @@ function AddClass() {
     });
   };
 
-  console.log("selectedTeachers", selectedTeachers);
-  console.log("Selected teacher:", selectedTeacher);
-
   const createNewClass = async () => {
     const newClassDocRef = await addDoc(collection(db, "classes"), {
       name: selectedClass,
       students: [],
-      teachers: selectedTeachers,
+      teachers: [selectedTeacher],
     });
     // setSelectedClass(newClassDocRef.id);
     await updateDoc(newClassDocRef, {
@@ -187,23 +116,20 @@ function AddClass() {
     }
 
     if (classDoc.exists) {
+      console.log("Class document exists");
       const classData = classDoc.data();
-      for (const selectedTeacher of selectedTeachers) {
-        console.log("Updating teacher's classes array for", selectedTeacher);
-        const teacherDocRef = doc(db, "users", selectedTeacher);
-        const teacherDoc = await getDoc(teacherDocRef);
-        const teacherData = teacherDoc.data();
+      console.log("Class teachers:", classData.teachers);
+      console.log("Selected teacher:", selectedTeacher);
 
-        if (!teacherData.classes.includes(classDocRef.id)) {
-          await updateDoc(teacherDocRef, {
-            classes: [...teacherData.classes, classDocRef.id],
-          });
-        }
-      }
+      // Check removed
+      console.log("Updating teacher's classes array");
+      const teacherDocRef = doc(db, "users", selectedTeacher);
+      const teacherDoc = await getDoc(teacherDocRef);
+      const teacherData = teacherDoc.data();
 
-      if (!classData.teachers.includes(selectedTeachers[0])) {
-        await updateDoc(classDocRef, {
-          teachers: [...classData.teachers, ...selectedTeachers],
+      if (!teacherData.classes.includes(classDocRef.id)) {
+        await updateDoc(teacherDocRef, {
+          classes: [...teacherData.classes, classDocRef.id],
         });
       }
 
@@ -245,10 +171,11 @@ function AddClass() {
               try {
                 const result = await createCustomUserFunction({
                   email: student.email,
+                  // phoneNumber: student.phoneNumber || '',
                   photoURL: student.photoURL || "",
                   password: student.email,
                   name: student.name,
-                  selectedTeacher: selectedTeacher,
+                  selectedTeacher,
                   selectedClass: classDocRef.id,
                 });
                 if (result.data.success) {
@@ -311,6 +238,22 @@ function AddClass() {
     ));
   };
 
+  const renderTable = () => {
+    return (
+      <table className="ExcelTable2007">
+        <thead>
+          <tr className="heading">
+            {cols.map((col, index) => (
+              <th key={index}>{col.name}</th>
+            ))}
+            {rows.length > 0 && <th>刪除</th>}
+          </tr>
+        </thead>
+        <tbody>{renderRows()}</tbody>
+      </table>
+    );
+  };
+
   const handleCheckboxChange = (e) => {
     setUseLoggedInUserEmail(e.target.checked);
     if (e.target.checked) {
@@ -319,14 +262,6 @@ function AddClass() {
       setTeacherInput("");
     }
   };
-
-  useEffect(() => {
-    const loggedInUserEmail = user.account; // Replace with the actual email of the logged-in user
-    setSelectedTeacher(loggedInUserEmail);
-    if (useLoggedInUserEmail) {
-      setTeacherInput(loggedInUserEmail);
-    }
-  }, [user.account, useLoggedInUserEmail]);
 
   return (
     <Body>
@@ -344,67 +279,37 @@ function AddClass() {
             </MainRedFilledBtn>
 
             <ClassContainer>
+              {/* <p>班級</p> */}
               <ClassInput
                 type="text"
                 value={selectedClass}
                 onChange={handleClassNameChange}
                 placeholder="輸入班級名稱"
+              />{" "}
+              {/* <p>教師</p> */}
+              <ClassInput
+                type="text"
+                value={teacherInput}
+                onChange={handleTeacherInputChange}
+                onBlur={handleTeacherInputBlur}
+                placeholder="輸入教師信箱"
               />
-
-              <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
-            </ClassContainer>
-
-            {/* Render the student table */}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <h3>班級學生</h3>
+              <CheckboxInput
+                type="checkbox"
+                checked={useLoggedInUserEmail}
+                onChange={handleCheckboxChange}
+                style={{ alignitems: "center" }}
+              />
+              <p>指派自己</p>
               <CustomFileInputButton
                 onClick={triggerFileInput}
                 style={{ marginLeft: "auto" }}
               >
                 上傳帳號
               </CustomFileInputButton>
-            </div>
-
-            {renderStudentTable()}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input
-                type="text"
-                value={studentNameInput}
-                onChange={(e) => setStudentNameInput(e.target.value)}
-                placeholder="手動輸入學生姓名"
-              />
-              <input
-                type="text"
-                value={studentEmailInput}
-                onChange={(e) => setStudentEmailInput(e.target.value)}
-                placeholder="手動新增學生信箱"
-              />
-              <NoBorderBtn
-                onClick={handleAddStudentEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}
-              >
-                新增學生
-              </NoBorderBtn>
-            </div>
-
-            {/* Render the teacher table */}
-            <h3>班級教師</h3>
-            {renderTeacherTable()}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input
-                type="text"
-                value={teacherEmailInput}
-                onChange={(e) => setTeacherEmailInput(e.target.value)}
-                onBlur={handleTeacherInputBlur}
-                placeholder="手動新增教師信箱"
-              />
-              <NoBorderBtn
-                onClick={handleAddTeacherEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}
-              >
-                新增教師
-              </NoBorderBtn>
-            </div>
+              <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
+            </ClassContainer>
+            {renderTable()}
           </MainContent>
         </Container>
       </Content>

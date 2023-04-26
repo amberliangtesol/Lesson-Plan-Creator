@@ -2,8 +2,20 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
+const firestore = admin.firestore();
+firestore.settings({ ignoreUndefinedProperties: true });
 
 exports.createCustomUser = functions.https.onCall(async (data, context) => {
+  if (
+    !data.email ||
+    !data.password ||
+    !data.name ||
+    !data.selectedTeacher ||
+    !data.selectedClass
+  ) {
+    return { success: false, error: "Missing required fields." };
+  }
+
   try {
     const userRecord = await admin.auth().createUser({
       email: data.email,
@@ -15,16 +27,20 @@ exports.createCustomUser = functions.https.onCall(async (data, context) => {
       // disabled: false,
     });
 
-    await admin.firestore().collection("users").doc(userRecord.email).set({
-      role: "student",
-      account: data.email,
-      image: "",
-      uid: userRecord.uid,
-      name: data.name,
-      createdBy: data.selectedTeacher,
-      classes: [data.selectedClass],
-      badge: { collected: [""], outdated: [""] },
-    });
+    await admin
+      .firestore()
+      .collection("users")
+      .doc(userRecord.email)
+      .set({
+        role: "student",
+        account: data.email,
+        image: "",
+        uid: userRecord.uid,
+        name: data.name,
+        createdBy: data.selectedTeacher,
+        classes: [data.selectedClass],
+        badge: { collected: [""], outdated: [""] },
+      });
 
     return { success: true, uid: userRecord.uid };
   } catch (error) {

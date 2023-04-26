@@ -4,7 +4,6 @@
   border-spacing: 0;
   width: 100%;
   font-size: 14px;
-  margin-top: 50px;
 }
 
 .ExcelTable2007 th {
@@ -12,7 +11,7 @@
   padding: 10px 30px;
   text-align: left;
   font-size: 18px;
-  color:#F46868;
+  color: #f46868;
   border-bottom: dashed 2px #e4e1e1;
 }
 
