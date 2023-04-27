@@ -22,7 +22,7 @@ import { UserContext } from "../../UserInfoProvider";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
-import { MainDarkFilledBtn } from "../../components/Buttons";
+import { MainDarkBorderBtn } from "../../components/Buttons";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { MdOutlineSchool } from "react-icons/md";
 
@@ -30,7 +30,7 @@ const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
 `;
 
-const CustomFileInputButton = styled(MainDarkFilledBtn)`
+const CustomFileInputButton = styled(MainDarkBorderBtn)`
   /* Add any custom styles you want for the input button */
 `;
 
@@ -389,24 +389,28 @@ function AddClass() {
                 onChange={(e) => setStudentEmailInput(e.target.value)}
                 placeholder="輸入信箱"
               />
-              <MainRedFilledBtn
+              <MainDarkBorderBtn
                 onClick={handleAddStudentEmail}
                 style={{ cursor: "pointer", marginLeft: "5px" }}
               >
                 新增學生
-              </MainRedFilledBtn>
+              </MainDarkBorderBtn>
               <CustomFileInputButton
                 onClick={triggerFileInput}
                 style={{ marginLeft: "auto", padding: "5px" }}
               >
                 <RiFileExcel2Line
-                  style={{ fontSize: "20px", marginRight: "5px" }}
+                  style={{
+                    fontSize: "20px",
+                    marginRight: "5px",
+                    color: "#1d6f42",
+                  }}
                 />
                 上傳
               </CustomFileInputButton>
             </StudentTable>
             <p style={{ fontSize: "15px", margin: "0px" }}>
-              * 未曾註冊之學生將自動建立帳號，系統預設密碼與帳號相同
+              * 未曾註冊之信箱將『建立帳號』，系統預設初始『帳號』與『密碼』相同
             </p>
             {renderStudentTable()}
 
@@ -428,12 +432,12 @@ function AddClass() {
                 style={{ width: "100%" }}
                 placeholder="輸入信箱"
               />
-              <MainRedFilledBtn
+              <MainDarkBorderBtn
                 onClick={handleAddTeacherEmail}
                 style={{ cursor: "pointer", marginLeft: "5px" }}
               >
                 新增教師
-              </MainRedFilledBtn>
+              </MainDarkBorderBtn>
             </TeacherTable>
 
             {renderTeacherTable()}
@@ -476,35 +480,6 @@ const MainContent = styled.div`
   margin-bottom: 90px;
   padding-right: 30px;
   padding-left: 30px;
-`;
-
-const Title = styled.p`
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 29px;
-  letter-spacing: 0em;
-`;
-
-const ClassContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  border-radius: 33px;
-  width: 60vw;
-  height: 83px;
-  padding: 0px;
-  align-content: center;
-  gap: 8px;
-  & > :last-child {
-    justify-self: flex-end;
-  }
-  p {
-    font-size: 20px;
-    letter-spacing: 0.03em;
-    white-space: nowrap;
-    align-items: center;
-    align-content: center;
-  }
 `;
 
 const StudentTable = styled.div`
@@ -551,24 +526,6 @@ const ClassNameInput = styled.input`
 const Splict = styled.div`
   border-bottom: solid 2px #f46868;
   width: 60vw;
-`;
-
-const CheckboxInput = styled.input`
-  width: 30px;
-  height: 30px;
-  background: #ffffff;
-  border-radius: 40px;
-  font-size: 18px;
-  padding-left: 15px;
-  border: none;
-  ${"" /* box-shadow: 0px 1px 4px 0px #00000033; */}
-  outline: none;
-  option:checked {
-    background-color: #febebe;
-  }
-  :focus {
-    outline: 2px solid #f46868;
-  }
 `;
 
 export default AddClass;

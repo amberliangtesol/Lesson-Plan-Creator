@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import "./EditClass.css";
 import { auth, db } from "../../utils/firebaseApp";
 import {
   setDoc,
+  addDoc,
   getDoc,
   doc,
   updateDoc,
@@ -17,13 +18,15 @@ import {
 import styled from "styled-components/macro";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { UserContext } from "../../UserInfoProvider";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
-import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
-import arrow from "../Login/arrow.png";
+import { RiFileExcel2Line } from "react-icons/ri";
+import { MdOutlineSchool } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
+import { useParams } from "react-router-dom";
 
 const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
@@ -35,26 +38,57 @@ const CustomFileInputButton = styled(MainDarkBorderBtn)`
 
 function EditClass() {
   const { classId } = useParams();
+  const { user, setUser } = useContext(UserContext);
   const [cols, setCols] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState("");
+  const [selectedTeachers, setSelectedTeachers] = useState([]);
   const [teacherInput, setTeacherInput] = useState("");
   const [teachers, setTeachers] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [classTeachers, setClassTeachers] = useState([]);
-  const [classStudents, setClassStudents] = useState([]);
+  const [teachersName, setTeachersName] = useState([]);
+  const [useLoggedInUserEmail, setUseLoggedInUserEmail] = useState(false);
   const fileInputRef = useRef();
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
+  const [studentEmailInput, setStudentEmailInput] = useState("");
+  const [studentNameInput, setStudentNameInput] = useState("");
+  const [teacherEmailInput, setTeacherEmailInput] = useState("");
+  const [inputFocused, setInputFocused] = useState(false);
+  const [studentName, setStudentName] = useState("");
+
+  const fetchStudents = async (studentsEmails) => {
+    if (!studentsEmails || studentsEmails.length === 0) {
+      console.error("The studentEmailList array is empty.");
+      return;
+    }
+
+    const studentsQuery = query(
+      collection(db, "users"),
+      where("role", "==", "student"),
+      where("account", "in", studentsEmails)
+    );
+    const querySnapshot = await getDocs(studentsQuery);
+    const studentsName = querySnapshot.docs.map((doc) => doc.data().name);
+    setStudentName(studentsName);
+    console.log("studentsName", studentsName);
+  };
+
+  console.log("classId:", classId);
 
   const fetchClassData = async (classId) => {
     const classDocRef = doc(db, "classes", classId);
     const classDoc = await getDoc(classDocRef);
     const classData = classDoc.data();
-    setClassStudents(classData.students);
-    setClassTeachers(classData.teachers);
+    setRows(classData.students);
+    setSelectedTeachers(classData.teachers);
+    setSelectedClass(classData.name);
+    console.log("classData.students:", classData.students); // Add this line to debug
+
+    if (classData.students && classData.students.length > 0) {
+      fetchStudents(classData.students);
+    }
   };
 
   useEffect(() => {
@@ -65,7 +99,7 @@ function EditClass() {
         id: doc.id,
         name: doc.data().name,
       }));
-      setClasses(classNames);
+      setSelectedClass(classNames);
     };
 
     fetchClasses();
@@ -79,23 +113,125 @@ function EditClass() {
       const teacherEmails = querySnapshot.docs.map((doc) => doc.data().account);
       setTeachers(teacherEmails);
     };
+
     fetchTeachers();
+
     if (classId) {
       fetchClassData(classId);
       setSelectedClass(classId);
     }
   }, [classId]);
 
-  const handleTeacherInputChange = (e) => {
-    setTeacherInput(e.target.value);
+  useEffect(() => {
+    if (rows && rows.length > 0) {
+      fetchStudents(rows);
+    }
+  }, [rows]);
+
+  const handleAddStudentEmail = () => {
+    if (studentEmailInput && studentNameInput) {
+      setRows([...rows, [studentNameInput, studentEmailInput]]);
+      setStudentNameInput("");
+      setStudentEmailInput("");
+    }
+  };
+
+  const handleAddTeacherEmail = () => {
+    if (teacherEmailInput && !selectedTeachers.includes(teacherEmailInput)) {
+      setSelectedTeachers([...selectedTeachers, teacherEmailInput]);
+      setTeachersName([...teachersName, teacherEmailInput]);
+      setTeacherEmailInput("");
+    }
+  };
+
+  console.log("selectedTeachers", selectedTeachers);
+
+  const renderStudentTable = () => {
+    return (
+      <table
+        className="ExcelTable2007"
+        style={rows.length === 0 ? { border: "none" } : {}}
+      >
+        {rows.length > 0 && (
+          <thead>
+            <tr className="heading">
+              <th>姓名</th>
+              <th>帳號</th>
+              <th>刪除</th>
+            </tr>
+          </thead>
+        )}
+        <tbody>{renderRows()}</tbody>
+      </table>
+    );
+  };
+
+  const renderTeacherTable = () => {
+    return (
+      <table
+        className="ExcelTable2007"
+        style={selectedTeachers.length === 0 ? { border: "none" } : {}}
+      >
+        {selectedTeachers.length > 0 && (
+          <thead>
+            <tr className="heading">
+              <th>姓名</th>
+              <th>帳號</th>
+              <th>刪除</th>
+            </tr>
+          </thead>
+        )}
+        <tbody>
+          {selectedTeachers.map((teacher, index) => {
+            const teacherIndex = teachers.indexOf(teacher);
+            if (teacherIndex === -1 || !teachersName[teacherIndex]) {
+              return null;
+            }
+            return (
+              <tr key={index}>
+                <td>{teachersName[teacherIndex]}</td>
+                <td>{teacher}</td>
+                <td>
+                  <DeleteIcon
+                    onDelete={() => {
+                      setSelectedTeachers(
+                        selectedTeachers.filter((_, i) => i !== index)
+                      );
+                      setTeacherInput("");
+                    }}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  };
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      const teachersQuery = query(
+        collection(db, "users"),
+        where("role", "==", "teacher")
+      );
+      const querySnapshot = await getDocs(teachersQuery);
+      const teacherEmails = querySnapshot.docs.map((doc) => doc.data().account);
+      const teacherNames = querySnapshot.docs.map((doc) => doc.data().name);
+      setTeachers(teacherEmails);
+      setTeachersName(teacherNames);
+    };
+    fetchTeachers();
+  }, []);
+
+  const handleClassNameChange = (e) => {
+    setSelectedClass(e.target.value);
   };
 
   const handleTeacherInputBlur = () => {
-    if (teachers.includes(teacherInput)) {
-      setSelectedTeacher(teacherInput);
+    if (teachers.includes(teacherEmailInput)) {
     } else {
       alert("無此教師帳號");
-      setTeacherInput("");
     }
   };
 
@@ -116,106 +252,114 @@ function EditClass() {
     });
   };
 
-  const handleSubmit = async () => {
+  const createOrUpdateClass = async () => {
     const classDocRef = doc(db, "classes", selectedClass);
-
-    // Read the current document
     const classDoc = await getDoc(classDocRef);
-    const classData = classDoc.data();
 
-    if (selectedTeacher !== "") {
-      // Update teachers field's array if the teacher is not already in the array
-      if (!classData.teachers.includes(selectedTeacher)) {
-        await updateDoc(classDocRef, {
-          teachers: [...classData.teachers, selectedTeacher],
-        });
-      }
+    if (classDoc.exists()) {
+      const classData = classDoc.data();
+      for (const selectedTeacher of selectedTeachers) {
+        const teacherDocRef = doc(db, "users", selectedTeacher);
+        const teacherDoc = await getDoc(teacherDocRef);
+        const teacherData = teacherDoc.data();
 
-      const teacherDocRef = doc(db, "users", selectedTeacher);
-      const teacherDoc = await getDoc(teacherDocRef);
-      const teacherData = teacherDoc.data();
-
-      if (!teacherData.classes.includes(selectedClass)) {
-        await updateDoc(teacherDocRef, {
-          classes: [...teacherData.classes, selectedClass],
-        });
-      }
-    }
-
-    // Extract email and name columns from the rows
-    const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
-
-    // Filter out existing student ids
-    const newStudentsData = studentsData.filter(
-      (student) => !classData.students.includes(student.email)
-    );
-
-    // Update students field's array if there are new student ids
-    if (newStudentsData.length > 0) {
-      const newStudentIds = newStudentsData.map((student) => student.email);
-
-      await updateDoc(classDocRef, {
-        students: [...classData.students, ...newStudentIds],
-      });
-
-      // Create user documents for new students
-      for (const student of newStudentsData) {
-        const userDocRef = doc(db, "users", student.email);
-        const userDoc = await getDoc(userDocRef);
-
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          // if (!userData.classes.includes(selectedClass)) {
-          //   await updateDoc(userDocRef, {
-          //     classes: [...userData.classes, selectedClass],
-          //   });
-          if (!userData.classes.includes(classDocRef.id)) {
-            // Use classDocRef.id instead of selectedClass
-            await updateDoc(userDocRef, {
-              classes: [...userData.classes, classDocRef.id],
-            });
-          }
-        } else {
-          async function createCustomUser(student) {
-            const functions = getFunctions();
-            const createCustomUserFunction = httpsCallable(
-              functions,
-              "createCustomUser"
-            );
-
-            try {
-              const result = await createCustomUserFunction({
-                email: student.email,
-                // phoneNumber: student.phoneNumber || '',
-                photoURL: student.photoURL || "",
-                password: student.email,
-                name: student.name,
-                selectedTeacher,
-                selectedClass: classDocRef.id,
-              });
-              if (result.data.success) {
-                console.log("Successfully created new user:", result.data.uid);
-              } else {
-                console.error(
-                  `Error creating user: ${student.email}`,
-                  result.data.error
-                );
-              }
-            } catch (error) {
-              console.error(`Error creating user: ${student.email}`, error);
-            }
-          }
-
-          // Call the createCustomUser function with the student object
-          createCustomUser(student);
+        if (!teacherData.classes.includes(classDocRef.id)) {
+          await updateDoc(teacherDocRef, {
+            classes: [...teacherData.classes, classDocRef.id],
+          });
         }
       }
+
+      if (!classData.teachers.includes(selectedTeachers[0])) {
+        await updateDoc(classDocRef, {
+          teachers: [...classData.teachers, ...selectedTeachers],
+        });
+      }
+
+      const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
+      const newStudentsData = studentsData.filter(
+        (student) => !classData.students.includes(student.email)
+      );
+
+      if (newStudentsData.length > 0) {
+        const newStudentIds = newStudentsData.map((student) => student.email);
+        await updateDoc(classDocRef, {
+          students: [...classData.students, ...newStudentIds],
+        });
+
+        for (const student of newStudentsData) {
+          const userDocRef = doc(db, "users", student.email);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            // if (!userData.classes.includes(selectedClass)) {
+            //   await updateDoc(userDocRef, {
+            //     classes: [...userData.classes, selectedClass],
+            //   });
+            if (!userData.classes.includes(classDocRef.id)) {
+              // Use classDocRef.id instead of selectedClass
+              await updateDoc(userDocRef, {
+                classes: [...userData.classes, classDocRef.id],
+              });
+            }
+          } else {
+            async function createCustomUser(student) {
+              const functions = getFunctions();
+              const createCustomUserFunction = httpsCallable(
+                functions,
+                "createCustomUser"
+              );
+
+              try {
+                const result = await createCustomUserFunction({
+                  email: student.email,
+                  photoURL: student.photoURL || "",
+                  password: student.email,
+                  name: student.name,
+                  selectedTeacher: selectedTeacher,
+                  selectedClass: classDocRef.id,
+                });
+                if (result.data.success) {
+                  console.log(
+                    "Successfully created new user:",
+                    result.data.uid
+                  );
+                } else {
+                  console.error(
+                    `Error creating user: ${student.email}`,
+                    result.data.error
+                  );
+                }
+              } catch (error) {
+                console.error(`Error creating user: ${student.email}`, error);
+              }
+            }
+
+            // Call the createCustomUser function with the student object
+            createCustomUser(student);
+          }
+        }
+      }
+    } else {
+      console.error("Error: Class document does not exist.");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (selectedTeacher) {
+      await createOrUpdateClass();
+    } else {
+      alert("Please select a teacher before submitting.");
     }
   };
 
   const DeleteIcon = ({ onDelete }) => {
     return (
-      <span onClick={onDelete}>
+      <span
+        onClick={onDelete}
+        style={{ cursor: "pointer", paddingLeft: "7px" }}
+      >
         <RiDeleteBinLine />
       </span>
     );
@@ -224,9 +368,8 @@ function EditClass() {
   const renderRows = () => {
     return rows.map((row, rowIndex) => (
       <tr key={rowIndex}>
-        {row.map((cell, cellIndex) => (
-          <td key={cellIndex}>{cell}</td>
-        ))}
+        <td>{studentName[rowIndex]}</td>
+        <td>{row}</td>
         <td>
           <DeleteIcon
             onDelete={() => {
@@ -239,21 +382,13 @@ function EditClass() {
     ));
   };
 
-  const renderTable = () => {
-    return (
-      <table className="ExcelTable2007">
-        <thead>
-          <tr className="heading">
-            {cols.map((col, index) => (
-              <th key={index}>{col.name}</th>
-            ))}
-            {rows.length > 0 && <th>Delete</th>}
-          </tr>
-        </thead>
-        <tbody>{renderRows()}</tbody>
-      </table>
-    );
-  };
+  useEffect(() => {
+    const loggedInUserEmail = user.account; // Replace with the actual email of the logged-in user
+    setSelectedTeacher(loggedInUserEmail);
+    if (useLoggedInUserEmail) {
+      setTeacherInput(loggedInUserEmail);
+    }
+  }, [user.account, useLoggedInUserEmail]);
 
   return (
     <Body>
@@ -262,61 +397,126 @@ function EditClass() {
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
           <MainContent>
-            <Title>班級編輯</Title>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <MdOutlineSchool
+                style={{ marginRight: "20px", fontSize: "40px" }}
+              />
+              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
+                班級
+              </h2>
+              <div style={{ position: "relative", width: "100%" }}>
+                <ClassNameInput
+                  type="text"
+                  value={selectedClass}
+                  onChange={handleClassNameChange}
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
+                  placeholder="輸入名稱"
+                />
+
+                {!inputFocused && (
+                  <FiEdit
+                    style={{
+                      position: "absolute",
+                      right: "0",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      pointerEvents: "none",
+                      fontSize: "20px",
+                      color: "#F46868",
+                    }}
+                  />
+                )}
+              </div>
+              <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
+            </div>
+
+            <Splict></Splict>
+
+            <StudentTable
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "30px",
+              }}
+            >
+              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
+                學生
+              </h2>
+              <ClassInput
+                type="text"
+                value={studentNameInput}
+                onChange={(e) => setStudentNameInput(e.target.value)}
+                placeholder="輸入姓名"
+              />
+              <ClassInput
+                type="text"
+                value={studentEmailInput}
+                onChange={(e) => setStudentEmailInput(e.target.value)}
+                placeholder="輸入信箱"
+              />
+              <MainDarkBorderBtn
+                onClick={handleAddStudentEmail}
+                style={{ cursor: "pointer", marginLeft: "5px" }}
+              >
+                新增學生
+              </MainDarkBorderBtn>
+              <CustomFileInputButton
+                onClick={triggerFileInput}
+                style={{ marginLeft: "auto", padding: "5px" }}
+              >
+                <RiFileExcel2Line
+                  style={{
+                    fontSize: "20px",
+                    marginRight: "5px",
+                    color: "#1d6f42",
+                  }}
+                />
+                上傳
+              </CustomFileInputButton>
+            </StudentTable>
+            <p style={{ fontSize: "15px", margin: "0px" }}>
+              * 未曾註冊之信箱將『建立帳號』，系統預設初始『帳號』與『密碼』相同
+            </p>
+            {renderStudentTable()}
+
+            <TeacherTable
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "30px",
+              }}
+            >
+              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
+                教師
+              </h2>
+              <ClassInput
+                type="text"
+                value={teacherEmailInput}
+                onChange={(e) => setTeacherEmailInput(e.target.value)}
+                onBlur={handleTeacherInputBlur}
+                style={{ width: "100%" }}
+                placeholder="輸入信箱"
+              />
+              <MainDarkBorderBtn
+                onClick={handleAddTeacherEmail}
+                style={{ cursor: "pointer", marginLeft: "5px" }}
+              >
+                新增教師
+              </MainDarkBorderBtn>
+            </TeacherTable>
+
+            {renderTeacherTable()}
+
             <MainRedFilledBtn
               onClick={handleSubmit}
-              style={{ marginLeft: "auto" }}
+              style={{ width: "100%", marginTop: "30px" }}
             >
               <Link to="/ManageClass">確認修改</Link>
             </MainRedFilledBtn>
-            <ClassContainer>
-              <ClassContainerBox>
-                <p style={{ margin: "10px" }}>班級教師</p>
-                <SelectOptions>
-                  {classTeachers.map((teacher, index) => (
-                    <option key={index} value={teacher}>
-                      {teacher}
-                    </option>
-                  ))}
-                </SelectOptions>
-
-                <p style={{ margin: "10px" }}>現有學生</p>
-                <SelectOptions>
-                  {classStudents.map((student, index) => (
-                    <option key={index} value={student}>
-                      {student}
-                    </option>
-                  ))}
-                </SelectOptions>
-              </ClassContainerBox>
-
-              <ClassContainerBox>
-                <p style={{ margin: "10px" }}>新增教師</p>
-                <ClassInput
-                  type="text"
-                  value={teacherInput}
-                  onChange={handleTeacherInputChange}
-                  onBlur={handleTeacherInputBlur}
-                  placeholder="輸入教師電子郵件"
-                ></ClassInput>
-
-                <p style={{ margin: "10px" }}>新增學生</p>
-                <CustomFileInputButton
-                  onClick={triggerFileInput}
-                  // style={{ marginLeft: "auto" }}
-                >
-                  上傳帳號
-                </CustomFileInputButton>
-                <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
-              </ClassContainerBox>
-            </ClassContainer>
-
-            {renderTable()}
           </MainContent>
         </Container>
       </Content>
-
-      <Footer></Footer>
     </Body>
   );
 }
@@ -348,90 +548,50 @@ const MainContent = styled.div`
   padding-left: 30px;
 `;
 
-const Title = styled.p`
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 29px;
-  letter-spacing: 0em;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 50px;
-  padding-right: 50px;
-`;
-
-const ClassContainer = styled.div`
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  background-color: #f5f5f5;
-  border-radius: 33px;
-  width: 60vw;
-  height: 170px;
-  padding: 30px 30px;
-  align-content: flex-start;
-  align-items: flex-start;
-  gap: 8px;
-  ${
-    "" /* & > :last-child {
-    justify-self: flex-end;
-  } */
-  }
-  p {
-    font-size: 20px;
-    letter-spacing: 0.03em;
-    white-space: nowrap;
-  }
-`;
-
-const ClassContainerBox = styled.div`
+const StudentTable = styled.div`
   display: flex;
   flex-direction: row;
-  align-content: center;
-  align-items: center;
+  gap: 5px;
+`;
+
+const TeacherTable = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
 `;
 
 const ClassInput = styled.input`
-  width: 100%;
-  height: 40px;
-  background: #ffffff;
+  width: 50%;
+  height: 35px;
+  background-color: #ffffff;
   border-radius: 24px;
   font-size: 18px;
   padding-left: 15px;
-  padding-right: 30px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
-  :focus {
-    outline: 2px solid #f46868;
-  }
   option:checked {
     background-color: #febebe;
+  }
+  :focus {
+    outline: 2px solid #f46868;
   }
 `;
 
-const SelectOptions = styled.select`
+const ClassNameInput = styled.input`
   width: 100%;
-  height: 40px;
-  background: #ffffff;
-  border-radius: 24px;
+  height: 35px;
   font-size: 18px;
   padding-left: 15px;
+  border-radius: 24px;
   border: none;
-  box-shadow: 0px 1px 4px 0px #00000033;
-  appearance: none;
-  background-image: url(${arrow});
-  background-repeat: no-repeat;
-  background-position: calc(100% - 5px) center; /* Adjusted */
-  padding-right: 30px;
-  text-overflow: ellipsis;
   :focus {
     outline: 2px solid #f46868;
   }
-  option:checked {
-    background-color: #febebe;
-  }
+`;
+
+const Splict = styled.div`
+  border-bottom: solid 2px #f46868;
+  width: 60vw;
 `;
 
 export default EditClass;
