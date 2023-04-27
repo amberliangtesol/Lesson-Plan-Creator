@@ -38,36 +38,36 @@ function TeacherMain() {
     return (user.classNames || [])[index] || "";
   }
 
-  useEffect(() => {
-    async function fetchUserData() {
-      if (user.classNames) return;
+  // useEffect(() => {
+  //   async function fetchUserData() {
+  //     if (user.classNames) return;
 
-      const docRef = doc(db, "users", user.account);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        if (userData) {
-          // Add this condition to check if userData is defined
-          // Fetch class names
-          const classNames = await Promise.all(
-            userData.classes.map(async (classId) => {
-              const classDoc = await getDoc(doc(db, "classes", classId));
-              return classDoc.data() && classDoc.data().name;
-            })
-          );
-          setUser({
-            ...user,
-            image: userData.image,
-            name: userData.name,
-            classes: userData.classes,
-            classNames,
-          });
-        }
-      }
-    }
+  //     const docRef = doc(db, "users", user.account);
+  //     const docSnap = await getDoc(docRef);
+  //     if (docSnap.exists()) {
+  //       const userData = docSnap.data();
+  //       if (userData) {
+  //         // Add this condition to check if userData is defined
+  //         // Fetch class names
+  //         const classNames = await Promise.all(
+  //           userData.classes.map(async (classId) => {
+  //             const classDoc = await getDoc(doc(db, "classes", classId));
+  //             return classDoc.data() && classDoc.data().name;
+  //           })
+  //         );
+  //         setUser({
+  //           ...user,
+  //           image: userData.image,
+  //           name: userData.name,
+  //           classes: userData.classes,
+  //           classNames,
+  //         });
+  //       }
+  //     }
+  //   }
 
-    fetchUserData();
-  }, [user]);
+  //   fetchUserData();
+  // }, [user]);
 
   useEffect(() => {
     const fetchClasses = async () => {

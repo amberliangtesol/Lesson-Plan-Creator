@@ -113,6 +113,7 @@ const YouTubeWithQuestions = () => {
     if (
       window.YT &&
       window.YT.PlayerState &&
+      typeof event.target.getPlayerState === "function" &&
       event.target.getPlayerState() === window.YT.PlayerState.PLAYING
     ) {
       interval.current = setInterval(() => {
@@ -132,6 +133,7 @@ const YouTubeWithQuestions = () => {
     } else if (
       window.YT &&
       window.YT.PlayerState &&
+      typeof event.target.getPlayerState === "function" &&
       event.target.getPlayerState() === window.YT.PlayerState.ENDED
     ) {
       setShowNextButton(true);
@@ -150,20 +152,21 @@ const YouTubeWithQuestions = () => {
       window.YT &&
       !currentQuestion &&
       playerRef.current &&
-      typeof playerRef.current.playVideo === "function"
+      typeof playerRef.current.playVideo === "function" &&
+      !showCongratsModal
     ) {
       playerRef.current.playVideo();
     }
     return () => {};
-  }, [currentQuestion]);
+  }, [currentQuestion, showCongratsModal]);
 
   window.onYouTubeIframeAPIReady = () => {
     playerRef.current = new window.YT.Player("player", {
       height: "100%",
       width: "100%",
-      playerVars: {
-        controls: 0,
-      },
+      // playerVars: {
+      //   controls: 0,
+      // },
       events: {
         onReady: () => {
           setPlayerReady(true);
@@ -246,6 +249,7 @@ const YouTubeWithQuestions = () => {
       setResultMessage("You win!");
       setIcon("✓");
       if (countdown > 0 && !hasShownCongratsModal) {
+        playerRef.current.pauseVideo();
         updateUserBadgeData("badge2");
         setShowCongratsModal(true); // Show the CongratsModal
         setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
@@ -292,6 +296,8 @@ const YouTubeWithQuestions = () => {
 
         if (nextUnitDoc) {
           const nextUnitId = nextUnitDoc.id;
+          setCurrentQuestion(null);
+          setResultMessage("");
           setCurrentUnitId(nextUnitId);
           console.log("nextUnitId", nextUnitId);
         } else {
@@ -332,6 +338,8 @@ const YouTubeWithQuestions = () => {
           showConfirmButton: false,
           padding: "30px",
           willClose: () => {
+            setShowCongratsModal(false);
+            playerRef.current.playVideo();
             clearInterval(timerInterval);
           },
         }).then((result) => {

@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import styled from "styled-components/macro";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserInfoProvider";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
@@ -35,6 +35,7 @@ const CustomFileInputButton = styled(MainDarkBorderBtn)`
 `;
 
 function AddClass() {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [cols, setCols] = useState([]);
   const [rows, setRows] = useState([]);
@@ -166,7 +167,7 @@ function AddClass() {
         updatedCols[0].name = "姓名";
         updatedCols[1].name = "帳號";
         setCols(updatedCols);
-        setRows(resp.rows);
+        setRows([...rows, ...resp.rows]);
       }
     });
   };
@@ -291,6 +292,7 @@ function AddClass() {
   const handleSubmit = async () => {
     if (selectedTeacher) {
       await createOrUpdateClass();
+      navigate("/ManageClass");
     } else {
       alert("Please select a teacher before submitting.");
     }
@@ -446,7 +448,7 @@ function AddClass() {
               onClick={handleSubmit}
               style={{ width: "100%", marginTop: "30px" }}
             >
-              <Link to="/ManageClass">新增班級</Link>
+              新增班級
             </MainRedFilledBtn>
           </MainContent>
         </Container>

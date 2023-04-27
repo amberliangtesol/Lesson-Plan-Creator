@@ -16,29 +16,29 @@ function ManageClass() {
   const [isLoading, setIsLoading] = useState(true);
 
   // First useEffect for fetching and setting user data
-  useEffect(() => {
-    async function fetchUserData() {
-      if (user.name) return;
+  // useEffect(() => {
+  //   async function fetchUserData() {
+  //     if (user.name && user.name !== "") return;
 
-      const docRef = doc(db, "users", user.account);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setUser({
-          ...user,
-          image: userData.image,
-          name: userData.name,
-          classes: userData.classes,
-        });
-      }
-    }
-    fetchUserData();
-  }, [user.account]);
+  //     const docRef = doc(db, "users", user.account);
+  //     const docSnap = await getDoc(docRef);
+  //     if (docSnap.exists()) {
+  //       const userData = docSnap.data();
+  //       setUser({
+  //         ...user,
+  //         image: userData.image,
+  //         name: userData.name,
+  //         classes: userData.classes,
+  //       });
+  //     }
+  //   }
+  //   fetchUserData();
+  // }, [user.account]);
 
   // Second useEffect for fetching and setting class details
   useEffect(() => {
     async function fetchClassDetails() {
-      if (!user.classes) return;
+      if (!user.classes || user.classes.length === 0) return;
 
       const classDetails = await Promise.all(
         user.classes.map(async (classId) => {
@@ -60,6 +60,7 @@ function ManageClass() {
       setClassDetails(classDetails.filter(Boolean));
       setIsLoading(false);
     }
+    console.log("user_classes", user.classes);
     fetchClassDetails();
   }, [user.classes]);
 

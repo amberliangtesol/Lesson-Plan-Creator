@@ -47,6 +47,9 @@ const UserInfoProvider = ({ children }) => {
         if (userData) {
           setUser({
             ...user,
+            image: userData.image,
+            name: userData.name,
+            classes: userData.classes,
             role: userData.role,
           });
         }

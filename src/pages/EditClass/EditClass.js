@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { OutTable, ExcelRenderer } from "react-excel-renderer";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
@@ -37,6 +38,8 @@ const CustomFileInputButton = styled(MainDarkBorderBtn)`
 `;
 
 function EditClass() {
+  const navigate = useNavigate();
+
   const { classId } = useParams();
   const { user, setUser } = useContext(UserContext);
   const [cols, setCols] = useState([]);
@@ -56,7 +59,7 @@ function EditClass() {
   const [studentNameInput, setStudentNameInput] = useState("");
   const [teacherEmailInput, setTeacherEmailInput] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
-  const [studentName, setStudentName] = useState("");
+  const [studentName, setStudentName] = useState([]);
 
   const fetchStudents = async (studentsEmails) => {
     if (!studentsEmails || studentsEmails.length === 0) {
@@ -70,9 +73,11 @@ function EditClass() {
       where("account", "in", studentsEmails)
     );
     const querySnapshot = await getDocs(studentsQuery);
-    const studentsName = querySnapshot.docs.map((doc) => doc.data().name);
+    const studentsName = querySnapshot.docs.map((doc) => ({
+      name: doc.data().name,
+      email: doc.data().account,
+    }));
     setStudentName(studentsName);
-    console.log("studentsName", studentsName);
   };
 
   console.log("classId:", classId);
@@ -240,6 +245,7 @@ function EditClass() {
 
     //just pass the fileObj as parameter
     ExcelRenderer(fileObj, (err, resp) => {
+      console.log(resp);
       if (err) {
         console.log(err);
       } else {
@@ -247,13 +253,13 @@ function EditClass() {
         updatedCols[0].name = "姓名";
         updatedCols[1].name = "帳號";
         setCols(updatedCols);
-        setRows(resp.rows);
+        setRows([...rows, ...resp.rows]);
       }
     });
   };
 
   const createOrUpdateClass = async () => {
-    const classDocRef = doc(db, "classes", selectedClass);
+    const classDocRef = doc(db, "classes", classId);
     const classDoc = await getDoc(classDocRef);
 
     if (classDoc.exists()) {
@@ -270,13 +276,27 @@ function EditClass() {
         }
       }
 
-      if (!classData.teachers.includes(selectedTeachers[0])) {
+      if (classData) {
         await updateDoc(classDocRef, {
-          teachers: [...classData.teachers, ...selectedTeachers],
+          name: selectedClass,
         });
       }
 
-      const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
+      await updateDoc(classDocRef, {
+        teachers: [...selectedTeachers],
+      });
+
+      const studentsData = rows.map((row, idx) => {
+        const email = Array.isArray(row) ? row[1] : row;
+        let name;
+        if (Array.isArray(row)) {
+          name = row[0];
+        } else {
+          const student = studentName.find((s) => s.email === email);
+          name = student.name;
+        }
+        return { name, email };
+      });
       const newStudentsData = studentsData.filter(
         (student) => !classData.students.includes(student.email)
       );
@@ -340,6 +360,10 @@ function EditClass() {
             createCustomUser(student);
           }
         }
+      } else {
+        await updateDoc(classDocRef, {
+          students: studentsData.map((s) => s.email),
+        });
       }
     } else {
       console.error("Error: Class document does not exist.");
@@ -349,6 +373,7 @@ function EditClass() {
   const handleSubmit = async () => {
     if (selectedTeacher) {
       await createOrUpdateClass();
+      navigate("/ManageClass");
     } else {
       alert("Please select a teacher before submitting.");
     }
@@ -365,21 +390,33 @@ function EditClass() {
     );
   };
 
+  console.log("rows", rows);
   const renderRows = () => {
-    return rows.map((row, rowIndex) => (
-      <tr key={rowIndex}>
-        <td>{studentName[rowIndex]}</td>
-        <td>{row}</td>
-        <td>
-          <DeleteIcon
-            onDelete={() => {
-              const updatedRows = rows.filter((_, i) => i !== rowIndex);
-              setRows(updatedRows);
-            }}
-          />
-        </td>
-      </tr>
-    ));
+    return rows.map((row, rowIndex) => {
+      const email = Array.isArray(row) ? row[1] : row;
+      let name;
+      if (Array.isArray(row)) {
+        name = row[0];
+      } else {
+        const student = studentName.find((s) => s.email === email);
+        name = student?.name;
+      }
+
+      return (
+        <tr key={rowIndex}>
+          <td>{name}</td>
+          <td>{email}</td>
+          <td>
+            <DeleteIcon
+              onDelete={() => {
+                const updatedRows = rows.filter((_, i) => i !== rowIndex);
+                setRows(updatedRows);
+              }}
+            />
+          </td>
+        </tr>
+      );
+    });
   };
 
   useEffect(() => {
@@ -428,7 +465,7 @@ function EditClass() {
                   />
                 )}
               </div>
-              <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
+              {/* <HiddenFileInput ref={fileInputRef} onChange={fileHandler} /> */}
             </div>
 
             <Splict></Splict>
@@ -461,7 +498,7 @@ function EditClass() {
               >
                 新增學生
               </MainDarkBorderBtn>
-              <CustomFileInputButton
+              {/* <CustomFileInputButton
                 onClick={triggerFileInput}
                 style={{ marginLeft: "auto", padding: "5px" }}
               >
@@ -473,7 +510,7 @@ function EditClass() {
                   }}
                 />
                 上傳
-              </CustomFileInputButton>
+              </CustomFileInputButton> */}
             </StudentTable>
             <p style={{ fontSize: "15px", margin: "0px" }}>
               * 未曾註冊之信箱將『建立帳號』，系統預設初始『帳號』與『密碼』相同
@@ -512,7 +549,7 @@ function EditClass() {
               onClick={handleSubmit}
               style={{ width: "100%", marginTop: "30px" }}
             >
-              <Link to="/ManageClass">確認修改</Link>
+              確認修改
             </MainRedFilledBtn>
           </MainContent>
         </Container>
