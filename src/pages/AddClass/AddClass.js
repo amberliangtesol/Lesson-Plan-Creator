@@ -22,14 +22,15 @@ import { UserContext } from "../../UserInfoProvider";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
-import { MainDarkBorderBtn } from "../../components/Buttons";
-import { NoBorderBtn } from "../../components/Buttons";
+import { MainDarkFilledBtn } from "../../components/Buttons";
+import { RiFileExcel2Line } from "react-icons/ri";
+import { MdOutlineSchool } from "react-icons/md";
 
 const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
 `;
 
-const CustomFileInputButton = styled(MainDarkBorderBtn)`
+const CustomFileInputButton = styled(MainDarkFilledBtn)`
   /* Add any custom styles you want for the input button */
 `;
 
@@ -70,14 +71,19 @@ function AddClass() {
 
   const renderStudentTable = () => {
     return (
-      <table className="ExcelTable2007">
-        <thead>
-          <tr className="heading">
-            <th>姓名</th>
-            <th>帳號</th>
-            {rows.length > 0 && <th>刪除</th>}
-          </tr>
-        </thead>
+      <table
+        className="ExcelTable2007"
+        style={rows.length === 0 ? { border: "none" } : {}}
+      >
+        {rows.length > 0 && (
+          <thead>
+            <tr className="heading">
+              <th>姓名</th>
+              <th>帳號</th>
+              <th>刪除</th>
+            </tr>
+          </thead>
+        )}
         <tbody>{renderRows()}</tbody>
       </table>
     );
@@ -85,14 +91,19 @@ function AddClass() {
 
   const renderTeacherTable = () => {
     return (
-      <table className="ExcelTable2007">
-        <thead>
-          <tr className="heading">
-            <th>姓名</th>
-            <th>帳號</th>
-            {rows.length > 0 && <th>刪除</th>}
-          </tr>
-        </thead>
+      <table
+        className="ExcelTable2007"
+        style={selectedTeachers.length === 0 ? { border: "none" } : {}}
+      >
+        {selectedTeachers.length > 0 && (
+          <thead>
+            <tr className="heading">
+              <th>姓名</th>
+              <th>帳號</th>
+              <th>刪除</th>
+            </tr>
+          </thead>
+        )}
         <tbody>
           {selectedTeachers.map((teacher, index) => (
             <tr key={index}>
@@ -137,7 +148,7 @@ function AddClass() {
   const handleTeacherInputBlur = () => {
     if (teachers.includes(teacherEmailInput)) {
       // setSelectedTeacher(teacherEmailInput);
-      alert("有此教師帳號");
+      // alert("有此教師帳號");
     } else {
       alert("無此教師帳號");
     }
@@ -287,7 +298,10 @@ function AddClass() {
 
   const DeleteIcon = ({ onDelete }) => {
     return (
-      <span onClick={onDelete} style={{ cursor: "pointer" }}>
+      <span
+        onClick={onDelete}
+        style={{ cursor: "pointer", paddingLeft: "7px" }}
+      >
         <RiDeleteBinLine />
       </span>
     );
@@ -335,82 +349,108 @@ function AddClass() {
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
           <MainContent>
-            <Title>班級建立</Title>
-            <MainRedFilledBtn
-              onClick={handleSubmit}
-              style={{ marginLeft: "auto" }}
-            >
-              <Link to="/ManageClass">新增班級</Link>
-            </MainRedFilledBtn>
-
-            <ClassContainer>
-              <ClassInput
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <MdOutlineSchool
+                style={{ marginRight: "20px", fontSize: "40px" }}
+              />
+              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
+                班級
+              </h2>
+              <ClassNameInput
                 type="text"
                 value={selectedClass}
                 onChange={handleClassNameChange}
-                placeholder="輸入班級名稱"
-              />
-
+                placeholder="輸入名稱"
+              ></ClassNameInput>
               <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
-            </ClassContainer>
-
-            {/* Render the student table */}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <h3>班級學生</h3>
-              <CustomFileInputButton
-                onClick={triggerFileInput}
-                style={{ marginLeft: "auto" }}
-              >
-                上傳帳號
-              </CustomFileInputButton>
             </div>
 
-            {renderStudentTable()}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input
+            <Splict></Splict>
+
+            <StudentTable
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "30px",
+              }}
+            >
+              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
+                學生
+              </h2>
+              <ClassInput
                 type="text"
                 value={studentNameInput}
                 onChange={(e) => setStudentNameInput(e.target.value)}
-                placeholder="手動輸入學生姓名"
+                placeholder="輸入姓名"
               />
-              <input
+              <ClassInput
                 type="text"
                 value={studentEmailInput}
                 onChange={(e) => setStudentEmailInput(e.target.value)}
-                placeholder="手動新增學生信箱"
+                placeholder="輸入信箱"
               />
-              <NoBorderBtn
+              <MainRedFilledBtn
                 onClick={handleAddStudentEmail}
                 style={{ cursor: "pointer", marginLeft: "5px" }}
               >
                 新增學生
-              </NoBorderBtn>
-            </div>
+              </MainRedFilledBtn>
+              <CustomFileInputButton
+                onClick={triggerFileInput}
+                style={{ marginLeft: "auto", padding: "5px" }}
+              >
+                <RiFileExcel2Line
+                  style={{ fontSize: "20px", marginRight: "5px" }}
+                />
+                上傳
+              </CustomFileInputButton>
+            </StudentTable>
+            <p style={{ fontSize: "15px", margin: "0px" }}>
+              * 未曾註冊之學生將自動建立帳號，系統預設密碼與帳號相同
+            </p>
+            {renderStudentTable()}
 
-            {/* Render the teacher table */}
-            <h3>班級教師</h3>
-            {renderTeacherTable()}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input
+            <TeacherTable
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "30px",
+              }}
+            >
+              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
+                教師
+              </h2>
+              <ClassInput
                 type="text"
                 value={teacherEmailInput}
                 onChange={(e) => setTeacherEmailInput(e.target.value)}
                 onBlur={handleTeacherInputBlur}
-                placeholder="手動新增教師信箱"
+                style={{ width: "100%" }}
+                placeholder="輸入信箱"
               />
-              <NoBorderBtn
+              <MainRedFilledBtn
                 onClick={handleAddTeacherEmail}
                 style={{ cursor: "pointer", marginLeft: "5px" }}
               >
                 新增教師
-              </NoBorderBtn>
-            </div>
+              </MainRedFilledBtn>
+            </TeacherTable>
+
+            {renderTeacherTable()}
+
+            <MainRedFilledBtn
+              onClick={handleSubmit}
+              style={{ width: "100%", marginTop: "30px" }}
+            >
+              <Link to="/ManageClass">新增班級</Link>
+            </MainRedFilledBtn>
           </MainContent>
         </Container>
       </Content>
     </Body>
   );
 }
+
 const Body = styled.div`
   min-height: 100vh;
   display: flex;
@@ -443,27 +483,17 @@ const Title = styled.p`
   font-weight: 700;
   line-height: 29px;
   letter-spacing: 0em;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 50px;
-  padding-right: 50px;
 `;
 
 const ClassContainer = styled.div`
-  margin-top: 50px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  background-color: #f5f5f5;
   border-radius: 33px;
   width: 60vw;
   height: 83px;
-  padding: 30px 60px;
+  padding: 0px;
   align-content: center;
-  align-items: center;
-  text-align: center;
   gap: 8px;
   & > :last-child {
     justify-self: flex-end;
@@ -472,16 +502,27 @@ const ClassContainer = styled.div`
     font-size: 20px;
     letter-spacing: 0.03em;
     white-space: nowrap;
-    text-align: center;
     align-items: center;
     align-content: center;
   }
 `;
 
+const StudentTable = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+`;
+
+const TeacherTable = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+`;
+
 const ClassInput = styled.input`
-  width: 25%;
-  height: 40px;
-  background: #ffffff;
+  width: 50%;
+  height: 35px;
+  background-color: #ffffff;
   border-radius: 24px;
   font-size: 18px;
   padding-left: 15px;
@@ -493,6 +534,23 @@ const ClassInput = styled.input`
   :focus {
     outline: 2px solid #f46868;
   }
+`;
+
+const ClassNameInput = styled.input`
+  width: 100%;
+  height: 35px;
+  font-size: 18px;
+  padding-left: 15px;
+  border-radius: 24px;
+  border: none;
+  :focus {
+    outline: 2px solid #f46868;
+  }
+`;
+
+const Splict = styled.div`
+  border-bottom: solid 2px #f46868;
+  width: 60vw;
 `;
 
 const CheckboxInput = styled.input`
