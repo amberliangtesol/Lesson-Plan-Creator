@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, registerables } from "chart.js";
 import { Bar, Doughnut } from "react-chartjs-2";
 import styled from "styled-components/macro";
+import { db } from "../utils/firebaseApp";
+import { doc, getDoc } from "firebase/firestore";
 
 const processDonutData = (data) => {
   const labels = Object.keys(data);
@@ -19,21 +21,6 @@ const processDonutData = (data) => {
     return data[student].some((e) => Object.keys(e).length === 0);
   });
   const unfinishedRate = (unfinished.length / labels.length) * 100;
-  // const finishRates = labels.map((label) => {
-  //   const answered = data[label].filter(
-  //     (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
-  //   ).length;
-  //   const finishRate = (answered / data[label].length) * 100;
-  //   return isNaN(finishRate) ? 0 : finishRate; // If there's no answer, set the finish rate to 0
-  // });
-  // const avgFinishRate = finishRates.reduce((a, b) => a + b, 0) / labels.length;
-  // const answeredZero = labels.filter((label) => {
-  //   const answered = data[label].filter(
-  //     (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
-  //   ).length;
-  //   return answered === 0;
-  // }).length;
-  // const answeredZeroPercentage = (answeredZero / labels.length) * 100;
 
   // Donut 2
   const finished = labels.length - unfinished.length;
@@ -46,37 +33,9 @@ const processDonutData = (data) => {
   const correctRate =
     results.reduce((acc, cur) => acc + cur, 0) /
     results.filter((r) => r > 0).length;
-  // const finishedAnswered = finished *
-
-  // const correctRates = labels.map((label) => {
-  //   const correct = data[label].filter(
-  //     (q) => Object.values(q)[0] === true
-  //   ).length;
-  //   const correctRate = (correct / data[label].length) * 100;
-  //   return isNaN(correctRate) ? 0 : correctRate; // If there's no answer, set the correct rate to 0
-  // });
-  // const avgCorrectRate =
-  //   correctRates.reduce((a, b) => a + b, 0) / labels.length;
 
   // Donut 3
   const specialStudent = results.filter((r) => r > 0 && r < 50);
-
-  // const notFinished = labels.filter((label) => {
-  //   const answered = data[label].filter(
-  //     (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
-  //   ).length;
-  //   return answered < data[label].length;
-  // }).length;
-  // const below50CorrectRate = labels.filter((label) => {
-  //   const correct = data[label].filter(
-  //     (q) => Object.values(q)[0] === true
-  //   ).length;
-  //   const correctRate = (correct / data[label].length) * 100;
-  //   return correctRate < 50;
-  // }).length;
-  // const notFinishedPercentage = (notFinished / labels.length) * 100;
-  // const below50CorrectRatePercentage =
-  //   (below50CorrectRate / labels.length) * 100;
 
   return [
     {
@@ -123,12 +82,39 @@ const Chart = ({ data }) => {
   const [donutData1, setDonutData1] = useState(null);
   const [donutData2, setDonutData2] = useState(null);
   const [donutData3, setDonutData3] = useState(null);
+  const [studentNames, setStudentNames] = useState({});
 
   useEffect(() => {
     const [d1, d2, d3] = processDonutData(data);
     setDonutData1(d1);
     setDonutData2(d2);
     setDonutData3(d3);
+  }, [data]);
+
+  useEffect(() => {
+    const fetchStudentNames = async () => {
+      try {
+        const studentIds = Object.keys(data);
+        const fetchedNames = {};
+
+        for (const studentId of studentIds) {
+          const docRef = doc(db, "users", studentId);
+          const docSnapshot = await getDoc(docRef);
+
+          if (docSnapshot.exists()) {
+            fetchedNames[studentId] = docSnapshot.data().name;
+          } else {
+            console.log(`No student found with ID: ${studentId}`);
+          }
+        }
+
+        setStudentNames(fetchedNames);
+      } catch (error) {
+        console.error("Error fetching student names:", error);
+      }
+    };
+
+    fetchStudentNames();
   }, [data]);
 
   const renderTable = () => {
@@ -143,6 +129,7 @@ const Chart = ({ data }) => {
       <StyledTable>
         <thead>
           <tr>
+            <th>學生姓名</th>
             <th>學生帳號</th>
             {Array.from({ length: numQuestions }, (_, i) => (
               <th key={`question-${i}`}>第{i + 1}題</th>
@@ -152,6 +139,7 @@ const Chart = ({ data }) => {
         <tbody>
           {studentIds.map((studentId) => (
             <tr key={studentId}>
+              <td>{studentNames[studentId]}</td>
               <td>{studentId}</td>
               {data[studentId] &&
                 data[studentId].map((q, i) => (
@@ -216,7 +204,7 @@ const StyledTable = styled.table`
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
-  font-size: 14px;
+  font-size: 18px;
   margin-top: 50px;
 
   td {
@@ -227,7 +215,7 @@ const StyledTable = styled.table`
   th {
     padding: 15px 30px;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     color: #000000;
     border-bottom: dashed 2px #e4e1e1;
     font-weight: 500;

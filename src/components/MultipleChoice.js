@@ -45,11 +45,29 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
             className={selectedOption === option ? "selected" : ""}
           >
             {option.text}
-            {isSubmitted && selectedOption
-              ? option.correct
-                ? " V"
-                : " X"
-              : ""}
+            {isSubmitted && selectedOption ? (
+              option.correct ? (
+                <span
+                  style={{
+                    color: "green",
+                    fontSize: "20px",
+                    marginLeft: "20px",
+                  }}
+                >
+                  {" "}
+                  ✔︎{" "}
+                </span>
+              ) : (
+                <span
+                  style={{ color: "red", fontSize: "20px", marginLeft: "20px" }}
+                >
+                  {" "}
+                  ✘{" "}
+                </span>
+              )
+            ) : (
+              ""
+            )}
           </MultipleChoiceOptionCard>
         ))}
         <MainRedFilledBtn

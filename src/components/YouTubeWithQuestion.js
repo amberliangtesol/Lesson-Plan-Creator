@@ -396,8 +396,7 @@ const YouTubeWithQuestions = () => {
 
                 <MainDarkBorderBtn
                   style={{
-                    position: "absolute",
-                    bottom: "250px",
+                    marginTop: "150px",
                   }}
                 >
                   <Link to="/StudentMain">回首頁</Link>
@@ -531,8 +530,6 @@ const Title = styled.p`
   margin-bottom: 40px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 50px;
-  padding-right: 50px;
 `;
 
 const BtnContainer = styled.div`
@@ -548,14 +545,12 @@ const Container1 = styled.div`
   text-align: center;
   background-color: rgb(245, 245, 245);
   min-height: 100vh;
-  padding-top: 90px;
+  padding: 90px 50px;
 `;
 
 const Container2 = styled.div`
-  ${
-    "" /* display: flex;
-  flex-direction: column; */
-  }
+  display: flex;
+  flex-direction: column;
   padding-top: 50px;
   width: 65vw;
   margin-left: auto;
