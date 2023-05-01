@@ -77,8 +77,8 @@ function Login() {
               <option value="" disabled>
                 請選擇身份
               </option>
-              <option value="student">student</option>
-              <option value="teacher">teacher</option>
+              <option value="student">學生</option>
+              <option value="teacher">教師</option>
             </RegisterSelect>
             <RegisterInput
               type="text"

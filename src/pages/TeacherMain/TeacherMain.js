@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Steps, Hints } from "intro.js-react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { UserContext } from "../../UserInfoProvider";
@@ -38,36 +39,36 @@ function TeacherMain() {
     return (user.classNames || [])[index] || "";
   }
 
-  // useEffect(() => {
-  //   async function fetchUserData() {
-  //     if (user.classNames) return;
+  useEffect(() => {
+    async function fetchUserData() {
+      if (user.classNames) return;
 
-  //     const docRef = doc(db, "users", user.account);
-  //     const docSnap = await getDoc(docRef);
-  //     if (docSnap.exists()) {
-  //       const userData = docSnap.data();
-  //       if (userData) {
-  //         // Add this condition to check if userData is defined
-  //         // Fetch class names
-  //         const classNames = await Promise.all(
-  //           userData.classes.map(async (classId) => {
-  //             const classDoc = await getDoc(doc(db, "classes", classId));
-  //             return classDoc.data() && classDoc.data().name;
-  //           })
-  //         );
-  //         setUser({
-  //           ...user,
-  //           image: userData.image,
-  //           name: userData.name,
-  //           classes: userData.classes,
-  //           classNames,
-  //         });
-  //       }
-  //     }
-  //   }
+      const docRef = doc(db, "users", user.account);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        if (userData) {
+          // Add this condition to check if userData is defined
+          // Fetch class names
+          const classNames = await Promise.all(
+            userData.classes.map(async (classId) => {
+              const classDoc = await getDoc(doc(db, "classes", classId));
+              return classDoc.data() && classDoc.data().name;
+            })
+          );
+          setUser({
+            ...user,
+            image: userData.image,
+            name: userData.name,
+            classes: userData.classes,
+            classNames,
+          });
+        }
+      }
+    }
 
-  //   fetchUserData();
-  // }, [user]);
+    fetchUserData();
+  }, [user]);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -86,7 +87,7 @@ function TeacherMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-        console.log(lessons);
+        console.log("lessons", lessons);
         setLessons(lessons);
       }
       setLoading(false);
@@ -117,11 +118,11 @@ function TeacherMain() {
           <TeacherMainSidebar></TeacherMainSidebar>
           <MainContent>
             <Title>課程主頁</Title>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <CreateCourseP>
               <MainRedFilledBtn style={{ marginLeft: "auto" }}>
                 <Link to="/CreateCourse">課程建立</Link>
               </MainRedFilledBtn>
-            </div>
+            </CreateCourseP>
             <CourseOutsideWrapper>
               <Container2>
                 <div
@@ -149,9 +150,10 @@ function TeacherMain() {
                             <p>
                               <b>班級</b>
                               <br />
-                              {c.classes.map((classId) => (
+                              {c.classes.map((classId, index) => (
                                 <span key={classId}>
-                                  {getClassNameById(classId)}{" "}
+                                  {getClassNameById(classId)}
+                                  {index < c.classes.length - 1 ? "、" : ""}
                                 </span>
                               ))}
                             </p>
@@ -216,9 +218,10 @@ function TeacherMain() {
                             <p>
                               班級
                               <br />
-                              {c.classes.map((classId) => (
+                              {c.classes.map((classId, index) => (
                                 <span key={classId}>
-                                  {getClassNameById(classId)}{" "}
+                                  {getClassNameById(classId)}
+                                  {index < c.classes.length - 1 ? "、" : ""}
                                 </span>
                               ))}
                             </p>
@@ -393,6 +396,11 @@ const CourseTextWrapper = styled.div`
     margin: 0;
     font-size: 20px;
   }
+`;
+
+const CreateCourseP = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export default TeacherMain;

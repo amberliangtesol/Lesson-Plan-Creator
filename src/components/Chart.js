@@ -17,14 +17,15 @@ const processDonutData = (data) => {
   // Donut 1
   const finishRates = labels.map((label) => {
     const answered = data[label].filter(
-      (q) => Object.values(q)[0] !== ""
+      (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
     ).length;
-    return (answered / data[label].length) * 100;
+    const finishRate = (answered / data[label].length) * 100;
+    return isNaN(finishRate) ? 0 : finishRate; // If there's no answer, set the finish rate to 0
   });
   const avgFinishRate = finishRates.reduce((a, b) => a + b, 0) / labels.length;
   const answeredZero = labels.filter((label) => {
     const answered = data[label].filter(
-      (q) => Object.values(q)[0] !== ""
+      (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
     ).length;
     return answered === 0;
   }).length;
@@ -35,7 +36,8 @@ const processDonutData = (data) => {
     const correct = data[label].filter(
       (q) => Object.values(q)[0] === true
     ).length;
-    return (correct / data[label].length) * 100;
+    const correctRate = (correct / data[label].length) * 100;
+    return isNaN(correctRate) ? 0 : correctRate; // If there's no answer, set the correct rate to 0
   });
   const avgCorrectRate =
     correctRates.reduce((a, b) => a + b, 0) / labels.length;
@@ -43,7 +45,7 @@ const processDonutData = (data) => {
   // Donut 3
   const notFinished = labels.filter((label) => {
     const answered = data[label].filter(
-      (q) => Object.values(q)[0] !== ""
+      (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
     ).length;
     return answered < data[label].length;
   }).length;

@@ -25,6 +25,15 @@ const ColorFilledBtn = styled.div`
       text-decoration: none;
     }
   }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
+  }
   @media screen and (max-width: 1279px) {
   }
 `;
@@ -53,6 +62,15 @@ const ColorBorderBtn = styled.div`
     &:active {
       text-decoration: none;
     }
+  }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
   }
   @media screen and (max-width: 1279px) {
   }
@@ -86,12 +104,22 @@ const MainRedFilledBtn = styled.div`
       text-decoration: none;
     }
   }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
+  }
   @media screen and (max-width: 1279px) {
   }
 `;
 
 const MainDarkFilledBtn = styled(MainRedFilledBtn)`
   background-color: #545454;
+  color: #ffffff;
 `;
 
 const MainDarkBorderBtn = styled.div`
@@ -121,6 +149,15 @@ const MainDarkBorderBtn = styled.div`
     &:active {
       text-decoration: none;
     }
+  }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
   }
 `;
 
@@ -194,7 +231,15 @@ const MultipleChoiceOptionCard = styled.div`
       text-decoration: none;
     }
   }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+  }
 
+  :active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
+  }
   @media screen and (max-width: 1279px) {
   }
 `;

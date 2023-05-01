@@ -73,8 +73,8 @@ function Main() {
 
       <SlogenWrapper>
         <h1>
-          The world's classroom <br />
-          at your fingertips !
+          讓學習更輕鬆 <br />
+          使教學更生動 !
         </h1>
         <ColorBorderBtn
           type="button"
@@ -141,7 +141,7 @@ function Main() {
       </FeatureWrapper> */}
 
       <FooterSlogenWrapper>
-        <h3>Learning has never been this easy with </h3>
+        <h2>Learning has never been this easy with </h2>
         <Logo></Logo>
       </FooterSlogenWrapper>
 
@@ -209,8 +209,13 @@ const Arrow = styled.div`
 const ConversationWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-right: 300px;
-  padding-left: 300px;
+  justify-content: center;
+  align-items: stretch;
+  width: 50%;
+  align-self: center;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 30px;
 `;
 
 const ConversationInsideWrapper = styled.div`
@@ -220,7 +225,7 @@ const ConversationInsideWrapper = styled.div`
 `;
 
 const ConversationP = styled.p`
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 500;
   margin: 50px;
   line-height: 40px;
@@ -280,7 +285,7 @@ const FooterSlogenWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   margin-top: 50px;
   margin-bottom: 150px;
 `;

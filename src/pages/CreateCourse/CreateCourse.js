@@ -14,6 +14,7 @@ import {
   query,
   onSnapshot,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
@@ -140,13 +141,26 @@ function CreateCourse() {
       // Upload the image to Firebase Storage and get its URL
       const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
 
+      // Get the classIds based on the selected class names
+      const classIds = await Promise.all(
+        classChoose.map(async (className) => {
+          const classQuery = query(
+            collection(db, "classes"),
+            where("name", "==", className)
+          );
+          const classSnapshot = await getDocs(classQuery);
+          const classDoc = classSnapshot.docs[0];
+          return classDoc.id;
+        })
+      );
+
       // Create the document in Firestore with the image URL
       const docRef = await addDoc(collection(db, "lessons"), {
         name: courseName,
         img: imageURL,
         start_date: startTimestamp,
         end_date: endTimestamp,
-        classes: classChoose,
+        classes: classIds,
       });
       await updateDoc(docRef, {
         id: docRef.id,

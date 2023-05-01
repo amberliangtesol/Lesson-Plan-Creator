@@ -47,7 +47,7 @@ const TeacherMainSidebar = () => {
             }
           >
             <BsFillPeopleFill style={{ color: "black" }} />
-            <StyledParagraph>班級管理</StyledParagraph>
+            <ClassmanageP>班級管理</ClassmanageP>
           </Btnwrapper>
         </Link>
 
@@ -133,6 +133,19 @@ const Greeting = styled.p`
 `;
 
 const StyledParagraph = styled.p`
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.04em;
+  color: black;
+  text-decoration: none;
+  &.active {
+    border-bottom: 3px solid black;
+  }
+  @media screen and (max-width: 1279px) {
+  }
+`;
+
+const ClassmanageP = styled.p`
   display: flex;
   align-items: center;
   letter-spacing: 0.04em;
