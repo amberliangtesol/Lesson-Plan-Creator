@@ -48,6 +48,7 @@ const YouTubeWithQuestions = () => {
   const [currentUnitDescription, setCurrentUnitDescription] = useState("");
   const [resultMessage, setResultMessage] = useState("");
   const [showCongratsModal, setShowCongratsModal] = useState(false);
+  const [currentBadge, setCurrentBadge] = useState("");
   const [icon, setIcon] = useState("");
   const [hasShownCongratsModal, setHasShownCongratsModal] = useState(false);
 
@@ -242,22 +243,29 @@ const YouTubeWithQuestions = () => {
     }
   };
 
-  const handleAnswerClick = (option) => {
-    console.log("handleAnswerClick called");
-    if (option.correct) {
+  const handleOnAnswer = (isCorrect) => {
+    console.log(isCorrect);
+    if (isCorrect) {
       updatedQuestions(currentQuestion.id, true);
       setResultMessage("You win!");
       setIcon("✓");
       if (countdown > 0 && !hasShownCongratsModal) {
         playerRef.current.pauseVideo();
         updateUserBadgeData("badge2");
+        setCurrentBadge(Badge2);
         setShowCongratsModal(true); // Show the CongratsModal
-        setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
+        // setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
       }
     } else {
       setResultMessage(currentQuestion.explanation);
       setIcon("✕");
+      setCountdown(0);
     }
+  };
+
+  const handleAnswerClick = (option) => {
+    console.log("handleAnswerClick called");
+    handleOnAnswer(option.correct);
   };
 
   const handleNextClick = () => {
@@ -272,7 +280,9 @@ const YouTubeWithQuestions = () => {
     if (answeredQuestions.length === questions.current.length) {
       // Give the user badge1 if they have answered all questions
       updateUserBadgeData("badge1");
-      alert("恭喜你準時完成作業！");
+      setCurrentBadge(Badge1);
+      setShowCongratsModal(true); // Show the CongratsModal
+      // setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
     }
 
     // Fetch the current unit's timestamp
@@ -322,14 +332,14 @@ const YouTubeWithQuestions = () => {
 
   console.log("currentQuestion", currentQuestion);
 
-  const CongratsModal = ({ show }) => {
+  const CongratsModal = ({ show, imageUrl }) => {
     console.log("CongratsModal show prop:", show); // Log the value of the show prop
     useEffect(() => {
       if (show) {
         let timerInterval;
         Swal.fire({
           title: "恭喜你獲得徽章!",
-          imageUrl: Badge2,
+          imageUrl,
           imageWidth: 250,
           imageHeight: 250,
           imageAlt: "Badge image",
@@ -338,6 +348,7 @@ const YouTubeWithQuestions = () => {
           showConfirmButton: false,
           padding: "30px",
           willClose: () => {
+            setCurrentBadge("");
             setShowCongratsModal(false);
             playerRef.current.playVideo();
             clearInterval(timerInterval);
@@ -415,8 +426,8 @@ const YouTubeWithQuestions = () => {
                   繼續觀看下個單元
                 </MainDarkFilledBtn>
               )}
-              <CongratsModal show={showCongratsModal} />
-
+              <CongratsModal show={showCongratsModal} imageUrl={currentBadge} />
+              <div></div>
               {currentQuestion && currentQuestion.gameMode && (
                 <GameMode countdown={countdown} setCountdown={setCountdown} />
               )}
@@ -427,26 +438,6 @@ const YouTubeWithQuestions = () => {
                       questionData={currentQuestion}
                       onAnswerClick={handleAnswerClick}
                     />
-                    <div
-                      style={{
-                        marginTop: "20px",
-                        color:
-                          resultMessage === "You win!" ? "#338168" : "#545454",
-                      }}
-                    >
-                      {resultMessage}
-                      {resultMessage !== "" && (
-                        <MainDarkFilledBtn
-                          onClick={handleNextClick}
-                          style={{
-                            marginTop: "20px",
-                            marginBottom: "20px",
-                          }}
-                        >
-                          繼續播放
-                        </MainDarkFilledBtn>
-                      )}
-                    </div>
                   </div>
                 )}
               {currentQuestion && currentQuestion.type === "sorting" && (
@@ -454,9 +445,7 @@ const YouTubeWithQuestions = () => {
                   <Sorting
                     questionData={currentQuestion}
                     sorted={currentQuestion.sorted}
-                    onWin={(isCorrect) =>
-                      updatedQuestions(currentQuestion.id, isCorrect)
-                    }
+                    onWin={(isCorrect) => handleOnAnswer(isCorrect)}
                     explanation={currentQuestion.explanation}
                   />
                 </div>
@@ -466,11 +455,30 @@ const YouTubeWithQuestions = () => {
                   <Matching
                     questionData={currentQuestion}
                     cards={currentQuestion.cards}
-                    onWin={() => updatedQuestions(currentQuestion.id, true)}
+                    onWin={(isCorrect) => handleOnAnswer(isCorrect)}
                     explanation={currentQuestion.explanation}
                   />
                 </div>
               )}
+              <div
+                style={{
+                  marginTop: "20px",
+                  color: resultMessage === "You win!" ? "#338168" : "#545454",
+                }}
+              >
+                {resultMessage}
+                {resultMessage !== "" && (
+                  <MainDarkFilledBtn
+                    onClick={handleNextClick}
+                    style={{
+                      marginTop: "20px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    繼續播放
+                  </MainDarkFilledBtn>
+                )}
+              </div>
             </Container2>
           </MainContent>
         </Container>
@@ -544,8 +552,10 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
+  ${
+    "" /* display: flex;
+  flex-direction: column; */
+  }
   padding-top: 50px;
   width: 65vw;
   margin-left: auto;

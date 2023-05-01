@@ -37,37 +37,39 @@ function EditCourse() {
   const [currentUnitId, setCurrentUnitId] = useState();
   const navigate = useNavigate();
 
-  async function fetchUserData() {
-    if (user.classNames) return;
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!user.account || user.classNames) return;
 
-    const docRef = doc(db, "users", user.account);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      if (userData) {
-        // Add this condition to check if userData is defined
-        // Fetch class names
-        const classNames = await Promise.all(
-          userData.classes.map(async (classId) => {
-            const classDoc = await getDoc(doc(db, "classes", classId));
-            return classDoc.data() && classDoc.data().name;
-          })
-        );
-        setUser({
-          ...user,
-          image: userData.image,
-          name: userData.name,
-          classes: userData.classes,
-          classNames,
-        });
+      const docRef = doc(db, "users", user.account);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        if (userData) {
+          // Add this condition to check if userData is defined
+          // Fetch class names
+          const classNames = await Promise.all(
+            userData.classes.map(async (classId) => {
+              const classDoc = await getDoc(doc(db, "classes", classId));
+              return {
+                id: classId,
+                name: classDoc.data() && classDoc.data().name,
+              };
+            })
+          );
+          setUser({
+            ...user,
+            image: userData.image,
+            name: userData.name,
+            classes: userData.classes,
+            classNames,
+          });
+        }
       }
     }
-  }
-
-  useEffect(() => {
     // Call fetchUserData on page load
     fetchUserData();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     // Set the classList state after the classNames property has been set
@@ -122,6 +124,7 @@ function EditCourse() {
           setEndTimestamp(lessonData.end_date);
           setClassChoose(lessonData.classes);
         }
+        console.log("lessonData.classes", lessonData.classes);
       }
     };
 
@@ -266,8 +269,8 @@ function EditCourse() {
                   }}
                 >
                   {classList.map((classItem) => (
-                    <option key={classItem} value={classItem}>
-                      {classItem}
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.name}
                     </option>
                   ))}
                 </SelectOptions>

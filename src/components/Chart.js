@@ -15,73 +15,86 @@ const processDonutData = (data) => {
   }
 
   // Donut 1
-  const finishRates = labels.map((label) => {
-    const answered = data[label].filter(
-      (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
-    ).length;
-    const finishRate = (answered / data[label].length) * 100;
-    return isNaN(finishRate) ? 0 : finishRate; // If there's no answer, set the finish rate to 0
+  const unfinished = labels.filter((student) => {
+    return data[student].some((e) => Object.keys(e).length === 0);
   });
-  const avgFinishRate = finishRates.reduce((a, b) => a + b, 0) / labels.length;
-  const answeredZero = labels.filter((label) => {
-    const answered = data[label].filter(
-      (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
-    ).length;
-    return answered === 0;
-  }).length;
-  const answeredZeroPercentage = (answeredZero / labels.length) * 100;
+  const unfinishedRate = (unfinished.length / labels.length) * 100;
+  // const finishRates = labels.map((label) => {
+  //   const answered = data[label].filter(
+  //     (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
+  //   ).length;
+  //   const finishRate = (answered / data[label].length) * 100;
+  //   return isNaN(finishRate) ? 0 : finishRate; // If there's no answer, set the finish rate to 0
+  // });
+  // const avgFinishRate = finishRates.reduce((a, b) => a + b, 0) / labels.length;
+  // const answeredZero = labels.filter((label) => {
+  //   const answered = data[label].filter(
+  //     (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
+  //   ).length;
+  //   return answered === 0;
+  // }).length;
+  // const answeredZeroPercentage = (answeredZero / labels.length) * 100;
 
   // Donut 2
-  const correctRates = labels.map((label) => {
-    const correct = data[label].filter(
-      (q) => Object.values(q)[0] === true
-    ).length;
-    const correctRate = (correct / data[label].length) * 100;
-    return isNaN(correctRate) ? 0 : correctRate; // If there's no answer, set the correct rate to 0
+  const finished = labels.length - unfinished.length;
+  const results = labels.map((student) => {
+    const correctCnt = data[student].filter((s) => {
+      return Object.values(s)[0];
+    });
+    return (correctCnt.length / data[student].length) * 100;
   });
-  const avgCorrectRate =
-    correctRates.reduce((a, b) => a + b, 0) / labels.length;
+  const correctRate =
+    results.reduce((acc, cur) => acc + cur, 0) /
+    results.filter((r) => r > 0).length;
+  // const finishedAnswered = finished *
+
+  // const correctRates = labels.map((label) => {
+  //   const correct = data[label].filter(
+  //     (q) => Object.values(q)[0] === true
+  //   ).length;
+  //   const correctRate = (correct / data[label].length) * 100;
+  //   return isNaN(correctRate) ? 0 : correctRate; // If there's no answer, set the correct rate to 0
+  // });
+  // const avgCorrectRate =
+  //   correctRates.reduce((a, b) => a + b, 0) / labels.length;
 
   // Donut 3
-  const notFinished = labels.filter((label) => {
-    const answered = data[label].filter(
-      (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
-    ).length;
-    return answered < data[label].length;
-  }).length;
-  const below50CorrectRate = labels.filter((label) => {
-    const correct = data[label].filter(
-      (q) => Object.values(q)[0] === true
-    ).length;
-    const correctRate = (correct / data[label].length) * 100;
-    return correctRate < 50;
-  }).length;
-  const notFinishedPercentage = (notFinished / labels.length) * 100;
-  const below50CorrectRatePercentage =
-    (below50CorrectRate / labels.length) * 100;
+  const specialStudent = results.filter((r) => r > 0 && r < 50);
+
+  // const notFinished = labels.filter((label) => {
+  //   const answered = data[label].filter(
+  //     (q) => Object.values(q)[0] !== "" || Object.values(q)[0] !== "未答" // Add condition for "未答"
+  //   ).length;
+  //   return answered < data[label].length;
+  // }).length;
+  // const below50CorrectRate = labels.filter((label) => {
+  //   const correct = data[label].filter(
+  //     (q) => Object.values(q)[0] === true
+  //   ).length;
+  //   const correctRate = (correct / data[label].length) * 100;
+  //   return correctRate < 50;
+  // }).length;
+  // const notFinishedPercentage = (notFinished / labels.length) * 100;
+  // const below50CorrectRatePercentage =
+  //   (below50CorrectRate / labels.length) * 100;
 
   return [
     {
       datasets: [
         {
-          data: [
-            avgFinishRate,
-            100 - avgFinishRate - answeredZeroPercentage,
-            answeredZeroPercentage,
-          ],
+          data: [unfinishedRate, 100 - unfinishedRate],
           backgroundColor: [
-            "rgba(75, 192, 192, 0.6)",
             "rgba(200, 200, 200, 0.6)",
-            "rgba(255, 159, 64, 0.6)",
+            "rgba(75, 192, 192, 0.6)",
           ],
         },
       ],
-      labels: ["完成率", "未完成者", "未作答者"],
+      labels: ["未完成", "已完成"],
     },
     {
       datasets: [
         {
-          data: [avgCorrectRate, 100 - avgCorrectRate],
+          data: [correctRate, 100 - correctRate],
           backgroundColor: [
             "rgba(255, 99, 132, 0.6)",
             "rgba(200, 200, 200, 0.6)",
@@ -93,19 +106,14 @@ const processDonutData = (data) => {
     {
       datasets: [
         {
-          data: [
-            notFinishedPercentage,
-            below50CorrectRatePercentage,
-            100 - notFinishedPercentage - below50CorrectRatePercentage,
-          ],
+          data: [unfinished.length, specialStudent.length],
           backgroundColor: [
             "rgba(255, 206, 86, 0.6)",
             "rgba(153, 102, 255, 0.6)",
-            "rgba(200, 200, 200, 0.6)",
           ],
         },
       ],
-      labels: ["未完成者", "正確率低於50者", "其他"],
+      labels: ["未完成者", "正確率低於50者"],
     },
   ];
 };

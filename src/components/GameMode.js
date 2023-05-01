@@ -88,6 +88,7 @@ const GameMode = ({ countdown, setCountdown }) => {
   useEffect(() => {
     if (countdown === 0) {
       setShowPopup(true);
+      setNpcCountdown(0);
     } else {
       setShowPopup(false);
     }
@@ -103,7 +104,7 @@ const GameMode = ({ countdown, setCountdown }) => {
               initialCountdown={initialUserCountdown}
             />
           </Sidebar>
-          {showPopup && <PopupText>Times Up!</PopupText>}
+          {showPopup && <PopupText>Game Over!</PopupText>}
           <ImagesWrapper countdown={countdown}>
             <CountdownWrapper countdown={countdown}>
               剩餘作答時間 {countdown} 秒

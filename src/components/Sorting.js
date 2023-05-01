@@ -54,12 +54,13 @@ function Sorting(props) {
 
   const handleSubmitClick = () => {
     if (checkWin(boxes)) {
-      setResultMessage("You win!");
+      // setResultMessage("You win!");
       setWin(true);
       props.onWin(true);
     } else {
-      setResultMessage(questionData.explanation);
+      // setResultMessage(questionData.explanation);
       setWin(false);
+      props.onWin(false);
     }
   };
 

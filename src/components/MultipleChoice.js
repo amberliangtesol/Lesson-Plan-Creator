@@ -6,6 +6,7 @@ import styled from "styled-components/macro";
 
 const MultipleChoice = ({ questionData, onAnswerClick }) => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isSubmitted, setSubmitted] = useState(false);
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
@@ -14,6 +15,7 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
   const handleSubmitClick = () => {
     if (selectedOption) {
       onAnswerClick(selectedOption);
+      setSubmitted(true);
     } else {
       alert("請選擇一個答案");
     }
@@ -43,6 +45,11 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
             className={selectedOption === option ? "selected" : ""}
           >
             {option.text}
+            {isSubmitted && selectedOption
+              ? option.correct
+                ? " V"
+                : " X"
+              : ""}
           </MultipleChoiceOptionCard>
         ))}
         <MainRedFilledBtn

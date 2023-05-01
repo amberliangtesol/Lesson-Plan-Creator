@@ -44,7 +44,7 @@ function CreateCourse() {
 
   // Call fetchUserData directly inside the component function
   async function fetchUserData() {
-    if (user.classNames) return;
+    if (!user.account || user.classNames) return;
 
     const docRef = doc(db, "users", user.account);
     const docSnap = await getDoc(docRef);
@@ -56,7 +56,10 @@ function CreateCourse() {
         const classNames = await Promise.all(
           userData.classes.map(async (classId) => {
             const classDoc = await getDoc(doc(db, "classes", classId));
-            return classDoc.data() && classDoc.data().name;
+            return {
+              id: classId,
+              name: classDoc.data() && classDoc.data().name,
+            };
           })
         );
         setUser({
@@ -142,17 +145,17 @@ function CreateCourse() {
       const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
 
       // Get the classIds based on the selected class names
-      const classIds = await Promise.all(
-        classChoose.map(async (className) => {
-          const classQuery = query(
-            collection(db, "classes"),
-            where("name", "==", className)
-          );
-          const classSnapshot = await getDocs(classQuery);
-          const classDoc = classSnapshot.docs[0];
-          return classDoc.id;
-        })
-      );
+      // const classIds = await Promise.all(
+      //   classChoose.map(async (className) => {
+      //     const classQuery = query(
+      //       collection(db, "classes"),
+      //       where("name", "==", className)
+      //     );
+      //     const classSnapshot = await getDocs(classQuery);
+      //     const classDoc = classSnapshot.docs[0];
+      //     return classDoc.id;
+      //   })
+      // );
 
       // Create the document in Firestore with the image URL
       const docRef = await addDoc(collection(db, "lessons"), {
@@ -160,7 +163,7 @@ function CreateCourse() {
         img: imageURL,
         start_date: startTimestamp,
         end_date: endTimestamp,
-        classes: classIds,
+        classes: classChoose,
       });
       await updateDoc(docRef, {
         id: docRef.id,
@@ -297,8 +300,8 @@ function CreateCourse() {
                   }}
                 >
                   {classList.map((classItem) => (
-                    <option key={classItem} value={classItem}>
-                      {classItem}
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.name}
                     </option>
                   ))}
                 </SelectOptions>

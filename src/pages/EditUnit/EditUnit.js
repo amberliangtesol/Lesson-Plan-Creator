@@ -12,7 +12,7 @@ import {
   collection,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -40,6 +40,7 @@ function EditUnit() {
   const [sortedUnits, setSortedUnits] = useState([]);
   const [currentUnitId, setCurrentUnitId] = useState();
   const [lessonData, setLessonData] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLessonData = async () => {
@@ -100,7 +101,7 @@ function EditUnit() {
   ]);
 
   const handleUpdate = async () => {
-    let id = "";
+    let id = videoId;
     if (videoId) {
       let url;
       try {
@@ -130,6 +131,7 @@ function EditUnit() {
       });
 
       console.log("Document updated with ID: ", currentUnitId);
+      navigate("/teachermain");
     } catch (e) {
       console.error("Error updating document: ", e);
     }
@@ -183,11 +185,11 @@ function EditUnit() {
     setVideoId(e.target.value);
   };
 
-  const extractVideoId = () => {
-    const url = new URL(inputLink);
-    const videoId = url.searchParams.get("v");
-    setVideoId(videoId);
-  };
+  // const extractVideoId = () => {
+  //   const url = new URL(inputLink);
+  //   const videoId = url.searchParams.get("v");
+  //   setVideoId(videoId);
+  // };
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
@@ -631,7 +633,7 @@ function EditUnit() {
                 onClick={handleUpdate}
                 style={{ width: "100%", marginTop: "20px" }}
               >
-                <Link to="/TeacherMain">完成送出</Link>
+                完成送出
               </MainRedFilledBtn>
             </form>
           </Container2>

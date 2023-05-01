@@ -35,13 +35,13 @@ function TeacherMain() {
   const navigate = useNavigate();
 
   function getClassNameById(classId) {
-    const index = user.classes.findIndex((id) => id === classId);
-    return (user.classNames || [])[index] || "";
+    const className = (user.classNames || []).find((c) => c.id === classId);
+    return className?.name || "";
   }
 
   useEffect(() => {
     async function fetchUserData() {
-      if (user.classNames) return;
+      if (!user.account || user.classNames) return;
 
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
@@ -53,7 +53,10 @@ function TeacherMain() {
           const classNames = await Promise.all(
             userData.classes.map(async (classId) => {
               const classDoc = await getDoc(doc(db, "classes", classId));
-              return classDoc.data() && classDoc.data().name;
+              return {
+                id: classId,
+                name: classDoc.data() && classDoc.data().name,
+              };
             })
           );
           setUser({
