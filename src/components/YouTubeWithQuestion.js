@@ -247,7 +247,7 @@ const YouTubeWithQuestions = () => {
     console.log(isCorrect);
     if (isCorrect) {
       updatedQuestions(currentQuestion.id, true);
-      setResultMessage("You win!");
+      // setResultMessage("You win!");
       setIcon("✓");
       if (countdown > 0 && !hasShownCongratsModal) {
         playerRef.current.pauseVideo();
@@ -280,8 +280,8 @@ const YouTubeWithQuestions = () => {
     if (answeredQuestions.length === questions.current.length) {
       // Give the user badge1 if they have answered all questions
       updateUserBadgeData("badge1");
-      setCurrentBadge(Badge1);
-      setShowCongratsModal(true); // Show the CongratsModal
+      // setCurrentBadge(Badge1);
+      // setShowCongratsModal(true);
       // setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
     }
 
@@ -461,10 +461,10 @@ const YouTubeWithQuestions = () => {
                 </div>
               )}
               <div
-                style={{
-                  marginTop: "20px",
-                  color: resultMessage === "You win!" ? "#338168" : "#545454",
-                }}
+              // style={{
+              //   marginTop: "20px",
+              //   color: resultMessage === "You win!" ? "#338168" : "#545454",
+              // }}
               >
                 {resultMessage}
                 {resultMessage !== "" && (

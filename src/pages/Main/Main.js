@@ -99,11 +99,38 @@ function Main() {
             ref={teacherImgRef}
           ></TeacherImg>
           <ConversationP>
-            更方便的建立影音素材教案
+            更方便快速的建立
+            <span
+              style={{
+                color: "#f46868",
+                fontWeight: "700",
+                paddingLeft: "10px",
+              }}
+            >
+              影音教案
+            </span>
             <br />
-            設計更吸引學生的互動問答
+            設計更吸引學生的
+            <span
+              style={{
+                color: "#f46868",
+                fontWeight: "700",
+                paddingLeft: "10px",
+              }}
+            >
+              互動問答
+            </span>
             <br />
-            更有效率地管理學生的後台
+            更有效容易的管理
+            <span
+              style={{
+                color: "#f46868",
+                fontWeight: "700",
+                paddingLeft: "10px",
+              }}
+            >
+              學生後台
+            </span>
           </ConversationP>
         </ConversationInsideWrapper>
         <ConversationInsideWrapper
@@ -111,11 +138,38 @@ function Main() {
           ref={studentImgRef}
         >
           <ConversationP>
-            更方便的建立影音素材教案
+            <span
+              style={{
+                color: "#f46868",
+                fontWeight: "700",
+                paddingRight: "10px",
+              }}
+            >
+              隨時隨地
+            </span>
+            學習讓上課不無聊
             <br />
-            設計更吸引學生的互動問答
+            <span
+              style={{
+                color: "#f46868",
+                fontWeight: "700",
+                paddingRight: "10px",
+              }}
+            >
+              遊戲模式
+            </span>
+            超級刺激欲罷不能
             <br />
-            更有效率地管理學生的後台
+            <span
+              style={{
+                color: "#f46868",
+                fontWeight: "700",
+                paddingRight: "10px",
+              }}
+            >
+              徽章集點
+            </span>
+            讓我想準時寫作業
           </ConversationP>
           <StudentImg className={showStudent ? "show" : ""}></StudentImg>
         </ConversationInsideWrapper>
@@ -141,8 +195,7 @@ function Main() {
       </FeatureWrapper> */}
 
       <FooterSlogenWrapper>
-        <h2>Learning has never been this easy with </h2>
-        <Logo></Logo>
+        <h2>來看看更多精彩功能吧！ </h2>
       </FooterSlogenWrapper>
 
       <Footer></Footer>

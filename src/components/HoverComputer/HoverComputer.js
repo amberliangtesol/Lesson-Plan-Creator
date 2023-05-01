@@ -2,6 +2,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import macbookbottom from "./macbookbottom.png";
 import macbookcover from "./macbookcover.png";
 import macbooktop from "./macbooktop.png";
+import guide from "./guide.mp4";
 import { useState, useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 
@@ -43,7 +44,8 @@ const HoverComputer = () => {
           <div ref={videoRef}>
             <video autoPlay controls>
               <source
-                src="https://d1xm195wioio0k.cloudfront.net/images/video/support.mp4"
+                // src="https://d1xm195wioio0k.cloudfront.net/images/video/support.mp4"
+                src={guide}
                 type="video/mp4"
               />
             </video>
