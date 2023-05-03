@@ -34,6 +34,7 @@ const TeacherMainSidebar = () => {
 
         <Link
           to="/ManageClass"
+          className="manageClassButton" // Add this class name
           style={{ textDecoration: "none" }}
           onClick={() => handleLinkClick("/ManageClass")}
         >

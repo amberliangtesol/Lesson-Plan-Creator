@@ -254,6 +254,8 @@ const Container1 = styled.div`
   background-color: rgb(245, 245, 245);
   min-height: 100vh;
   padding-top: 90px;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const Container2 = styled.div`

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Steps, Hints } from "intro.js-react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled, { keyframes } from "styled-components/macro";
 import { UserContext } from "../../UserInfoProvider";
 import {
   collection,
@@ -22,6 +21,7 @@ import { MainDarkBorderBtn } from "../../components/Buttons";
 import { BiTimeFive } from "react-icons/bi";
 import { BsFillBookmarkStarFill } from "react-icons/bs";
 import { BsCheckCircleFill } from "react-icons/bs";
+import Joyride from "react-joyride";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -32,7 +32,138 @@ function TeacherMain() {
   const { user, setUser } = useContext(UserContext);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [runJoyride, setRunJoyride] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if the guide state is stored in the local storage
+    const guideState = localStorage.getItem("mainguide");
+
+    if (guideState === "true") {
+      // If the guide state is true, don't show the Joyride guide
+      setRunJoyride(false);
+    } else {
+      // If the guide state is not true (first time or false), show the Joyride guide
+      setRunJoyride(true);
+    }
+  }, []);
+
+  // Joyride callback function to handle onFinish or onSkip event
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+
+    if (status === "finished" || status === "skipped") {
+      // If the user finishes or skips the Joyride guide, set the guide state to true in local storage
+      localStorage.setItem("mainguide", "true");
+    }
+  };
+
+  const [steps] = useState([
+    {
+      target: ".manageClassButton",
+      content: (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: "#f46868",
+            }}
+          >
+            Step1
+          </span>
+          <br />
+          請先建立班級
+        </>
+      ),
+      disableBeacon: true,
+      continuous: true,
+      showSkipButton: true,
+      hideCloseButton: true,
+      showProgress: true,
+      showNextButton: true,
+    },
+    {
+      target: ".createClass",
+      content: (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: "#f46868",
+            }}
+          >
+            Step2
+          </span>
+          <br />
+          再建立課程
+        </>
+      ),
+      disableBeacon: true,
+      showSkipButton: true,
+      hideCloseButton: true,
+      hideBackButton: true,
+      showNextButton: true,
+    },
+  ]);
+
+  const joyrideStyles = {
+    options: {
+      primaryColor: "#f46868",
+      borderRadius: "25px",
+    },
+    buttonSkip: {
+      backgroundColor: "#ffffff",
+      color: "#f46868",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "2px #f46868 solid",
+    },
+    buttonNext: {
+      backgroundColor: "#f46868",
+      color: "#ffffff",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "none",
+      cursor: "pointer",
+    },
+    tooltip: {
+      backgroundColor: "#ffffff",
+      borderRadius: "25px",
+      textAlign: "left",
+    },
+    tooltipContainer: {
+      textAlign: "center",
+    },
+    buttonBack: {
+      backgroundColor: "#f46868",
+      color: "#ffffff",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "none",
+    },
+    buttonPrimary: {
+      backgroundColor: "#ffffff",
+      border: "none",
+    },
+    buttonClose: {
+      backgroundColor: "#ffffff",
+      color: "#f46868",
+      borderRadius: "25px",
+      border: "none",
+      text: "Next",
+    },
+    tooltipTitle: {
+      color: "#ffffff",
+      fontSize: "24px",
+      fontWeight: "bold",
+    },
+    tooltipContent: {
+      fontSize: "18px",
+    },
+  };
 
   function getClassNameById(classId) {
     const className = (user.classNames || []).find((c) => c.id === classId);
@@ -115,148 +246,174 @@ function TeacherMain() {
 
   return (
     <Body>
+      <Joyride
+        steps={steps}
+        styles={joyrideStyles}
+        run={runJoyride} // Use the runJoyride state to control when to show the Joyride guide
+        callback={handleJoyrideCallback} // Add the callback function to handle onFinish or onSkip event
+      />
       <Header></Header>
       <Content>
         <Container>
-          <TeacherMainSidebar></TeacherMainSidebar>
+          <TeacherMainSidebar className="sideBar"></TeacherMainSidebar>
           <MainContent>
             <Title>課程主頁</Title>
             <CreateCourseP>
-              <MainRedFilledBtn style={{ marginLeft: "auto" }}>
+              <MainRedFilledBtn
+                style={{ marginLeft: "auto" }}
+                className="createClass"
+              >
                 <Link to="/CreateCourse">課程建立</Link>
               </MainRedFilledBtn>
             </CreateCourseP>
-            <CourseOutsideWrapper>
-              <Container2>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <BsFillBookmarkStarFill
-                    style={{ color: "#F46868", fontSize: "24px" }}
-                  ></BsFillBookmarkStarFill>
-                  <SubTitle>進行中課程</SubTitle>
-                </div>
 
-                <CourseWrapper>
-                  {lessons
-                    .filter((c) => !isCourseOutdated(c))
-                    .map((c, index) => (
-                      <OutdatedCourse key={index} outdated={false}>
-                        <CourseContent>
-                          <VideoImg img={c.img}></VideoImg>
-                          <CourseTextWrapper>
-                            <p>
-                              <b>班級</b>
-                              <br />
-                              {c.classes.map((classId, index) => (
-                                <span key={classId}>
-                                  {getClassNameById(classId)}
-                                  {index < c.classes.length - 1 ? "、" : ""}
-                                </span>
-                              ))}
-                            </p>
-                            <p>
-                              <b>課程</b>
-                              <br /> {c.name}
-                            </p>
-                            <p
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              <BiTimeFive
-                                style={{ marginRight: "5px", fontSize: "24px" }}
-                              />
-                              {`${formatDate(c.start_date)}~${formatDate(
-                                c.end_date
-                              )}`}
-                            </p>
-                          </CourseTextWrapper>
-                        </CourseContent>
-                        <BtnContainer>
-                          <MainDarkFilledBtn
-                            type="button"
-                            onClick={() => handleEditCourse(c.id)}
-                            // disabled={!isCourseOutdated(c)}
-                          >
-                            <Link to="/EditCourse">課程編輯</Link>
-                          </MainDarkFilledBtn>
-                          <MainDarkBorderBtn
-                            type="button"
-                            onClick={() => handleScore(c.id)}
-                          >
-                            <Link to="/Score">答題狀況</Link>
-                          </MainDarkBorderBtn>
-                        </BtnContainer>
-                      </OutdatedCourse>
-                    ))}
-                </CourseWrapper>
-              </Container2>
+            {lessons.length > 0 ? ( // Only render if lessons is not empty
+              <CourseOutsideWrapper>
+                <Container2>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <BsFillBookmarkStarFill
+                      style={{ color: "#F46868", fontSize: "24px" }}
+                    ></BsFillBookmarkStarFill>
+                    <SubTitle>進行中課程</SubTitle>
+                  </div>
 
-              <Container2>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <BsCheckCircleFill
-                    style={{ color: "#F46868", fontSize: "24px" }}
-                  ></BsCheckCircleFill>
-                  <SubTitle>已完成課程</SubTitle>
-                </div>
-                <CourseWrapper>
-                  {lessons
-                    .filter((c) => isCourseOutdated(c))
-                    .map((c, index) => (
-                      <OutdatedCourse key={index}>
-                        <CourseContent outdated>
-                          <VideoImg img={c.img}></VideoImg>
-                          <CourseTextWrapper>
-                            <p>
-                              班級
-                              <br />
-                              {c.classes.map((classId, index) => (
-                                <span key={classId}>
-                                  {getClassNameById(classId)}
-                                  {index < c.classes.length - 1 ? "、" : ""}
-                                </span>
-                              ))}
-                            </p>
-                            <p>
-                              <b>課程</b>
-                              <br /> {c.name}
-                            </p>
-                            <p
-                              style={{ display: "flex", alignItems: "center" }}
+                  <CourseWrapper>
+                    {lessons
+                      .filter((c) => !isCourseOutdated(c))
+                      .map((c, index) => (
+                        <OutdatedCourse key={index} outdated={false}>
+                          <CourseContent>
+                            <VideoImg img={c.img}></VideoImg>
+                            <CourseTextWrapper>
+                              <p>
+                                <b>班級</b>
+                                <br />
+                                {c.classes.map((classId, index) => (
+                                  <span key={classId}>
+                                    {getClassNameById(classId)}
+                                    {index < c.classes.length - 1 ? "、" : ""}
+                                  </span>
+                                ))}
+                              </p>
+                              <p>
+                                <b>課程</b>
+                                <br /> {c.name}
+                              </p>
+                              <p
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <BiTimeFive
+                                  style={{
+                                    marginRight: "5px",
+                                    fontSize: "24px",
+                                  }}
+                                />
+                                {`${formatDate(c.start_date)}~${formatDate(
+                                  c.end_date
+                                )}`}
+                              </p>
+                            </CourseTextWrapper>
+                          </CourseContent>
+                          <BtnContainer>
+                            <MainDarkFilledBtn
+                              type="button"
+                              onClick={() => handleEditCourse(c.id)}
+                              // disabled={!isCourseOutdated(c)}
                             >
-                              <BiTimeFive
-                                style={{ marginRight: "5px", fontSize: "24px" }}
-                              />
-                              {`${formatDate(c.start_date)}~${formatDate(
-                                c.end_date
-                              )}`}
-                            </p>
-                          </CourseTextWrapper>
-                        </CourseContent>
-                        <BtnContainer>
-                          <MainDarkBorderBtn
-                            type="button"
-                            onClick={() => handleScore(c.id)}
-                          >
-                            <Link to="/Score">答題狀況</Link>
-                          </MainDarkBorderBtn>
-                        </BtnContainer>
-                      </OutdatedCourse>
-                    ))}
-                </CourseWrapper>
-              </Container2>
-            </CourseOutsideWrapper>
+                              <Link to="/EditCourse">課程編輯</Link>
+                            </MainDarkFilledBtn>
+                            <MainDarkBorderBtn
+                              type="button"
+                              onClick={() => handleScore(c.id)}
+                            >
+                              <Link to="/Score">答題狀況</Link>
+                            </MainDarkBorderBtn>
+                          </BtnContainer>
+                        </OutdatedCourse>
+                      ))}
+                  </CourseWrapper>
+                </Container2>
+
+                <Container2>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <BsCheckCircleFill
+                      style={{ color: "#F46868", fontSize: "24px" }}
+                    ></BsCheckCircleFill>
+                    <SubTitle>已完成課程</SubTitle>
+                  </div>
+                  <CourseWrapper>
+                    {lessons
+                      .filter((c) => isCourseOutdated(c))
+                      .map((c, index) => (
+                        <OutdatedCourse key={index}>
+                          <CourseContent outdated>
+                            <VideoImg img={c.img}></VideoImg>
+                            <CourseTextWrapper>
+                              <p>
+                                班級
+                                <br />
+                                {c.classes.map((classId, index) => (
+                                  <span key={classId}>
+                                    {getClassNameById(classId)}
+                                    {index < c.classes.length - 1 ? "、" : ""}
+                                  </span>
+                                ))}
+                              </p>
+                              <p>
+                                <b>課程</b>
+                                <br /> {c.name}
+                              </p>
+                              <p
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <BiTimeFive
+                                  style={{
+                                    marginRight: "5px",
+                                    fontSize: "24px",
+                                  }}
+                                />
+                                {`${formatDate(c.start_date)}~${formatDate(
+                                  c.end_date
+                                )}`}
+                              </p>
+                            </CourseTextWrapper>
+                          </CourseContent>
+                          <BtnContainer>
+                            <MainDarkBorderBtn
+                              type="button"
+                              onClick={() => handleScore(c.id)}
+                            >
+                              <Link to="/Score">答題狀況</Link>
+                            </MainDarkBorderBtn>
+                          </BtnContainer>
+                        </OutdatedCourse>
+                      ))}
+                  </CourseWrapper>
+                </Container2>
+              </CourseOutsideWrapper>
+            ) : (
+              <p>Loading...</p> // Or show a loading message while waiting for the lessons to load
+            )}
           </MainContent>
         </Container>
       </Content>
@@ -404,6 +561,26 @@ const CourseTextWrapper = styled.div`
 const CreateCourseP = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+  }
+
+  55% {
+    background-color: rgba(255, 100, 100, 0.9);
+    transform: scale(1.6);
+  }
+`;
+
+const Beacon = styled.span`
+  animation: ${pulse} 1s ease-in-out infinite;
+  background-color: rgba(255, 27, 14, 0.6);
+  border-radius: 50%;
+  display: inline-block;
+  height: 3rem;
+  width: 3rem;
 `;
 
 export default TeacherMain;

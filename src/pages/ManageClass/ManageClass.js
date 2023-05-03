@@ -38,8 +38,10 @@ function ManageClass() {
   // Second useEffect for fetching and setting class details
   useEffect(() => {
     async function fetchClassDetails() {
-      if (!user.classes || user.classes.length === 0) return;
-
+      if (!user.classes || user.classes.length === 0) {
+        setIsLoading(false);
+        return;
+      }
       const classDetails = await Promise.all(
         user.classes.map(async (classId) => {
           const classDoc = await getDoc(doc(db, "classes", classId));
@@ -80,6 +82,8 @@ function ManageClass() {
             <Container2>
               {isLoading ? (
                 <p>Loading...</p>
+              ) : classDetails.length === 0 ? (
+                <p>No class to show.</p>
               ) : (
                 <ClassWrapper>
                   {classDetails.map((classItem, index) => (

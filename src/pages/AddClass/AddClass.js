@@ -25,6 +25,7 @@ import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { MdOutlineSchool } from "react-icons/md";
+import Joyride from "react-joyride";
 
 const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
@@ -53,6 +54,162 @@ function AddClass() {
   const [studentEmailInput, setStudentEmailInput] = useState("");
   const [studentNameInput, setStudentNameInput] = useState("");
   const [teacherEmailInput, setTeacherEmailInput] = useState("");
+  const [runJoyride, setRunJoyride] = useState(false);
+  useEffect(() => {
+    // Check if the guide state is stored in the local storage
+    const guideState = localStorage.getItem("addclassguide");
+
+    if (guideState === "true") {
+      // If the guide state is true, don't show the Joyride guide
+      setRunJoyride(false);
+    } else {
+      // If the guide state is not true (first time or false), show the Joyride guide
+      setRunJoyride(true);
+    }
+  }, []);
+
+  // Joyride callback function to handle onFinish or onSkip event
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+
+    if (status === "finished" || status === "skipped") {
+      // If the user finishes or skips the Joyride guide, set the guide state to true in local storage
+      localStorage.setItem("addclassguide", "true");
+    }
+  };
+
+  const [steps] = useState([
+    {
+      target: ".classNameInput",
+      content: (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: "#f46868",
+            }}
+          >
+            Step1 輸入班級
+          </span>
+          <br />
+          請輸入班級名稱
+        </>
+      ),
+      disableBeacon: true,
+      continuous: true,
+      showSkipButton: true,
+      showCloseButton: true,
+      type: "continuous",
+      // hideCloseButton: true,
+      // showProgress: true,
+      // showNextButton: true,
+    },
+    {
+      target: ".studentTable",
+      content: (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: "#f46868",
+            }}
+          >
+            Step2 新增學生
+          </span>
+          <br />
+          可以『手動輸入姓名與帳號』
+          <br />
+          或以『上傳excel檔案』方式新增學生
+        </>
+      ),
+      disableBeacon: true,
+      hideCloseButton: true,
+      showNextButton: true,
+      // showSkipButton: true,
+      // hideBackButton: true,
+    },
+    {
+      target: ".teacherTable",
+      content: (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: "#f46868",
+            }}
+          >
+            Step3 指派教師
+          </span>
+          <br />
+          請輸入已註冊之教師帳號
+        </>
+      ),
+      disableBeacon: true,
+      // showSkipButton: true,
+      hideCloseButton: true,
+      // hideBackButton: true,
+      showNextButton: true,
+    },
+  ]);
+
+  const joyrideStyles = {
+    options: {
+      primaryColor: "#f46868",
+      borderRadius: "25px",
+    },
+    buttonSkip: {
+      backgroundColor: "#ffffff",
+      color: "#f46868",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "2px #f46868 solid",
+    },
+    buttonNext: {
+      backgroundColor: "#f46868",
+      color: "#ffffff",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "none",
+      cursor: "pointer",
+    },
+    tooltip: {
+      backgroundColor: "#ffffff",
+      borderRadius: "25px",
+      textAlign: "left",
+    },
+    tooltipContainer: {
+      textAlign: "center",
+    },
+    buttonBack: {
+      backgroundColor: "#f46868",
+      color: "#ffffff",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "none",
+    },
+    buttonPrimary: {
+      backgroundColor: "#ffffff",
+      border: "none",
+    },
+    buttonClose: {
+      backgroundColor: "#ffffff",
+      color: "#f46868",
+      borderRadius: "25px",
+      border: "none",
+      ariaLabel: "Next",
+    },
+    tooltipTitle: {
+      color: "#ffffff",
+      fontSize: "24px",
+      fontWeight: "bold",
+    },
+    tooltipContent: {
+      fontSize: "18px",
+    },
+  };
 
   const handleAddStudentEmail = () => {
     if (studentEmailInput && studentNameInput) {
@@ -346,6 +503,12 @@ function AddClass() {
 
   return (
     <Body>
+      <Joyride
+        steps={steps}
+        styles={joyrideStyles}
+        run={runJoyride} // Use the runJoyride state to control when to show the Joyride guide
+        callback={handleJoyrideCallback} // Add the callback function to handle onFinish or onSkip event
+      />
       <Header></Header>
       <Content>
         <Container>
@@ -363,6 +526,7 @@ function AddClass() {
                 value={selectedClass}
                 onChange={handleClassNameChange}
                 placeholder="輸入名稱"
+                className="classNameInput"
               ></ClassNameInput>
               <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
             </div>
@@ -375,6 +539,7 @@ function AddClass() {
                 alignItems: "center",
                 marginTop: "30px",
               }}
+              className="studentTable"
             >
               <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
                 學生
@@ -422,6 +587,7 @@ function AddClass() {
                 alignItems: "center",
                 marginTop: "30px",
               }}
+              className="teacherTable"
             >
               <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
                 教師
