@@ -36,6 +36,7 @@ function EditCourse() {
   const [sortedUnits, setSortedUnits] = useState([]);
   const [currentUnitId, setCurrentUnitId] = useState();
   const navigate = useNavigate();
+  const now = new Date().toISOString().slice(0, 16);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -278,6 +279,7 @@ function EditCourse() {
                 <CourseDetailText>開始時間</CourseDetailText>
                 <CourseInput
                   type="datetime-local"
+                  min={now}
                   value={new Date(startTimestamp).toISOString().slice(0, 16)}
                   onChange={(e) =>
                     setStartTimestamp(new Date(e.target.value).getTime())
@@ -286,6 +288,7 @@ function EditCourse() {
                 <CourseDetailText>結束時間</CourseDetailText>
                 <CourseInput
                   type="datetime-local"
+                  min={new Date(startTimestamp).toISOString().slice(0, 16)}
                   value={new Date(endTimestamp).toISOString().slice(0, 16)}
                   onChange={(e) =>
                     setEndTimestamp(new Date(e.target.value).getTime())
