@@ -6,6 +6,7 @@ import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 import profile from "./profile.png";
+import teacherprofile from "./teacherprofile.png";
 import { UserContext } from "../../UserInfoProvider";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
@@ -13,6 +14,7 @@ import Footer from "../../components/Footer";
 import arrow from "./arrow.png";
 import { ColorFilledBtn } from "../../components/Buttons";
 import { ColorBorderBtn } from "../../components/Buttons";
+import modal from "../../components/Modal";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -20,6 +22,7 @@ function Login() {
   const [role, setRole] = useState("");
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const profileImage = role === "teacher" ? teacherprofile : profile;
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
@@ -45,19 +48,19 @@ function Login() {
         } else if (role === "teacher" && userDoc.data().role === "teacher") {
           navigate("/teachermain");
         } else {
-          alert("請聯絡你的老師");
+          modal.success("請確認登入身份是否正確");
         }
       } else {
         if (role === "teacher") {
-          alert("您沒有帳號請先註冊");
+          modal.success("您沒有帳號請先註冊");
           navigate("/register");
         } else {
-          alert("錯誤的帳號或密碼");
+          modal.success("錯誤的帳號或密碼");
         }
       }
     } catch (error) {
-      console.log(error.message);
-      alert("錯誤的帳號或密碼");
+      console.log(error.code);
+      modal.success("錯誤的帳號或密碼");
     }
   };
 
@@ -66,7 +69,9 @@ function Login() {
       <Header></Header>
       <Content>
         <Wrapper>
-          <ProfileIcon></ProfileIcon>
+          <ProfileIcon
+            style={{ backgroundImage: `url(${profileImage})` }}
+          ></ProfileIcon>
           <h2>登入</h2>
           <RegisterForm>
             <RegisterSelect value={role} onChange={handleRoleChange}>
@@ -128,7 +133,7 @@ const Wrapper = styled.div`
 
 const ProfileIcon = styled.div`
   width: 98px;
-  height: 142px;
+  height: 137px;
   background-image: url(${profile});
   cursor: pointer;
 `;

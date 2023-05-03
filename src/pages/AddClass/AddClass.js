@@ -26,6 +26,7 @@ import { MainDarkBorderBtn } from "../../components/Buttons";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { MdOutlineSchool } from "react-icons/md";
 import Joyride from "react-joyride";
+import modal from "../../components/Modal";
 
 const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
@@ -145,10 +146,10 @@ function AddClass() {
         </>
       ),
       disableBeacon: true,
-      // showSkipButton: true,
       hideCloseButton: true,
-      // hideBackButton: true,
       showNextButton: true,
+      // hideBackButton: true,
+      // showSkipButton: true,
     },
   ]);
 
@@ -306,9 +307,8 @@ function AddClass() {
   const handleTeacherInputBlur = () => {
     if (teachers.includes(teacherEmailInput)) {
       // setSelectedTeacher(teacherEmailInput);
-      // alert("有此教師帳號");
     } else {
-      alert("無此教師帳號");
+      modal.success("無此教師帳號!");
     }
   };
 
@@ -451,7 +451,7 @@ function AddClass() {
       await createOrUpdateClass();
       navigate("/ManageClass");
     } else {
-      alert("Please select a teacher before submitting.");
+      modal.success("請選擇至少一位教師");
     }
   };
 

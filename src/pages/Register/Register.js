@@ -4,11 +4,12 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../utils/firebaseApp";
 import { setDoc, doc } from "firebase/firestore";
 import styled from "styled-components/macro";
-import profile from "./profile.png";
+import teacherprofile from "./teacherprofile.png";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ColorBorderBtn } from "../../components/Buttons";
+import modal from "../../components/Modal";
 
 function Register() {
   const navigate = useNavigate();
@@ -33,16 +34,25 @@ function Register() {
           classes: [],
           uid: uid,
         }).then(() => {
-          console.log("註冊成功");
-          // Redirect to the login page after successful registration
+          modal.success("註冊成功");
           navigate("/login");
         });
         console.log(userCredential);
       })
       .catch((error) => {
-        // const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorMessage);
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            modal.success("電子信箱已使用");
+            break;
+          case "auth/invalid-email":
+            modal.success("請輸入有效的電子信箱");
+            break;
+          case "auth/weak-password":
+            modal.success("密碼應至少為6個字符");
+            break;
+          default:
+            modal.success("註冊失敗，請重試");
+        }
       });
   };
 
@@ -60,7 +70,7 @@ function Register() {
               placeholder="請輸入姓名"
             ></RegisterInput>
             <RegisterInput
-              type="text"
+              type="email"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="請輸入信箱"
             ></RegisterInput>
@@ -77,8 +87,7 @@ function Register() {
             </ColorBorderBtn>
           </BtnContainer>
           <TextContainer>
-            <Text1>註冊成功後</Text1>
-            <Text2>登入即可使用！</Text2>
+            <Text1>註冊成功將跳轉登入頁面</Text1>
           </TextContainer>
         </Wrapper>
       </Content>
@@ -110,7 +119,7 @@ const Wrapper = styled.div`
 const ProfileIcon = styled.div`
   width: 107px;
   height: 135px;
-  background-image: url(${profile});
+  background-image: url(${teacherprofile});
   cursor: pointer;
 `;
 

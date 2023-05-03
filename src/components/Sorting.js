@@ -116,6 +116,7 @@ function Sorting(props) {
                 boxNumber={box.id}
                 handleDrag={handleDrag}
                 handleDrop={handleDrop}
+                cursor="grab"
               />
             ))}
         </BoxContainer>

@@ -14,6 +14,7 @@ import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
+import modal from "../../components/Modal";
 
 function TeacherProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -125,8 +126,7 @@ function TeacherProfile() {
     const auth = getAuth();
     sendPasswordResetEmail(auth, user.account)
       .then(() => {
-        console.log("Password reset email sent");
-        alert("變更密碼的信件已寄至您的信箱📬");
+        modal.success("變更密碼信件已寄至您的信箱");
       })
       .catch((error) => {
         console.log(error);

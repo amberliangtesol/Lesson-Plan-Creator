@@ -17,6 +17,7 @@ import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import arrow from "../Login/arrow.png";
+import modal from "../../components/Modal";
 
 function ManageBadge() {
   const { user, setUser } = useContext(UserContext);
@@ -103,6 +104,21 @@ function ManageBadge() {
     }, [selectedClass]);
 
     const redeemBadge = async (student, badge) => {
+      if (!selectedClass) {
+        modal.success("請選擇班級");
+        return;
+      }
+
+      if (!selectedStudent) {
+        modal.success("請選擇學生");
+        return;
+      }
+
+      if (!selectedBadge) {
+        modal.success("請選擇徽章");
+        return;
+      }
+
       const badgeMapping = {
         準時完成作業: "badge1",
         挑戰打怪成功: "badge2",
@@ -137,13 +153,12 @@ function ManageBadge() {
               outdated: updatedOutdated,
             },
           });
-
-          alert("徽章已兌換");
+          modal.success("徽章已兌換");
         } else {
-          alert("該學生無該徽章");
+          modal.success("該學生無該徽章");
         }
       } else {
-        alert("學生資料不存在");
+        modal.success("學生資料不存在");
       }
     };
 
