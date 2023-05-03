@@ -76,6 +76,10 @@ function Register() {
               註冊
             </ColorBorderBtn>
           </BtnContainer>
+          <TextContainer>
+            <Text1>註冊成功後</Text1>
+            <Text2>登入即可使用！</Text2>
+          </TextContainer>
         </Wrapper>
       </Content>
       <Footer></Footer>
@@ -139,6 +143,30 @@ const BtnContainer = styled.div`
   gap: 15px;
   padding-bottom: 30px;
   justify-content: center;
+`;
+
+const TextContainer = styled.div`
+  width: 360px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  padding-bottom: 20px;
+  justify-content: center;
+`;
+
+const Text1 = styled.p`
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  align-items: center;
+  text-align: center;
+  color: #666666;
+  letter-spacing: 0.1em;
+`;
+
+const Text2 = styled(Text1)`
+  font-weight: 700;
+  color: #f46868;
 `;
 
 export default Register;

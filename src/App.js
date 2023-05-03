@@ -32,7 +32,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
     body {
-    font-family: 'Noto Sans TC';
+    font-family: 'Noto Sans TC', sans-serif;
     margin: 0;
     padding:0;
   }
@@ -56,7 +56,7 @@ const GlobalStyle = createGlobalStyle`
 
 const TeacherRouter = () => {
   const { user } = useContext(UserContext);
-  if (!user.role) {
+  if (!user) {
     return <Navigate to="/" replace />;
   }
   if (user.role && user.role !== "teacher") {
@@ -67,7 +67,7 @@ const TeacherRouter = () => {
 
 const StudentRouter = () => {
   const { user } = useContext(UserContext);
-  if (!user.role) {
+  if (!user) {
     return <Navigate to="/" replace />;
   }
   if (user.role && user.role !== "student") {

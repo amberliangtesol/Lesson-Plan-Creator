@@ -69,11 +69,7 @@ function Login() {
           <ProfileIcon></ProfileIcon>
           <h2>登入</h2>
           <RegisterForm>
-            <RegisterSelect
-              value={role}
-              onChange={handleRoleChange}
-              placeholder="請輸入帳號"
-            >
+            <RegisterSelect value={role} onChange={handleRoleChange}>
               <option value="" disabled>
                 請選擇身份
               </option>
@@ -83,7 +79,7 @@ function Login() {
             <RegisterInput
               type="text"
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="請輸入帳號"
+              placeholder="請輸入信箱"
             ></RegisterInput>
             <RegisterInput
               type="password"

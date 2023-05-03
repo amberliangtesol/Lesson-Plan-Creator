@@ -2,8 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import 'firebase/auth';
-
+import "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -11,13 +10,13 @@ import 'firebase/auth';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDN7Wsnq01CSkSuEG2PKrckZyiuYnmyn4g",
+  apiKey: process.env.REACT_APP_FIREBASE,
   authDomain: "lesson-plan-creator.firebaseapp.com",
   projectId: "lesson-plan-creator",
   storageBucket: "lesson-plan-creator.appspot.com",
   messagingSenderId: "582929675572",
   appId: "1:582929675572:web:025b81c7c14c32e1d22161",
-  measurementId: "G-WGC6CGYYCN"
+  measurementId: "G-WGC6CGYYCN",
 };
 
 // Initialize Firebase
