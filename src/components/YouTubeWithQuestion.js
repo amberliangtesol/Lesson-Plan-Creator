@@ -165,9 +165,14 @@ const YouTubeWithQuestions = () => {
     playerRef.current = new window.YT.Player("player", {
       height: "100%",
       width: "100%",
-      // playerVars: {
-      //   controls: 0,
-      // },
+      playerVars: {
+        controls: 0,
+        rel: 0,
+        showinfo: 0,
+        fs: 0,
+        disablekb: 1,
+        modestbranding: 1,
+      },
       events: {
         onReady: () => {
           setPlayerReady(true);

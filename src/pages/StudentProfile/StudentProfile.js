@@ -14,6 +14,7 @@ import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
+import modal from "../../components/Modal";
 
 function StudentProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -48,9 +49,9 @@ function StudentProfile() {
         classes: classes,
         image: imageURL,
       });
-      console.log("修改成功");
+      modal.success("修改成功");
     } catch (error) {
-      console.error(error);
+      modal.success(error.code);
     }
   };
 
@@ -108,16 +109,13 @@ function StudentProfile() {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        console.log(" Sign-out successful");
-      })
-      .then(() => {
         setUser({});
       })
       .then(() => {
         navigate("/login");
       })
       .catch((error) => {
-        console.log(error);
+        modal.success(error.code);
       });
   }
 
@@ -125,10 +123,10 @@ function StudentProfile() {
     const auth = getAuth();
     sendPasswordResetEmail(auth, user.account)
       .then(() => {
-        console.log("Password reset email sent");
+        modal.success("變更密碼信件已寄至您的信箱");
       })
       .catch((error) => {
-        console.log(error);
+        modal.success(error.code);
       });
   };
 

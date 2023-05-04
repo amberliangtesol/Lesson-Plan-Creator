@@ -49,9 +49,9 @@ function TeacherProfile() {
         classes: classes,
         image: imageURL,
       });
-      console.log("修改成功");
+      modal.success("修改成功");
     } catch (error) {
-      console.error(error);
+      modal.success(error.code);
     }
   };
 
@@ -109,16 +109,13 @@ function TeacherProfile() {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        console.log(" Sign-out successful");
-      })
-      .then(() => {
         setUser({});
       })
       .then(() => {
         navigate("/login");
       })
       .catch((error) => {
-        console.log(error);
+        modal.success(error.code);
       });
   }
 
@@ -129,7 +126,7 @@ function TeacherProfile() {
         modal.success("變更密碼信件已寄至您的信箱");
       })
       .catch((error) => {
-        console.log(error);
+        modal.success(error.code);
       });
   };
 

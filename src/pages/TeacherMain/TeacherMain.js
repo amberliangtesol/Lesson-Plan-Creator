@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
+import loadinganimation from "../../components/loading.gif";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
@@ -412,7 +413,7 @@ function TeacherMain() {
                 </Container2>
               </CourseOutsideWrapper>
             ) : (
-              <p>Loading...</p> // Or show a loading message while waiting for the lessons to load
+              <LoadingSvg />
             )}
           </MainContent>
         </Container>
@@ -563,24 +564,8 @@ const CreateCourseP = styled.div`
   align-items: center;
 `;
 
-const pulse = keyframes`
-  0% {
-    transform: scale(1);
-  }
-
-  55% {
-    background-color: rgba(255, 100, 100, 0.9);
-    transform: scale(1.6);
-  }
-`;
-
-const Beacon = styled.span`
-  animation: ${pulse} 1s ease-in-out infinite;
-  background-color: rgba(255, 27, 14, 0.6);
-  border-radius: 50%;
-  display: inline-block;
-  height: 3rem;
-  width: 3rem;
+const LoadingSvg = styled.img`
+  background-image: url(${loadinganimation});
 `;
 
 export default TeacherMain;

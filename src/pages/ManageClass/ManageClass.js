@@ -7,6 +7,7 @@ import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
 import Footer from "../../components/Footer";
+import loadinganimation from "../../components/loading.gif";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 
@@ -75,15 +76,17 @@ function ManageClass() {
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
           <MainContent>
-            <Title>班級管理</Title>
-            <MainRedFilledBtn style={{ marginLeft: "auto" }}>
-              <Link to="/AddClass">班級建立</Link>
-            </MainRedFilledBtn>
+            <HeaderContainer>
+              <Title>班級管理</Title>
+              <MainRedFilledBtn style={{ marginLeft: "auto" }}>
+                <Link to="/AddClass">班級建立</Link>
+              </MainRedFilledBtn>
+            </HeaderContainer>
             <Container2>
               {isLoading ? (
-                <p>Loading...</p>
+                <LoadingSvg />
               ) : classDetails.length === 0 ? (
-                <p>No class to show.</p>
+                <LoadingSvg />
               ) : (
                 <ClassWrapper>
                   {classDetails.map((classItem, index) => (
@@ -135,6 +138,7 @@ const MainContent = styled.div`
   margin-bottom: 90px;
   padding-right: 30px;
   padding-left: 30px;
+  width: 100%;
 `;
 
 const Title = styled.p`
@@ -148,6 +152,16 @@ const Title = styled.p`
   margin-right: auto;
   padding-left: 50px;
   padding-right: 50px;
+`;
+
+const HeaderContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  & > :last-child {
+    margin-left: auto;
+  }
 `;
 
 const Container2 = styled.div`
@@ -182,6 +196,14 @@ const ClassContainer = styled.div`
     font-size: 20px;
     letter-spacing: 0.03em;
   }
+`;
+
+const LoadingSvg = styled.div`
+  background-image: url(${loadinganimation});
+  background-size: contain;
+  width: 200px;
+  height: 200px;
+  opacity: 30%;
 `;
 
 export default ManageClass;
