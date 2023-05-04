@@ -6,13 +6,7 @@ const firestore = admin.firestore();
 firestore.settings({ ignoreUndefinedProperties: true });
 
 exports.createCustomUser = functions.https.onCall(async (data, context) => {
-  if (
-    !data.email ||
-    !data.password ||
-    !data.name ||
-    !data.selectedTeacher ||
-    !data.selectedClass
-  ) {
+  if (!data.email || !data.password || !data.name || !data.selectedTeacher) {
     return { success: false, error: "Missing required fields." };
   }
 
@@ -22,6 +16,7 @@ exports.createCustomUser = functions.https.onCall(async (data, context) => {
       // emailVerified: false,
       // phoneNumber: data.phoneNumber || '',
       password: data.email,
+      // account: data.email,
       // displayName: data.name,
       // photoURL: data.photoURL || '',
       // disabled: false,
@@ -38,7 +33,7 @@ exports.createCustomUser = functions.https.onCall(async (data, context) => {
         uid: userRecord.uid,
         name: data.name,
         createdBy: data.selectedTeacher,
-        classes: [data.selectedClass],
+        classes: [],
         badge: { collected: [""], outdated: [""] },
       });
 

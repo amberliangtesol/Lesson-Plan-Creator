@@ -221,6 +221,10 @@ function AddClass() {
   };
 
   const handleAddTeacherEmail = () => {
+    if (!teachers.includes(teacherEmailInput)) {
+      modal.success("無此教師帳號!");
+      return;
+    }
     if (teacherEmailInput && !selectedTeachers.includes(teacherEmailInput)) {
       setSelectedTeachers([...selectedTeachers, teacherEmailInput]);
       setTeachersName([...teachersName, teacherEmailInput]);
@@ -304,14 +308,6 @@ function AddClass() {
     setSelectedClass(e.target.value);
   };
 
-  const handleTeacherInputBlur = () => {
-    if (teachers.includes(teacherEmailInput)) {
-      // setSelectedTeacher(teacherEmailInput);
-    } else {
-      modal.success("無此教師帳號!");
-    }
-  };
-
   const fileHandler = (event) => {
     let fileObj = event.target.files[0];
 
@@ -346,93 +342,95 @@ function AddClass() {
   };
 
   const createOrUpdateClass = async () => {
-    let classDocRef = doc(db, "classes", selectedClass);
-    let classDoc = await getDoc(classDocRef);
-
-    if (!classDoc.exists()) {
-      const newClassId = await createNewClass();
-      classDocRef = doc(db, "classes", newClassId);
-      classDoc = await getDoc(classDocRef);
-    }
-
-    if (classDoc.exists) {
-      const classData = classDoc.data();
-      for (const selectedTeacher of selectedTeachers) {
-        // console.log("Updating teacher's classes array for", selectedTeacher);
-        const teacherDocRef = doc(db, "users", selectedTeacher);
-        const teacherDoc = await getDoc(teacherDocRef);
-        const teacherData = teacherDoc.data();
-
-        if (!teacherData.classes.includes(classDocRef.id)) {
-          await updateDoc(teacherDocRef, {
-            classes: [...teacherData.classes, classDocRef.id],
-          });
-        }
-      }
-
-      if (!classData.teachers.includes(selectedTeachers[0])) {
-        await updateDoc(classDocRef, {
-          teachers: [...classData.teachers, ...selectedTeachers],
-        });
-      }
-
-      const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
-      const newStudentsData = studentsData.filter(
-        (student) => !classData.students.includes(student.email)
+    async function createCustomUser(student) {
+      const functions = getFunctions();
+      const createCustomUserFunction = httpsCallable(
+        functions,
+        "createCustomUser"
       );
 
-      if (newStudentsData.length > 0) {
-        const newStudentIds = newStudentsData.map((student) => student.email);
-        await updateDoc(classDocRef, {
-          students: [...classData.students, ...newStudentIds],
-        });
+      const result = await createCustomUserFunction({
+        email: student.email,
+        photoURL: student.photoURL || "",
+        password: student.email,
+        name: student.name,
+        selectedTeacher: selectedTeacher,
+      });
+      if (result.data.success) {
+        modal.success("成功建立學生帳號");
+      } else {
+        modal.success(`${student.email}帳號建立失敗`);
+        throw new Error("create student account error !");
+      }
+    }
 
-        for (const student of newStudentsData) {
+    const studentsData = rows.map((row) => ({ email: row[1], name: row[0] }));
+    let createStuedntSuccess = false;
+
+    try {
+      if (studentsData.length > 0) {
+        await Promise.all(
+          studentsData.map(async (student) => {
+            const userDocRef = doc(db, "users", student.email);
+            const userDoc = await getDoc(userDocRef);
+            if (!userDoc.exists()) {
+              await createCustomUser(student);
+            }
+            return true;
+          })
+        );
+        createStuedntSuccess = true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    if (createStuedntSuccess) {
+      const newClassId = await createNewClass();
+      const classDocRef = doc(db, "classes", newClassId);
+      const classDoc = await getDoc(classDocRef);
+      const classData = classDoc.data();
+      await updateDoc(classDocRef, {
+        students: [
+          ...classData.students,
+          ...studentsData.map((student) => student.email),
+        ],
+      });
+
+      await Promise.all(
+        selectedTeachers.map(async (teacher) => {
+          const teacherDocRef = doc(db, "users", teacher);
+          const teacherDoc = await getDoc(teacherDocRef);
+          const teacherData = teacherDoc.data();
+
+          if (!teacherData.classes.includes(classDocRef.id)) {
+            await updateDoc(teacherDocRef, {
+              classes: [...teacherData.classes, classDocRef.id],
+            });
+          }
+          if (!classData.teachers.includes(teacher)) {
+            await updateDoc(classDocRef, {
+              teachers: [...classData.teachers, ...selectedTeachers],
+            });
+          }
+          return true;
+        })
+      );
+
+      await Promise.all(
+        studentsData.map(async (student) => {
           const userDocRef = doc(db, "users", student.email);
           const userDoc = await getDoc(userDocRef);
-
           if (userDoc.exists()) {
-            const userData = userDoc.data();
-            if (!userData.classes.includes(classDocRef.id)) {
-              await updateDoc(userDocRef, {
-                classes: [...userData.classes, classDocRef.id],
-              });
-            }
-          } else {
-            async function createCustomUser(student) {
-              const functions = getFunctions();
-              const createCustomUserFunction = httpsCallable(
-                functions,
-                "createCustomUser"
-              );
-
-              try {
-                const result = await createCustomUserFunction({
-                  email: student.email,
-                  photoURL: student.photoURL || "",
-                  password: student.email,
-                  name: student.name,
-                  selectedTeacher: selectedTeacher,
-                  selectedClass: classDocRef.id,
-                });
-                if (result.data.success) {
-                  modal.success("成功建立學生帳號");
-                  navigate("/ManageClass");
-                } else {
-                  modal.success(`${student.email}帳號建立失敗`);
-                }
-              } catch (error) {
-                console.error(`Error creating user: ${student.email}`, error);
-              }
-            }
-
-            // Call the createCustomUser function with the student object
-            createCustomUser(student);
+            await updateDoc(userDocRef, {
+              ...userDoc.data(),
+              classes: [classDocRef.id],
+            });
           }
-        }
-      }
-    } else {
-      console.error("Error: Class document does not exist.");
+          return true;
+        })
+      );
+      navigate("/ManageClass");
     }
   };
 
@@ -586,7 +584,6 @@ function AddClass() {
                 type="text"
                 value={teacherEmailInput}
                 onChange={(e) => setTeacherEmailInput(e.target.value)}
-                onBlur={handleTeacherInputBlur}
                 style={{ width: "100%" }}
                 placeholder="輸入信箱"
               />

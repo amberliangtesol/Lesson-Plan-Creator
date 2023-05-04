@@ -14,9 +14,10 @@ export const UserContext = createContext({});
 const UserInfoProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [isLogin, setIsLogin] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       console.log("usecontext_user", user);
@@ -29,7 +30,6 @@ const UserInfoProvider = ({ children }) => {
           classes: user.classes || [],
         };
         setUser(data);
-        // setIsLoading(false);
         setIsLogin(true);
       } else {
         setUser({});
@@ -40,8 +40,6 @@ const UserInfoProvider = ({ children }) => {
 
   useEffect(() => {
     async function fetchUserData() {
-      if (user.role) return;
-
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -58,6 +56,14 @@ const UserInfoProvider = ({ children }) => {
       }
     }
 
+    if (!user.account || user.role) {
+      return;
+    }
+    if (user.account && user.role) {
+      setIsLoading(false);
+      return;
+    }
+
     fetchUserData();
   }, [user]);
 
@@ -68,7 +74,7 @@ const UserInfoProvider = ({ children }) => {
   // console.log(isLoading);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, isLoading, setUser }}>
       {children}
     </UserContext.Provider>
   );

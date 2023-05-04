@@ -30,14 +30,6 @@ import { FiEdit } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import modal from "../../components/Modal";
 
-const HiddenFileInput = styled.input.attrs({ type: "file" })`
-  display: none;
-`;
-
-const CustomFileInputButton = styled(MainDarkBorderBtn)`
-  /* Add any custom styles you want for the input button */
-`;
-
 function EditClass() {
   const navigate = useNavigate();
 
@@ -52,10 +44,7 @@ function EditClass() {
   const [teachers, setTeachers] = useState([]);
   const [teachersName, setTeachersName] = useState([]);
   const [useLoggedInUserEmail, setUseLoggedInUserEmail] = useState(false);
-  const fileInputRef = useRef();
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
+
   const [studentEmailInput, setStudentEmailInput] = useState("");
   const [studentNameInput, setStudentNameInput] = useState("");
   const [teacherEmailInput, setTeacherEmailInput] = useState("");
@@ -143,6 +132,10 @@ function EditClass() {
   };
 
   const handleAddTeacherEmail = () => {
+    if (!teachers.includes(teacherEmailInput)) {
+      modal.success("無此教師帳號!");
+      return;
+    }
     if (teacherEmailInput && !selectedTeachers.includes(teacherEmailInput)) {
       setSelectedTeachers([...selectedTeachers, teacherEmailInput]);
       setTeachersName([...teachersName, teacherEmailInput]);
@@ -241,51 +234,35 @@ function EditClass() {
     }
   };
 
-  const fileHandler = (event) => {
-    let fileObj = event.target.files[0];
-
-    //just pass the fileObj as parameter
-    ExcelRenderer(fileObj, (err, resp) => {
-      // console.log(resp);
-      if (err) {
-        modal.success(err);
-      } else {
-        let updatedCols = [...resp.cols];
-        updatedCols[0].name = "姓名";
-        updatedCols[1].name = "帳號";
-        setCols(updatedCols);
-        setRows([...rows, ...resp.rows]);
-      }
-    });
-  };
-
   const createOrUpdateClass = async () => {
     const classDocRef = doc(db, "classes", classId);
     const classDoc = await getDoc(classDocRef);
 
     if (classDoc.exists()) {
       const classData = classDoc.data();
-      for (const selectedTeacher of selectedTeachers) {
-        const teacherDocRef = doc(db, "users", selectedTeacher);
-        const teacherDoc = await getDoc(teacherDocRef);
-        const teacherData = teacherDoc.data();
 
-        if (!teacherData.classes.includes(classDocRef.id)) {
-          await updateDoc(teacherDocRef, {
-            classes: [...teacherData.classes, classDocRef.id],
+      await Promise.all(
+        selectedTeachers.map(async (teacher) => {
+          const teacherDocRef = doc(db, "users", teacher);
+          const teacherDoc = await getDoc(teacherDocRef);
+          const teacherData = teacherDoc.data();
+
+          if (!teacherData.classes.includes(classDocRef.id)) {
+            await updateDoc(teacherDocRef, {
+              classes: [...teacherData.classes, classDocRef.id],
+            });
+          }
+          if (classData) {
+            await updateDoc(classDocRef, {
+              name: selectedClass,
+            });
+          }
+          await updateDoc(classDocRef, {
+            teachers: [...selectedTeachers],
           });
-        }
-      }
-
-      if (classData) {
-        await updateDoc(classDocRef, {
-          name: selectedClass,
-        });
-      }
-
-      await updateDoc(classDocRef, {
-        teachers: [...selectedTeachers],
-      });
+          return true;
+        })
+      );
 
       const studentsData = rows.map((row, idx) => {
         const email = Array.isArray(row) ? row[1] : row;
@@ -303,65 +280,65 @@ function EditClass() {
       );
 
       if (newStudentsData.length > 0) {
-        const newStudentIds = newStudentsData.map((student) => student.email);
-        await updateDoc(classDocRef, {
-          students: [...classData.students, ...newStudentIds],
-        });
+        let createStuedntSuccess = false;
+        await Promise.all(
+          newStudentsData.map(async (student) => {
+            const userDocRef = doc(db, "users", student.email);
+            const userDoc = await getDoc(userDocRef);
 
-        for (const student of newStudentsData) {
-          const userDocRef = doc(db, "users", student.email);
-          const userDoc = await getDoc(userDocRef);
-
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            if (!userData.classes.includes(classDocRef.id)) {
-              await updateDoc(userDocRef, {
-                classes: [...userData.classes, classDocRef.id],
-              });
-            }
-          } else {
-            async function createCustomUser(student) {
-              const functions = getFunctions();
-              const createCustomUserFunction = httpsCallable(
-                functions,
-                "createCustomUser"
-              );
-
-              try {
-                const result = await createCustomUserFunction({
-                  email: student.email,
-                  photoURL: student.photoURL || "",
-                  password: student.email,
-                  name: student.name,
-                  selectedTeacher: selectedTeacher,
-                  selectedClass: classDocRef.id,
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              if (!userData.classes.includes(classDocRef.id)) {
+                await updateDoc(userDocRef, {
+                  classes: [...userData.classes, classDocRef.id],
                 });
-                if (result.data.success) {
-                  modal.success("成功建立學生帳號");
-                  // console.log(
-                  //   "Successfully created new user:",
-                  //   result.data.uid
-                  // );
-                } else {
-                  modal.success(`${student.email}帳號建立失敗`);
-                  // console.error(
-                  //   `Error creating user: ${student.email}`,
-                  //   result.data.error
-                  // );
-                }
-              } catch (error) {
-                console.error(`Error creating user: ${student.email}`, error);
               }
-            }
+              createStuedntSuccess = true;
+            } else {
+              async function createCustomUser(student) {
+                const functions = getFunctions();
+                const createCustomUserFunction = httpsCallable(
+                  functions,
+                  "createCustomUser"
+                );
 
-            // Call the createCustomUser function with the student object
-            createCustomUser(student);
-          }
+                try {
+                  const result = await createCustomUserFunction({
+                    email: student.email,
+                    photoURL: student.photoURL || "",
+                    password: student.email,
+                    name: student.name,
+                    selectedTeacher: selectedTeacher,
+                    selectedClass: classDocRef.id,
+                  });
+                  if (result.data.success) {
+                    modal.success("成功建立學生帳號");
+                    createStuedntSuccess = true;
+                  } else {
+                    modal.success(`${student.email}帳號建立失敗`);
+                  }
+                } catch (error) {
+                  createStuedntSuccess = false;
+                  console.error(`Error creating user: ${student.email}`, error);
+                }
+              }
+              await createCustomUser(student);
+            }
+            return true;
+          })
+        );
+        if (createStuedntSuccess) {
+          const newStudentIds = newStudentsData.map((student) => student.email);
+          await updateDoc(classDocRef, {
+            students: [...classData.students, ...newStudentIds],
+          });
+          navigate("/ManageClass");
         }
       } else {
         await updateDoc(classDocRef, {
           students: studentsData.map((s) => s.email),
         });
+        navigate("/ManageClass");
       }
     } else {
       console.error("Error: Class document does not exist.");
@@ -371,7 +348,6 @@ function EditClass() {
   const handleSubmit = async () => {
     if (selectedTeacher) {
       await createOrUpdateClass();
-      navigate("/ManageClass");
     } else {
       modal.success("請選擇至少一位教師");
     }
@@ -529,7 +505,7 @@ function EditClass() {
                 type="text"
                 value={teacherEmailInput}
                 onChange={(e) => setTeacherEmailInput(e.target.value)}
-                onBlur={handleTeacherInputBlur}
+                // onBlur={handleTeacherInputBlur}
                 style={{ width: "100%" }}
                 placeholder="輸入信箱"
               />

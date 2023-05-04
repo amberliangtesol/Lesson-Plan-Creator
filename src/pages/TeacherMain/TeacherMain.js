@@ -209,6 +209,7 @@ function TeacherMain() {
   useEffect(() => {
     const fetchClasses = async () => {
       if (
+        loading &&
         user &&
         user.classes &&
         user.classes.length > 0 &&
@@ -225,12 +226,12 @@ function TeacherMain() {
         });
         console.log("lessons", lessons);
         setLessons(lessons);
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchClasses();
-  }, [lessons, user]);
+  }, [lessons, loading, user]);
 
   const handleScore = (id) => {
     navigate(`/score/${id}`);
@@ -426,7 +427,7 @@ function TeacherMain() {
             ) : (
               <LoadingContainer>
                 <LoadingSvg />
-                <p>目前尚無課程資料</p>
+                <p>{loading ? "Loading..." : "目前尚無課程資料"}</p>
               </LoadingContainer>
             )}
           </MainContent>
