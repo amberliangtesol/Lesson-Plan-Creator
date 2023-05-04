@@ -15,6 +15,7 @@ import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
 import modal from "../../components/Modal";
+import profile from "./profile.png";
 
 function TeacherProfile() {
   const [imageURL, setImageURL] = useState("");
@@ -86,7 +87,7 @@ function TeacherProfile() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setImageURL(userData.image || "");
+        setImageURL(userData.image || profile);
         setName(userData.name || "");
         setAccount(userData.account || "");
         setClasses(userData.classes || []);
@@ -161,7 +162,10 @@ function TeacherProfile() {
                 </ProfileDetailContainer>
 
                 <ProfileDetailContainer>
-                  <ProfileText>班級</ProfileText> {classNames.join(", ")}
+                  <ProfileText>班級</ProfileText>
+                  {classNames && classNames.length > 0
+                    ? classNames.join(", ")
+                    : "目前尚無班級"}
                 </ProfileDetailContainer>
 
                 <ProfileDetailContainer>
@@ -279,6 +283,7 @@ const ProfileText = styled.div`
   font-size: 18px;
   font-weight: 700;
   line-height: 19px;
+  white-space: nowrap;
 `;
 const IconWrapper = styled.span`
   position: absolute;

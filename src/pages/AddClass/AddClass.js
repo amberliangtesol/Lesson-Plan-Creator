@@ -318,7 +318,7 @@ function AddClass() {
     //just pass the fileObj as parameter
     ExcelRenderer(fileObj, (err, resp) => {
       if (err) {
-        console.log(err);
+        modal.success(err);
       } else {
         let updatedCols = [...resp.cols];
         updatedCols[0].name = "姓名";
@@ -329,8 +329,8 @@ function AddClass() {
     });
   };
 
-  console.log("selectedTeachers", selectedTeachers);
-  console.log("Selected teacher:", selectedTeacher);
+  // console.log("selectedTeachers", selectedTeachers);
+  // console.log("Selected teacher:", selectedTeacher);
 
   const createNewClass = async () => {
     const newClassDocRef = await addDoc(collection(db, "classes"), {
@@ -358,7 +358,7 @@ function AddClass() {
     if (classDoc.exists) {
       const classData = classDoc.data();
       for (const selectedTeacher of selectedTeachers) {
-        console.log("Updating teacher's classes array for", selectedTeacher);
+        // console.log("Updating teacher's classes array for", selectedTeacher);
         const teacherDocRef = doc(db, "users", selectedTeacher);
         const teacherDoc = await getDoc(teacherDocRef);
         const teacherData = teacherDoc.data();
@@ -393,12 +393,7 @@ function AddClass() {
 
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            // if (!userData.classes.includes(selectedClass)) {
-            //   await updateDoc(userDocRef, {
-            //     classes: [...userData.classes, selectedClass],
-            //   });
             if (!userData.classes.includes(classDocRef.id)) {
-              // Use classDocRef.id instead of selectedClass
               await updateDoc(userDocRef, {
                 classes: [...userData.classes, classDocRef.id],
               });
@@ -421,15 +416,10 @@ function AddClass() {
                   selectedClass: classDocRef.id,
                 });
                 if (result.data.success) {
-                  console.log(
-                    "Successfully created new user:",
-                    result.data.uid
-                  );
+                  modal.success("成功建立學生帳號");
+                  navigate("/ManageClass");
                 } else {
-                  console.error(
-                    `Error creating user: ${student.email}`,
-                    result.data.error
-                  );
+                  modal.success(`${student.email}帳號建立失敗`);
                 }
               } catch (error) {
                 console.error(`Error creating user: ${student.email}`, error);
@@ -449,7 +439,7 @@ function AddClass() {
   const handleSubmit = async () => {
     if (selectedTeacher) {
       await createOrUpdateClass();
-      navigate("/ManageClass");
+      // navigate("/ManageClass");
     } else {
       modal.success("請選擇至少一位教師");
     }

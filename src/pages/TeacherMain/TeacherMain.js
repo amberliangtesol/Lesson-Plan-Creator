@@ -23,6 +23,7 @@ import { BiTimeFive } from "react-icons/bi";
 import { BsFillBookmarkStarFill } from "react-icons/bs";
 import { BsCheckCircleFill } from "react-icons/bs";
 import Joyride from "react-joyride";
+import modal from "../../components/Modal";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -245,6 +246,14 @@ function TeacherMain() {
     return endDate < currentDate;
   }
 
+  const handleCreateCourseClick = () => {
+    if (user && user.classes && user.classes.length <= 0) {
+      modal.success("請先至『班級管理』建立班級");
+    } else {
+      navigate("/CreateCourse");
+    }
+  };
+
   return (
     <Body>
       <Joyride
@@ -258,17 +267,19 @@ function TeacherMain() {
         <Container>
           <TeacherMainSidebar className="sideBar"></TeacherMainSidebar>
           <MainContent>
-            <Title>課程主頁</Title>
-            <CreateCourseP>
-              <MainRedFilledBtn
-                style={{ marginLeft: "auto" }}
-                className="createClass"
-              >
-                <Link to="/CreateCourse">課程建立</Link>
-              </MainRedFilledBtn>
-            </CreateCourseP>
-
-            {lessons.length > 0 ? ( // Only render if lessons is not empty
+            <HeaderContainer>
+              <Title>課程主頁</Title>
+              <CreateCourseP>
+                <MainRedFilledBtn
+                  style={{ marginLeft: "auto" }}
+                  className="createClass"
+                  onClick={handleCreateCourseClick}
+                >
+                  課程建立
+                </MainRedFilledBtn>
+              </CreateCourseP>
+            </HeaderContainer>
+            {lessons.length > 0 ? (
               <CourseOutsideWrapper>
                 <Container2>
                   <div
@@ -413,7 +424,10 @@ function TeacherMain() {
                 </Container2>
               </CourseOutsideWrapper>
             ) : (
-              <LoadingSvg />
+              <LoadingContainer>
+                <LoadingSvg />
+                <p>目前尚無課程資料</p>
+              </LoadingContainer>
             )}
           </MainContent>
         </Container>
@@ -459,8 +473,19 @@ const Title = styled.p`
   margin-bottom: 0;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 50px;
-  padding-right: 50px;
+  flex-grow: 1;
+  text-align: center;
+`;
+
+const HeaderContainer = styled.div`
+  min-width: 300px;
+  padding-right: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  & > :last-child {
+    margin-left: auto;
+  }
 `;
 
 const SubTitle = styled.p`
@@ -494,6 +519,16 @@ const Container2 = styled.div`
   gap: 10px;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  align-items: center;
+  p {
+    margin: 0px;
+  }
+`;
+
 const VideoImg = styled.div`
   width: 300px;
   height: 150px;
@@ -506,6 +541,7 @@ const VideoImg = styled.div`
 const OutdatedCourse = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   background-color: #f5f5f5;
   border-radius: 33px;
   width: 100%;
@@ -535,11 +571,14 @@ const BtnContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin-left: auto;
+  margin-top: 30px;
+  align-items: flex-end;
 `;
 
 const CourseContent = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 30px;
   ${({ outdated }) =>
     outdated &&
@@ -552,7 +591,7 @@ const CourseTextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   p {
     margin: 0;
     font-size: 20px;
@@ -564,8 +603,12 @@ const CreateCourseP = styled.div`
   align-items: center;
 `;
 
-const LoadingSvg = styled.img`
+const LoadingSvg = styled.div`
   background-image: url(${loadinganimation});
+  background-size: contain;
+  width: 200px;
+  height: 200px;
+  opacity: 30%;
 `;
 
 export default TeacherMain;

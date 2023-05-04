@@ -402,6 +402,8 @@ const YouTubeWithQuestions = () => {
                 <MainDarkBorderBtn
                   style={{
                     marginTop: "150px",
+                    width: "104px",
+                    alignSelf: "center",
                   }}
                 >
                   <Link to="/StudentMain">回首頁</Link>

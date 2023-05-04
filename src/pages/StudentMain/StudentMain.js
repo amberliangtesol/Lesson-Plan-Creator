@@ -278,8 +278,8 @@ const Title = styled.p`
   margin-bottom: 0;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 50px;
-  padding-right: 50px;
+  flex-grow: 1;
+  text-align: center;
 `;
 
 const SubTitle = styled.p`
@@ -325,6 +325,7 @@ const VideoImg = styled.div`
 const OutdatedCourse = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   background-color: #f5f5f5;
   border-radius: 33px;
   width: 100%;
@@ -353,11 +354,14 @@ const BtnContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin-left: auto;
+  margin-top: 30px;
+  align-items: flex-end;
 `;
 
 const CourseContent = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 30px;
   ${({ outdated }) =>
     outdated &&
@@ -370,7 +374,7 @@ const CourseTextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   p {
     margin: 0;
     font-size: 20px;

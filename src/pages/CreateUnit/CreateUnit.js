@@ -680,7 +680,7 @@ const Container2 = styled.div`
   display: flex;
   flex-direction: column;
   padding-top: 50px;
-  width: 50vw;
+  width: 65vw;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 90px;

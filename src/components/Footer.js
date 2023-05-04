@@ -25,21 +25,9 @@ const Copywright = styled.p`
   }
 `;
 
-const Hat = styled.div`
-  width: 105px;
-  height: 135px;
-  background-image: url(${hat});
-  position: absolute;
-  right: 0px;
-  top: -104px;
-  @media screen and (max-width: 1279px) {
-  }
-`;
-
 const Footer = () => {
   return (
     <Container>
-      <Hat></Hat>
       <Copywright>​Copyright © All Rights Reserved.</Copywright>
     </Container>
   );

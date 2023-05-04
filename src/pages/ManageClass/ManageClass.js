@@ -84,9 +84,15 @@ function ManageClass() {
             </HeaderContainer>
             <Container2>
               {isLoading ? (
-                <LoadingSvg />
+                <LoadingContainer>
+                  <LoadingSvg />
+                  <p>Loading...</p>
+                </LoadingContainer>
               ) : classDetails.length === 0 ? (
-                <LoadingSvg />
+                <LoadingContainer>
+                  <LoadingSvg />
+                  <p>目前尚無班級資料</p>
+                </LoadingContainer>
               ) : (
                 <ClassWrapper>
                   {classDetails.map((classItem, index) => (
@@ -138,7 +144,6 @@ const MainContent = styled.div`
   margin-bottom: 90px;
   padding-right: 30px;
   padding-left: 30px;
-  width: 100%;
 `;
 
 const Title = styled.p`
@@ -150,12 +155,13 @@ const Title = styled.p`
   margin-bottom: 0;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 50px;
-  padding-right: 50px;
+  flex-grow: 1;
+  text-align: center;
 `;
 
 const HeaderContainer = styled.div`
-  width: 100%;
+  min-width: 300px;
+  padding-right: 60px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -170,6 +176,17 @@ const Container2 = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: centerㄤ;
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  align-items: center;
+  p {
+    margin: 0px;
+  }
 `;
 
 const ClassWrapper = styled.div`
@@ -178,6 +195,7 @@ const ClassWrapper = styled.div`
   gap: 20px;
   justify-content: center;
   margin-top: 50px;
+  width: 100%;
 `;
 
 const ClassContainer = styled.div`
@@ -185,7 +203,7 @@ const ClassContainer = styled.div`
   flex-direction: row;
   background-color: #f5f5f5;
   border-radius: 33px;
-  width: 60vw;
+  width: 100%;
   height: 83px;
   padding: 30px 60px;
   align-items: center;

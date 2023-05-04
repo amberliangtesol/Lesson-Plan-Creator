@@ -28,6 +28,7 @@ import { RiFileExcel2Line } from "react-icons/ri";
 import { MdOutlineSchool } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useParams } from "react-router-dom";
+import modal from "../../components/Modal";
 
 const HiddenFileInput = styled.input.attrs({ type: "file" })`
   display: none;
@@ -80,7 +81,7 @@ function EditClass() {
     setStudentName(studentsName);
   };
 
-  console.log("classId:", classId);
+  // console.log("classId:", classId);
 
   const fetchClassData = async (classId) => {
     const classDocRef = doc(db, "classes", classId);
@@ -89,7 +90,7 @@ function EditClass() {
     setRows(classData.students);
     setSelectedTeachers(classData.teachers);
     setSelectedClass(classData.name);
-    console.log("classData.students:", classData.students); // Add this line to debug
+    // console.log("classData.students:", classData.students);
 
     if (classData.students && classData.students.length > 0) {
       fetchStudents(classData.students);
@@ -149,7 +150,7 @@ function EditClass() {
     }
   };
 
-  console.log("selectedTeachers", selectedTeachers);
+  // console.log("selectedTeachers", selectedTeachers);
 
   const renderStudentTable = () => {
     return (
@@ -236,7 +237,7 @@ function EditClass() {
   const handleTeacherInputBlur = () => {
     if (teachers.includes(teacherEmailInput)) {
     } else {
-      alert("無此教師帳號");
+      modal.success("無此教師帳號!");
     }
   };
 
@@ -245,9 +246,9 @@ function EditClass() {
 
     //just pass the fileObj as parameter
     ExcelRenderer(fileObj, (err, resp) => {
-      console.log(resp);
+      // console.log(resp);
       if (err) {
-        console.log(err);
+        modal.success(err);
       } else {
         let updatedCols = [...resp.cols];
         updatedCols[0].name = "姓名";
@@ -313,12 +314,7 @@ function EditClass() {
 
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            // if (!userData.classes.includes(selectedClass)) {
-            //   await updateDoc(userDocRef, {
-            //     classes: [...userData.classes, selectedClass],
-            //   });
             if (!userData.classes.includes(classDocRef.id)) {
-              // Use classDocRef.id instead of selectedClass
               await updateDoc(userDocRef, {
                 classes: [...userData.classes, classDocRef.id],
               });
@@ -341,15 +337,17 @@ function EditClass() {
                   selectedClass: classDocRef.id,
                 });
                 if (result.data.success) {
-                  console.log(
-                    "Successfully created new user:",
-                    result.data.uid
-                  );
+                  modal.success("成功建立學生帳號");
+                  // console.log(
+                  //   "Successfully created new user:",
+                  //   result.data.uid
+                  // );
                 } else {
-                  console.error(
-                    `Error creating user: ${student.email}`,
-                    result.data.error
-                  );
+                  modal.success(`${student.email}帳號建立失敗`);
+                  // console.error(
+                  //   `Error creating user: ${student.email}`,
+                  //   result.data.error
+                  // );
                 }
               } catch (error) {
                 console.error(`Error creating user: ${student.email}`, error);
@@ -375,7 +373,7 @@ function EditClass() {
       await createOrUpdateClass();
       navigate("/ManageClass");
     } else {
-      alert("Please select a teacher before submitting.");
+      modal.success("請選擇至少一位教師");
     }
   };
 
@@ -390,7 +388,7 @@ function EditClass() {
     );
   };
 
-  console.log("rows", rows);
+  // console.log("rows", rows);
   const renderRows = () => {
     return rows.map((row, rowIndex) => {
       const email = Array.isArray(row) ? row[1] : row;

@@ -14,6 +14,7 @@ export const UserContext = createContext({});
 const UserInfoProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [isLogin, setIsLogin] = useState(false);
+  // const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
@@ -28,6 +29,7 @@ const UserInfoProvider = ({ children }) => {
           classes: user.classes || [],
         };
         setUser(data);
+        // setIsLoading(false);
         setIsLogin(true);
       } else {
         setUser({});
@@ -58,6 +60,12 @@ const UserInfoProvider = ({ children }) => {
 
     fetchUserData();
   }, [user]);
+
+  // if (!user && isLoading) {
+  //   return;
+  // }
+  // console.log(user);
+  // console.log(isLoading);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
