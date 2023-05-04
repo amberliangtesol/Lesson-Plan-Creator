@@ -5,6 +5,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { HiOutlineHome } from "react-icons/hi";
 import { BsFillPersonFill } from "react-icons/bs";
 import { BiBadgeCheck } from "react-icons/bi";
+import studentprofile from "./defaultstudentprofile.png";
 
 const StudentMainSidebar = () => {
   const { user, setUser } = useContext(UserContext);
@@ -87,7 +88,8 @@ const ProfileImg = styled.div`
   width: 150px;
   min-height: 150px;
   box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
-  background-image: url(${(props) => props.imageURL});
+  background-image: url(${(props) =>
+    props.imageURL ? props.imageURL : studentprofile});
   background-size: cover;
   background-position: center;
   border-radius: 50%;

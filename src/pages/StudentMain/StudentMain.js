@@ -14,6 +14,7 @@ import { db } from "../../utils/firebaseApp";
 import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
 import Footer from "../../components/Footer";
+import loadinganimation from "../../components/loading.gif";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
@@ -35,9 +36,19 @@ function StudentMain() {
   const [account, setAccount] = useState("");
   const [classNames, setClassNames] = useState([]);
 
+  // function getClassNameById(classId) {
+  //   const index = user.classes.findIndex((id) => id === classId);
+  //   return (user.classNames || [])[index] || "";
+  // }
+
+  function getClassNameById(classId) {
+    const className = (user.classNames || []).find((c) => c.id === classId);
+    return className?.name || "";
+  }
+
   useEffect(() => {
     async function fetchUserData() {
-      if (user.classNames) return;
+      if (!user.account || user.classNames) return;
 
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
@@ -49,7 +60,10 @@ function StudentMain() {
           const classNames = await Promise.all(
             userData.classes.map(async (classId) => {
               const classDoc = await getDoc(doc(db, "classes", classId));
-              return classDoc.data() && classDoc.data().name;
+              return {
+                id: classId,
+                name: classDoc.data() && classDoc.data().name,
+              };
             })
           );
           setUser({
@@ -64,13 +78,12 @@ function StudentMain() {
     }
 
     fetchUserData();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
     const fetchClasses = async () => {
       if (
+        loading &&
         user &&
         user.classes &&
         user.classes.length > 0 &&
@@ -85,19 +98,14 @@ function StudentMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-
+        console.log("lessons", lessons);
         setLessons(lessons);
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchClasses();
-  }, [lessons, user]);
-
-  function getClassNameById(classId) {
-    const index = user.classes.findIndex((id) => id === classId);
-    return (user.classNames || [])[index] || "";
-  }
+  }, [lessons, loading, user]);
 
   function isCourseOutdated(course) {
     const currentDate = new Date();
@@ -113,126 +121,144 @@ function StudentMain() {
           <StudentMainSidebar></StudentMainSidebar>
           <MainContent>
             <Title>課程主頁</Title>
-            <CourseOutsideWrapper>
-              <Container2>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <BsFillBookmarkStarFill
-                    style={{ color: "#F46868", fontSize: "24px" }}
-                  ></BsFillBookmarkStarFill>
-                  <SubTitle>進行中課程</SubTitle>
-                </div>
+            {lessons.length > 0 ? (
+              <CourseOutsideWrapper>
+                <Container2>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <BsFillBookmarkStarFill
+                      style={{ color: "#F46868", fontSize: "24px" }}
+                    ></BsFillBookmarkStarFill>
+                    <SubTitle>進行中課程</SubTitle>
+                  </div>
 
-                <CourseWrapper>
-                  {lessons
-                    .filter((c) => !isCourseOutdated(c))
-                    .map((c, index) => (
-                      <OutdatedCourse key={index} outdated={false}>
-                        <CourseContent>
-                          <VideoImg img={c.img}></VideoImg>
-                          <CourseTextWrapper>
-                            <p>
-                              <b>班級</b>
-                              <br />
-                              {c.classes.map((classId) => (
-                                <span key={classId}>
-                                  {getClassNameById(classId)}{" "}
-                                </span>
-                              ))}
-                            </p>
-                            <p>
-                              <b>課程</b>
-                              <br /> {c.name}
-                            </p>
-                            <p
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              <BiTimeFive
-                                style={{ marginRight: "5px", fontSize: "24px" }}
-                              />
-                              {`${formatDate(c.start_date)}~${formatDate(
-                                c.end_date
-                              )}`}
-                            </p>
-                          </CourseTextWrapper>
-                        </CourseContent>
-                        <BtnContainer>
-                          <MainRedFilledBtn>
-                            <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                              進入課程
-                            </Link>
-                          </MainRedFilledBtn>
-                        </BtnContainer>
-                      </OutdatedCourse>
-                    ))}
-                </CourseWrapper>
-              </Container2>
-
-              <Container2>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <BsCheckCircleFill
-                    style={{ color: "#F46868", fontSize: "24px" }}
-                  ></BsCheckCircleFill>
-                  <SubTitle>已完成課程</SubTitle>
-                </div>
-                <CourseWrapper>
-                  {lessons
-                    .filter((c) => isCourseOutdated(c))
-                    .map((c, index) => (
-                      <OutdatedCourse key={index}>
-                        <CourseContent outdated>
-                          <VideoImg img={c.img}></VideoImg>
-                          <CourseTextWrapper>
-                            <p>
-                              班級
-                              <br />
-                              {c.classes.map((classId) => (
-                                <span key={classId}>
-                                  {getClassNameById(classId)}{" "}
-                                </span>
-                              ))}
-                            </p>
-                            <p>
-                              <b>課程</b>
-                              <br /> {c.name}
-                            </p>
-                            <p
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              <BiTimeFive
-                                style={{ marginRight: "5px", fontSize: "24px" }}
-                              />
-                              {`${formatDate(c.start_date)}~${formatDate(
-                                c.end_date
-                              )}`}
-                            </p>
-                          </CourseTextWrapper>
-                        </CourseContent>
-                        <BtnContainer>
-                          {/* <MainDarkBorderBtn disabled>
+                  <CourseWrapper>
+                    {lessons
+                      .filter((c) => !isCourseOutdated(c))
+                      .map((c, index) => (
+                        <OutdatedCourse key={index} outdated={false}>
+                          <CourseContent>
+                            <VideoImg img={c.img}></VideoImg>
+                            <CourseTextWrapper>
+                              <p>
+                                <b>班級</b>
+                                <br />
+                                {c.classes.map((classId) => (
+                                  <span key={classId}>
+                                    {getClassNameById(classId)}{" "}
+                                  </span>
+                                ))}
+                              </p>
+                              <p>
+                                <b>課程</b>
+                                <br /> {c.name}
+                              </p>
+                              <p
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <BiTimeFive
+                                  style={{
+                                    marginRight: "5px",
+                                    fontSize: "24px",
+                                  }}
+                                />
+                                {`${formatDate(c.start_date)}~${formatDate(
+                                  c.end_date
+                                )}`}
+                              </p>
+                            </CourseTextWrapper>
+                          </CourseContent>
+                          <BtnContainer>
+                            <MainRedFilledBtn>
+                              <Link to={`/YouTubeWithQuestion/${c.id}`}>
+                                進入課程
+                              </Link>
+                            </MainRedFilledBtn>
+                          </BtnContainer>
+                        </OutdatedCourse>
+                      ))}
+                  </CourseWrapper>
+                </Container2>
+                <Container2>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <BsCheckCircleFill
+                      style={{ color: "#F46868", fontSize: "24px" }}
+                    ></BsCheckCircleFill>
+                    <SubTitle>已完成課程</SubTitle>
+                  </div>
+                  <CourseWrapper>
+                    {lessons
+                      .filter((c) => isCourseOutdated(c))
+                      .map((c, index) => (
+                        <OutdatedCourse key={index}>
+                          <CourseContent outdated>
+                            <VideoImg img={c.img}></VideoImg>
+                            <CourseTextWrapper>
+                              <p>
+                                班級
+                                <br />
+                                {c.classes.map((classId) => (
+                                  <span key={classId}>
+                                    {getClassNameById(classId)}{" "}
+                                  </span>
+                                ))}
+                              </p>
+                              <p>
+                                <b>課程</b>
+                                <br /> {c.name}
+                              </p>
+                              <p
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <BiTimeFive
+                                  style={{
+                                    marginRight: "5px",
+                                    fontSize: "24px",
+                                  }}
+                                />
+                                {`${formatDate(c.start_date)}~${formatDate(
+                                  c.end_date
+                                )}`}
+                              </p>
+                            </CourseTextWrapper>
+                          </CourseContent>
+                          <BtnContainer>
+                            {/* <MainDarkBorderBtn disabled>
                             <Link to={`/YouTubeWithQuestion/${c.id}`}>
                               進入課程
                             </Link>
                           </MainDarkBorderBtn> */}
-                        </BtnContainer>
-                      </OutdatedCourse>
-                    ))}
-                </CourseWrapper>
-              </Container2>
-            </CourseOutsideWrapper>
+                          </BtnContainer>
+                        </OutdatedCourse>
+                      ))}
+                  </CourseWrapper>
+                </Container2>
+              </CourseOutsideWrapper>
+            ) : (
+              <LoadingContainer>
+                <LoadingSvg />
+                <p>{loading ? "Loading..." : "目前尚無課程資料"}</p>
+              </LoadingContainer>
+            )}
           </MainContent>
         </Container>
       </Content>
@@ -278,7 +304,6 @@ const Title = styled.p`
   margin-bottom: 0;
   margin-left: auto;
   margin-right: auto;
-  flex-grow: 1;
   text-align: center;
 `;
 
@@ -311,6 +336,16 @@ const Container2 = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px;
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  align-items: center;
+  p {
+    margin: 0px;
+  }
 `;
 
 const VideoImg = styled.div`
@@ -379,6 +414,14 @@ const CourseTextWrapper = styled.div`
     margin: 0;
     font-size: 20px;
   }
+`;
+
+const LoadingSvg = styled.div`
+  background-image: url(${loadinganimation});
+  background-size: contain;
+  width: 200px;
+  height: 200px;
+  opacity: 30%;
 `;
 
 export default StudentMain;

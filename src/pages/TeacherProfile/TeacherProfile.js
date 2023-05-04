@@ -141,6 +141,7 @@ function TeacherProfile() {
             <Title>個人設定</Title>
             <Container2>
               <ProfileImg imageURL={imageURL}>
+                <HoverText></HoverText>
                 <IconWrapper>
                   <UploadLabel htmlFor="imageUpload">
                     <UploadIcon />
@@ -251,7 +252,26 @@ const Container2 = styled.div`
   box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
 `;
 
+const HoverText = styled.div`
+  width: 150px;
+  height: 150px;
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+`;
+
+const IconWrapper = styled.span`
+  position: absolute;
+`;
+
 const ProfileImg = styled.div`
+  position: relative;
   width: 150px;
   height: 150px;
   box-shadow: rgb(0 0 0 / 50%) 0px 1px 4px 0px;
@@ -262,6 +282,16 @@ const ProfileImg = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  & ${IconWrapper}, & ${HoverText} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+  }
+  &:hover ${IconWrapper}, &:hover ${HoverText} {
+    display: block;
+  }
 `;
 
 const ProfileDetail = styled.div`
@@ -285,12 +315,13 @@ const ProfileText = styled.div`
   line-height: 19px;
   white-space: nowrap;
 `;
-const IconWrapper = styled.span`
-  position: absolute;
-`;
 
 const UploadLabel = styled.label`
   cursor: pointer;
+  font-size: 30px;
+  font-weight: 700;
+  padding: 40px;
+  color: #ffffff;
 `;
 
 const ButtonContainer = styled.div`

@@ -6,6 +6,7 @@ import { HiOutlineHome } from "react-icons/hi";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { BsFillPersonFill } from "react-icons/bs";
 import { BiBadgeCheck } from "react-icons/bi";
+import teacherprofile from "./defaultteacherprofile.png";
 
 const TeacherMainSidebar = () => {
   const { user, setUser } = useContext(UserContext);
@@ -108,7 +109,8 @@ const ProfileImg = styled.div`
   width: 150px;
   height: 150px;
   box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
-  background-image: url(${(props) => props.imageURL});
+  background-image: url(${(props) =>
+    props.imageURL ? props.imageURL : teacherprofile});
   background-size: cover;
   background-position: center;
   border-radius: 50%;
