@@ -442,16 +442,18 @@ const Body = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  padding-top: 50px;
 `;
 
 const Content = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  height: 100%;
 `;
 
 const MainContent = styled.div`

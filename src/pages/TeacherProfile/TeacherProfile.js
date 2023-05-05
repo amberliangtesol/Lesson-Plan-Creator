@@ -124,7 +124,7 @@ function TeacherProfile() {
     const auth = getAuth();
     sendPasswordResetEmail(auth, user.account)
       .then(() => {
-        modal.success("變更密碼信件已寄至您的信箱");
+        modal.success("已寄送密碼重設信至您的信箱");
       })
       .catch((error) => {
         modal.success(error.code);
@@ -207,16 +207,18 @@ const Body = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  padding-top: 50px;
 `;
 
 const Content = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  height: 100%;
 `;
 
 const MainContent = styled.div`

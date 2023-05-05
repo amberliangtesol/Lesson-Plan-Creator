@@ -27,6 +27,7 @@ import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { TbCircleNumber1 } from "react-icons/tb";
 import { TbCircleNumber2 } from "react-icons/tb";
 import { TbCircleNumber3 } from "react-icons/tb";
+import modal from "../../components/Modal";
 
 function CreateCourse() {
   const { user, setUser } = useContext(UserContext);
@@ -142,23 +143,7 @@ function CreateCourse() {
 
   const handleCreate = async () => {
     try {
-      // Upload the image to Firebase Storage and get its URL
-      const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
-
-      // Get the classIds based on the selected class names
-      // const classIds = await Promise.all(
-      //   classChoose.map(async (className) => {
-      //     const classQuery = query(
-      //       collection(db, "classes"),
-      //       where("name", "==", className)
-      //     );
-      //     const classSnapshot = await getDocs(classQuery);
-      //     const classDoc = classSnapshot.docs[0];
-      //     return classDoc.id;
-      //   })
-      // );
-
-      // Create the document in Firestore with the image URL
+      const imageURL = await uploadImageAndGetURL(imageFile);
       const docRef = await addDoc(collection(db, "lessons"), {
         name: courseName,
         img: imageURL,

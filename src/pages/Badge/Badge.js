@@ -19,11 +19,116 @@ import Header from "../../components/Header";
 import StudentMainSidebar from "../../components/StudentMainSidebar";
 import Footer from "../../components/Footer";
 import arrow from "../Login/arrow.png";
+import Joyride from "react-joyride";
 
 function Badge() {
   const { user, setUser } = useContext(UserContext);
   const [collectedBadges, setCollectedBadges] = useState([]);
   const [usedBadges, setUsedBadges] = useState([]);
+  const [runJoyride, setRunJoyride] = useState(false);
+  useEffect(() => {
+    // Check if the guide state is stored in the local storage
+    const guideState = localStorage.getItem("badgeguide");
+
+    if (guideState === "true") {
+      // If the guide state is true, don't show the Joyride guide
+      setRunJoyride(false);
+    } else {
+      // If the guide state is not true (first time or false), show the Joyride guide
+      setRunJoyride(true);
+    }
+  }, []);
+
+  // Joyride callback function to handle onFinish or onSkip event
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+
+    if (status === "finished" || status === "skipped") {
+      // If the user finishes or skips the Joyride guide, set the guide state to true in local storage
+      localStorage.setItem("badgeguide", "true");
+    }
+  };
+
+  const [steps] = useState([
+    {
+      target: ".classNameInput",
+      content: (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+              color: "#f46868",
+            }}
+          >
+            Step1 輸入班級
+          </span>
+          <br />
+          請輸入班級名稱
+        </>
+      ),
+      disableBeacon: true,
+      showCloseButton: true,
+    },
+  ]);
+
+  const joyrideStyles = {
+    options: {
+      primaryColor: "#f46868",
+      borderRadius: "25px",
+    },
+    buttonSkip: {
+      backgroundColor: "#ffffff",
+      color: "#f46868",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "2px #f46868 solid",
+    },
+    buttonNext: {
+      backgroundColor: "#f46868",
+      color: "#ffffff",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "none",
+      cursor: "pointer",
+    },
+    tooltip: {
+      backgroundColor: "#ffffff",
+      borderRadius: "25px",
+      textAlign: "left",
+    },
+    tooltipContainer: {
+      textAlign: "center",
+    },
+    buttonBack: {
+      backgroundColor: "#f46868",
+      color: "#ffffff",
+      borderRadius: "25px",
+      paddingLeft: "15px",
+      paddingRight: "15px",
+      border: "none",
+    },
+    buttonPrimary: {
+      backgroundColor: "#ffffff",
+      border: "none",
+    },
+    buttonClose: {
+      backgroundColor: "#ffffff",
+      color: "#f46868",
+      borderRadius: "25px",
+      border: "none",
+      ariaLabel: "Next",
+    },
+    tooltipTitle: {
+      color: "#ffffff",
+      fontSize: "24px",
+      fontWeight: "bold",
+    },
+    tooltipContent: {
+      fontSize: "18px",
+    },
+  };
 
   useEffect(() => {
     async function fetchUserData() {
@@ -138,7 +243,7 @@ function Badge() {
   );
 }
 const Body = styled.div`
-  min-height: 100vh;
+  ${"" /* min-height: 100vh; */}
   display: flex;
   flex-direction: column;
   margin-top: 50px;

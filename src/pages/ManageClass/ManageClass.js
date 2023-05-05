@@ -123,16 +123,18 @@ const Body = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  padding-top: 50px;
 `;
 
 const Content = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  height: 100%;
 `;
 
 const MainContent = styled.div`
@@ -144,6 +146,7 @@ const MainContent = styled.div`
   margin-bottom: 90px;
   padding-right: 30px;
   padding-left: 30px;
+  max-width: 100%;
 `;
 
 const Title = styled.p`
@@ -203,7 +206,7 @@ const ClassContainer = styled.div`
   flex-direction: row;
   background-color: #f5f5f5;
   border-radius: 33px;
-  width: 100%;
+  width: 60vw;
   height: 83px;
   padding: 30px 60px;
   align-items: center;

@@ -17,6 +17,7 @@ import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
 import arrow from "../Login/arrow.png";
+import modal from "../../components/Modal";
 
 function chunk(array, chunk) {
   let result = [];

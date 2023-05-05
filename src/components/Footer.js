@@ -1,5 +1,4 @@
 import styled from "styled-components/macro";
-import hat from "./hat.png";
 
 const Container = styled.div`
   width: 100%;
@@ -8,10 +7,8 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #f46868;
-  position: relative;
-  position: fixed;
+  position: absolute;
   bottom: 0;
-  z-index: 1000;
   @media screen and (max-width: 1279px) {
   }
 `;
@@ -28,7 +25,7 @@ const Copywright = styled.p`
 const Footer = () => {
   return (
     <Container>
-      <Copywright>​Copyright © All Rights Reserved.</Copywright>
+      <Copywright>​Copyright © 2023 EduTube | All Rights Reserved.</Copywright>
     </Container>
   );
 };

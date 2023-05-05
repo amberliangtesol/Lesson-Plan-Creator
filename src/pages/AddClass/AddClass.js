@@ -21,6 +21,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserInfoProvider";
 import Header from "../../components/Header";
 import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { RiFileExcel2Line } from "react-icons/ri";
@@ -606,6 +607,7 @@ function AddClass() {
           </MainContent>
         </Container>
       </Content>
+      <Footer></Footer>
     </Body>
   );
 }
@@ -614,16 +616,18 @@ const Body = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  padding-top: 50px;
 `;
 
 const Content = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  height: 100%;
 `;
 
 const MainContent = styled.div`

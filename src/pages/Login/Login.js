@@ -1,6 +1,10 @@
 import React, { useContext } from "react";
 import { useState, useEffect } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
@@ -59,9 +63,28 @@ function Login() {
         }
       }
     } catch (error) {
-      console.log(error.code);
       modal.success("錯誤的帳號或密碼");
     }
+  };
+
+  const handleForgotPassword = () => {
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        modal.success("已寄送密碼重設信至您的信箱");
+      })
+      .catch((error) => {
+        switch (error.code) {
+          case "auth/missing-email":
+            modal.success("請輸入您的電子信箱");
+            break;
+          case "auth/invalid-email":
+            modal.success("請輸入有效的電子信箱");
+            break;
+          default:
+            modal.success("設定失敗，請確認是否輸入正確的電子信箱");
+        }
+      });
   };
 
   return (
@@ -99,9 +122,22 @@ function Login() {
                 <Link to="/Register">註冊</Link>
               </ColorBorderBtn>
             </BtnContainer>
+            <Text0 onClick={handleForgotPassword}>忘記密碼</Text0>
             <TextContainer>
-              <Text1>無帳號教師</Text1>
-              <Text2>請先註冊</Text2>
+              {role === "student" ? (
+                <>
+                  <Text1>系統預設學生</Text1>
+                  <Text2>帳號密碼相同</Text2>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Text1>無帳號教師請先</Text1>
+                  <Text2>
+                    <Link to="/Register">註冊</Link>
+                  </Text2>
+                </>
+              )}
             </TextContainer>
           </RegisterForm>
         </Wrapper>
@@ -116,11 +152,12 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin-top: 90px;
+  padding-top: 50px;
 `;
 
 const Content = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -129,6 +166,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 80px;
+  height: 100%;
 `;
 
 const ProfileIcon = styled.div`
@@ -202,6 +240,38 @@ const TextContainer = styled.div`
   justify-content: center;
 `;
 
+const Text0 = styled.p`
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  align-items: center;
+  text-align: center;
+  color: #666666;
+  letter-spacing: 0.1em;
+  margin: 0;
+  cursor: pointer;
+  a {
+    color: #f46868;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.055em;
+    text-decoration: none;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+  }ß
+`;
+
 const Text1 = styled.p`
   font-weight: 400;
   font-size: 16px;
@@ -215,6 +285,27 @@ const Text1 = styled.p`
 const Text2 = styled(Text1)`
   font-weight: 700;
   color: #f46868;
+  cursor: pointer;
+  a {
+    color: #f46868;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.055em;
+    text-decoration: none;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+  }
 `;
 
 export default Login;

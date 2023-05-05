@@ -100,7 +100,7 @@ const Container1 = styled.div`
   width: 350px;
   background-color: #f5f5f5;
   padding-top: 100px;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
   @media screen and (max-width: 1279px) {
   }
 `;

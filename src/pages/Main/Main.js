@@ -9,7 +9,7 @@ import HoverComputer from "../../components/HoverComputer/HoverComputer";
 import { ColorFilledBtn } from "../../components/Buttons";
 import { ColorBorderBtn } from "../../components/Buttons";
 import arrow from "./arrow.png";
-import logo from "./logo.png";
+import logo from "../../components/logo.png";
 import banner from "./banner.png";
 import student from "./student.png";
 import teacher from "./teacher.png";
@@ -55,8 +55,10 @@ function Main() {
 
   return (
     <div>
-      <HeaderWrapper>
-        <Header></Header>
+      <HeaderWrapper style={{ zIndex: "10000" }}>
+        <Link to="/">
+          <Logo />
+        </Link>
         <ColorFilledBtn
           type="button"
           style={{
@@ -204,11 +206,26 @@ function Main() {
 }
 
 const HeaderWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 90px;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  position: relative;
+  background-color: #fff;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+`;
+
+const Logo = styled.div`
+  width: 252px;
+  height: 51px;
+  background-image: url(${logo});
+  cursor: pointer;
+  @media screen and (max-width: 1279px) {
+  }
 `;
 
 const SlogenWrapper = styled.div`
@@ -321,15 +338,9 @@ const ComputerWrapper = styled.div`
   flex-direction: column;
 `;
 
-const FeatureWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
+const FeatureWrapper = styled.div``;
 
-const Feature = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const Feature = styled.div``;
 
 const FeatureImg = styled.div``;
 
@@ -341,12 +352,6 @@ const FooterSlogenWrapper = styled.div`
   gap: 20px;
   margin-top: 50px;
   margin-bottom: 150px;
-`;
-
-const Logo = styled.div`
-  width: 208px;
-  height: 43px;
-  background-image: url(${logo});
 `;
 
 export default Main;

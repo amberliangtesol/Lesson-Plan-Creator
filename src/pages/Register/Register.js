@@ -10,6 +10,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ColorBorderBtn } from "../../components/Buttons";
 import modal from "../../components/Modal";
+import { Link } from "react-router-dom";
 
 function Register() {
   const navigate = useNavigate();
@@ -87,7 +88,10 @@ function Register() {
             </ColorBorderBtn>
           </BtnContainer>
           <TextContainer>
-            <Text1>註冊成功將跳轉登入頁面</Text1>
+            <Text1>註冊成功將跳轉</Text1>
+            <Text2>
+              <Link to="/Login">登入</Link>
+            </Text2>
           </TextContainer>
         </Wrapper>
       </Content>
@@ -101,11 +105,12 @@ const Body = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-top: 90px;
+  padding-top: 50px;
 `;
 
 const Content = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -114,6 +119,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 80px;
+  height: 100%;
 `;
 
 const ProfileIcon = styled.div`
@@ -176,6 +182,27 @@ const Text1 = styled.p`
 const Text2 = styled(Text1)`
   font-weight: 700;
   color: #f46868;
+  cursor: pointer;
+  a {
+    color: #f46868;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.055em;
+    text-decoration: none;
+    &:hover,
+    &:link,
+    &:active {
+      text-decoration: none;
+    }
+  }
+  :hover {
+    transform: translate(-0.05em, -0.05em);
+  }
+
+  :active {
+    transform: translate(0.05em, 0.05em);
+  }
 `;
 
 export default Register;
