@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { MainRedFilledBtn } from "./Buttons";
 import { MainDarkFilledBtn } from "./Buttons";
@@ -68,7 +68,24 @@ function Sorting(props) {
     props.onWin(win);
   };
 
-  const Box = ({ boxColor, boxNumber, handleDrag, handleDrop }) => {
+  const Box = ({ boxColor, boxNumber, handleDrag, handleDrop, win }) => {
+    const [correct, setCorrect] = useState(false);
+
+    const handleCorrectness = () => {
+      if (
+        boxNumber ===
+        correctOrder[boxes.findIndex((box) => box.id === boxNumber)]
+      ) {
+        setCorrect(true);
+      } else {
+        setCorrect(false);
+      }
+    };
+
+    useEffect(() => {
+      handleCorrectness();
+    }, [boxes]);
+
     return (
       <SingleBox
         draggable={true}
@@ -77,14 +94,38 @@ function Sorting(props) {
         onDragStart={handleDrag}
         onDrop={handleDrop}
         style={{
-          backgroundColor: "#7D7A7A",
+          backgroundColor: "transparent",
           borderRadius: "7px",
-          color: "#ffffff",
+          color: "#666666",
           width: "40%",
           padding: "20px",
+          border: "solid 2px #666666",
         }}
       >
         {boxNumber}
+        {win !== "" && (
+          <>
+            {correct ? (
+              <span
+                style={{
+                  color: "green",
+                  fontSize: "21px",
+                  marginLeft: "20px",
+                }}
+              >
+                {" "}
+                ✔︎{" "}
+              </span>
+            ) : (
+              <span
+                style={{ color: "red", fontSize: "21px", marginLeft: "20px" }}
+              >
+                {" "}
+                ✘{" "}
+              </span>
+            )}
+          </>
+        )}
       </SingleBox>
     );
   };
@@ -117,6 +158,7 @@ function Sorting(props) {
                 handleDrag={handleDrag}
                 handleDrop={handleDrop}
                 cursor="grab"
+                win={win}
               />
             ))}
         </BoxContainer>
@@ -130,7 +172,7 @@ function Sorting(props) {
         >
           送出答案
         </MainRedFilledBtn>
-        <div
+        {/* <div
           style={{
             marginTop: "20px",
             color: resultMessage === "You win!" ? "#338168" : "#545454",
@@ -148,7 +190,7 @@ function Sorting(props) {
               繼續播放
             </MainDarkFilledBtn>
           )}
-        </div>
+        </div> */}
       </OptionContainer>
     </div>
   );

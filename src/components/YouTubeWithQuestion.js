@@ -54,7 +54,6 @@ const YouTubeWithQuestions = () => {
   const [resultMessage, setResultMessage] = useState("");
   const [showCongratsModal, setShowCongratsModal] = useState(false);
   const [currentBadge, setCurrentBadge] = useState("");
-  const [icon, setIcon] = useState("");
   const [hasShownCongratsModal, setHasShownCongratsModal] = useState(false);
   const winsound = useRef(new Audio(winbgm));
   const losesound = useRef(new Audio(losebgm));
@@ -495,7 +494,11 @@ const YouTubeWithQuestions = () => {
                   />
                 </div>
               )}
-              <div>
+              <div
+                style={{
+                  marginTop: "20px",
+                }}
+              >
                 {resultMessage}
                 {resultMessage !== "" && (
                   <MainDarkFilledBtn

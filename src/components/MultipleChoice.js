@@ -43,6 +43,7 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
             key={index}
             onClick={() => handleOptionClick(option)}
             className={selectedOption === option ? "selected" : ""}
+            correct={option.correct}
           >
             {option.text}
             {isSubmitted && selectedOption ? (
@@ -50,7 +51,7 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
                 <span
                   style={{
                     color: "green",
-                    fontSize: "20px",
+                    fontSize: "24px",
                     marginLeft: "20px",
                   }}
                 >
@@ -59,7 +60,7 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
                 </span>
               ) : (
                 <span
-                  style={{ color: "red", fontSize: "20px", marginLeft: "20px" }}
+                  style={{ color: "red", fontSize: "24px", marginLeft: "20px" }}
                 >
                   {" "}
                   ✘{" "}

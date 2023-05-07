@@ -186,11 +186,13 @@ const CountdownBar = styled.div`
   animation: ${(props) => css`
     ${props.initialCountdown}s ${countdownAnimation} linear forwards
   `};
-  ${(props) =>
+  ${
+    "" /* ${(props) =>
     props.countdown === 0 &&
     css`
       opacity: 20%;
-    `}
+    `} */
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -389,14 +391,26 @@ const CountdownWrapper = styled.div`
   ${(props) => props.countdown !== null && props.countdown <= 5 && redShake}
 `;
 
-const popupAnimation = keyframes`
+// const popupAnimation = keyframes`
+//   0% {
+//     opacity: 0;
+//     transform: translateY(0);
+//   }
+//   100% {
+//     opacity: 1;
+//     transform: translateY(-50px);
+//   }
+// `;
+
+const bounceAnimation = keyframes`
   0% {
-    opacity: 0;
     transform: translateY(0);
   }
+  50% {
+    transform: translateY(-20px);
+  }
   100% {
-    opacity: 1;
-    transform: translateY(-50px);
+    transform: translateY(0);
   }
 `;
 
@@ -405,7 +419,7 @@ const PopupText = styled.div`
   font-size: 40px;
   font-weight: 700;
   color: #a3a1a1;
-  animation: ${popupAnimation} 1s ease forwards;
+  animation: ${bounceAnimation} 1s ease infinite;
   z-index: 400;
   opacity: 1;
 `;
