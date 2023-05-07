@@ -26,7 +26,7 @@ function StudentProfile() {
   const { user, setUser } = useContext(UserContext);
   const [classNames, setClassNames] = useState([]);
 
-  console.log(user.uid);
+  // console.log(user.uid);
 
   const navigate = useNavigate();
 
@@ -252,6 +252,7 @@ const Container2 = styled.div`
   border-radius: 33px;
   padding: 40px 80px 10px 80px;
   box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
+  width: 100%;
 `;
 
 const HoverText = styled.div`

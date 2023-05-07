@@ -242,7 +242,7 @@ function StudentMain() {
             ) : (
               <LoadingContainer>
                 <LoadingSvg />
-                <p>{loading ? "Loading..." : "目前尚無課程"}</p>
+                <p>{loading ? "Loading..." : "目前尚無課程資料"}</p>
               </LoadingContainer>
             )}
           </MainContent>

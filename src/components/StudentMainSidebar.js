@@ -39,7 +39,7 @@ const StudentMainSidebar = () => {
         >
           <Btnwrapper className={activeLink === "/Badge" ? "active" : ""}>
             <BiBadgeCheck style={{ color: "black" }} />
-            <StyledParagraph>徽章搜集</StyledParagraph>
+            <StyledParagraph>我的徽章</StyledParagraph>
           </Btnwrapper>
         </Link>
 
