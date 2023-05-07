@@ -28,11 +28,9 @@ function formatDate(timestamp) {
 }
 
 function StudentMain() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, isLoading: isUserLoading } = useContext(UserContext);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  console.log(loading);
 
   function getClassNameById(classId) {
     const className = (user.classNames || []).find((c) => c.id === classId);
@@ -41,7 +39,7 @@ function StudentMain() {
 
   useEffect(() => {
     async function fetchUserData() {
-      if (!user.classes || user.classNames) return;
+      if (!user.classes || user.classes.length === 0 || user.classNames) return;
 
       // Add this condition to check if userData is defined
       // Fetch class names
@@ -54,7 +52,6 @@ function StudentMain() {
           };
         })
       );
-
       setUser({
         ...user,
         classNames,
@@ -82,20 +79,20 @@ function StudentMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
+        console.log(lessons);
         setLessons(lessons);
       }
     };
 
-    if (loading && user) {
-      if (user.classes && user.classes.length > 0) {
+    if (!isUserLoading) {
+      if (user.classes.length > 0) {
         fetchClasses();
       } else {
         setLoading(false);
       }
     }
-  }, [lessons, loading, user]);
+  }, [isUserLoading, lessons, loading, user]);
 
-  console.log(lessons.length);
   function isCourseOutdated(course) {
     const currentDate = new Date();
     const endDate = new Date(course.end_date);
