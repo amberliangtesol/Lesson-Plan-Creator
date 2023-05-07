@@ -56,7 +56,7 @@ const GlobalStyle = createGlobalStyle`
 
 const TeacherRouter = () => {
   const { user, isLoading } = useContext(UserContext);
-  if (isLoading === false && !user.role) {
+  if (!isLoading && !user.role) {
     return <Navigate to="/login" replace />;
   }
   if (user.role && user.role !== "teacher") {
@@ -67,7 +67,7 @@ const TeacherRouter = () => {
 
 const StudentRouter = () => {
   const { user, isLoading } = useContext(UserContext);
-  if (isLoading === false && !user.role) {
+  if (!isLoading && !user.role) {
     return <Navigate to="/login" replace />;
   }
   if (user.role && user.role !== "student") {

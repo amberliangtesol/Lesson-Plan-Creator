@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components/macro";
 import monster1 from "./Monster/1.png";
 import monster2 from "./Monster/2.png";
@@ -13,6 +13,7 @@ import monster10 from "./Monster/10.png";
 import user from "./Monster/user.png";
 import spinnerImage from "./Monster/spinnerImage.png";
 import vs from "./Monster/vs.png";
+import gamebgm from "./gamesound.mp3";
 
 const monsterImages = [
   monster1,
@@ -42,6 +43,7 @@ const GameMode = ({ countdown, setCountdown }) => {
   const [initialUserCountdown, setInitialUserCountdown] = useState(null);
   const [initialNpcCountdown, setInitialNpcCountdown] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  // const gamesound = useRef(new Audio(gamebgm));
 
   const randomCountdown = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -59,11 +61,13 @@ const GameMode = ({ countdown, setCountdown }) => {
       setNpcCountdown(npcCountdown);
       setInitialUserCountdown(userCountdown);
       setInitialNpcCountdown(npcCountdown);
+      // gamesound.current.play();
     } else {
       setCountdown(null);
       setNpcCountdown(null);
       setInitialUserCountdown(null);
       setInitialNpcCountdown(null);
+      // gamesound.current.pause();
     }
   }, [gamemode]);
 
@@ -89,6 +93,7 @@ const GameMode = ({ countdown, setCountdown }) => {
     if (countdown === 0) {
       setShowPopup(true);
       setNpcCountdown(0);
+      // gamesound.current.pause();
     } else {
       setShowPopup(false);
     }

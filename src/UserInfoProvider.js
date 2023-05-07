@@ -34,12 +34,14 @@ const UserInfoProvider = ({ children }) => {
       } else {
         setUser({});
         setIsLogin(false);
+        setIsLoading(false);
       }
     });
   }, []);
 
   useEffect(() => {
     async function fetchUserData() {
+      if (!user.account || user.role) return;
       const docRef = doc(db, "users", user.account);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -54,24 +56,10 @@ const UserInfoProvider = ({ children }) => {
           });
         }
       }
-    }
-
-    if (!user.account || user.role) {
-      return;
-    }
-    if (user.account && user.role) {
       setIsLoading(false);
-      return;
     }
-
     fetchUserData();
   }, [user]);
-
-  // if (!user && isLoading) {
-  //   return;
-  // }
-  // console.log(user);
-  // console.log(isLoading);
 
   return (
     <UserContext.Provider value={{ user, isLoading, setUser }}>

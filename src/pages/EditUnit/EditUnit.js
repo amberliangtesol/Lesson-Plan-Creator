@@ -122,7 +122,11 @@ function EditUnit() {
         test: totalTestArray.map((item, index) => {
           return {
             ...item,
-            data: { ...item.data, id: index + 1 },
+            data: {
+              ...item.data,
+              gameMode: item.data.gameMode === "true",
+              id: index + 1,
+            },
           };
         }),
         unitName: unitName,
@@ -240,7 +244,7 @@ function EditUnit() {
                     setCurrentUnitId(unit.id);
                   }}
                 >
-                  Unit {index + 1} : {unit.data.unitName}
+                  單元 {index + 1} : {unit.data.unitName}
                 </h3>
               ))}
               <MainDarkBorderBtn>

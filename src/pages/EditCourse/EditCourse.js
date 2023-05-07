@@ -211,7 +211,7 @@ function EditCourse() {
                       setCurrentUnitId(unit.id);
                     }}
                   >
-                    Unit {index + 1} : {unit.data.unitName}
+                    單元 {index + 1} : {unit.data.unitName}
                   </h3>
                 ))}
                 <MainDarkBorderBtn>

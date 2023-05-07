@@ -29,15 +29,10 @@ import { HiOutlineHome } from "react-icons/hi";
 import Badge1 from "./badge1.gif";
 import Badge2 from "./badge2.gif";
 import Swal from "sweetalert2";
-import modal from "./Modal";
-import winbgm from "./winsound.mp3";
-import losebgm from "./losesound.mp3";
-import gamebgm from "./gamesound.mp3";
 
 const YouTubeWithQuestions = () => {
   const { lessonId } = useParams();
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const refCurrentQuestion = useRef(null);
   const [currentUnitId, setCurrentUnitId] = useState();
   const [showNextButton, setShowNextButton] = useState(false);
   const { user, setUser } = useContext(UserContext);
@@ -56,9 +51,6 @@ const YouTubeWithQuestions = () => {
   const [currentBadge, setCurrentBadge] = useState("");
   const [icon, setIcon] = useState("");
   const [hasShownCongratsModal, setHasShownCongratsModal] = useState(false);
-  const winsound = useRef(new Audio(winbgm));
-  const losesound = useRef(new Audio(losebgm));
-  const gamesound = useRef(new Audio(gamebgm));
 
   console.log("currentUnitId", currentUnitId);
   useEffect(() => {
@@ -102,6 +94,7 @@ const YouTubeWithQuestions = () => {
 
         if (playerRef.current && playerReady) {
           playerRef.current.cueVideoById({ videoId: unitData.video });
+          playerRef.current.playVideo();
         }
       }
     };
@@ -129,18 +122,11 @@ const YouTubeWithQuestions = () => {
         localStorage.setItem("videoTimestamp", currentTime);
         localStorage.setItem("lessonid", lessonId);
         localStorage.setItem("currentUnitId", currentUnitId);
-        if (!refCurrentQuestion.current) {
+        if (!currentQuestion) {
           const questionToShow = questions.current.find(
             (q) => currentTime >= q.time && !q.answered
           );
           if (questionToShow) {
-            if (questionToShow.gameMode) {
-              console.log("play");
-              gamesound.current.play();
-            } else {
-              gamesound.current.pause();
-            }
-            refCurrentQuestion.current = questionToShow;
             setCurrentQuestion(questionToShow);
           }
         }
@@ -168,13 +154,12 @@ const YouTubeWithQuestions = () => {
       !currentQuestion &&
       playerRef.current &&
       typeof playerRef.current.playVideo === "function" &&
-      !showCongratsModal &&
-      resultMessage === ""
+      !showCongratsModal
     ) {
       playerRef.current.playVideo();
     }
     return () => {};
-  }, [currentQuestion, resultMessage, showCongratsModal]);
+  }, [currentQuestion, showCongratsModal]);
 
   window.onYouTubeIframeAPIReady = () => {
     playerRef.current = new window.YT.Player("player", {
@@ -242,6 +227,8 @@ const YouTubeWithQuestions = () => {
         answered: [{ [currentQuestion.type]: isCorrect }],
       });
     }
+
+    setCurrentQuestion(null);
   };
 
   const updateUserBadgeData = async (badgeId) => {
@@ -262,22 +249,22 @@ const YouTubeWithQuestions = () => {
   };
 
   const handleOnAnswer = (isCorrect) => {
-    console.log("isCorrect", isCorrect);
-    gamesound.current.pause();
-    setResultMessage(currentQuestion.explanation);
-    setCountdown(0);
+    console.log(isCorrect);
     if (isCorrect) {
-      winsound.current.play();
       updatedQuestions(currentQuestion.id, true);
+      // setResultMessage("You win!");
+      setIcon("✓");
       if (countdown > 0 && !hasShownCongratsModal) {
         playerRef.current.pauseVideo();
         updateUserBadgeData("badge2");
         setCurrentBadge(Badge2);
-        setShowCongratsModal(true);
+        setShowCongratsModal(true); // Show the CongratsModal
+        // setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
       }
     } else {
-      losesound.current.play();
-      updatedQuestions(currentQuestion.id, false);
+      setResultMessage(currentQuestion.explanation);
+      setIcon("✕");
+      setCountdown(0);
     }
   };
 
@@ -287,9 +274,7 @@ const YouTubeWithQuestions = () => {
   };
 
   const handleNextClick = () => {
-    setResultMessage("");
-    refCurrentQuestion.current = null;
-    setCurrentQuestion(null);
+    updatedQuestions(currentQuestion.id, false);
   };
 
   const handleNextUnitClick = async () => {
@@ -326,7 +311,6 @@ const YouTubeWithQuestions = () => {
 
         if (nextUnitDoc) {
           const nextUnitId = nextUnitDoc.id;
-          refCurrentQuestion.current = null;
           setCurrentQuestion(null);
           setResultMessage("");
           setCurrentUnitId(nextUnitId);
@@ -351,23 +335,10 @@ const YouTubeWithQuestions = () => {
     };
   }, [unsubscribeNextUnit]);
 
-  useEffect(() => {
-    if (countdown === 0 && currentQuestion && currentQuestion.gameMode) {
-      gamesound.current.pause();
-      gamesound.currentTime = 0;
-    } else if (
-      countdown > 0 &&
-      gamesound.current.paused &&
-      currentQuestion &&
-      currentQuestion.gameMode
-    ) {
-      gamesound.current.play();
-    }
-  }, [countdown, currentQuestion]);
-
-  // console.log("currentQuestion", currentQuestion);
+  console.log("currentQuestion", currentQuestion);
 
   const CongratsModal = ({ show, imageUrl }) => {
+    console.log("CongratsModal show prop:", show); // Log the value of the show prop
     useEffect(() => {
       if (show) {
         let timerInterval;
@@ -377,13 +348,14 @@ const YouTubeWithQuestions = () => {
           imageWidth: 250,
           imageHeight: 250,
           imageAlt: "Badge image",
-          timer: 2000,
+          timer: 1500,
           timerProgressBar: true,
           showConfirmButton: false,
           padding: "30px",
           willClose: () => {
             setCurrentBadge("");
             setShowCongratsModal(false);
+            playerRef.current.playVideo();
             clearInterval(timerInterval);
           },
         }).then((result) => {
@@ -491,11 +463,15 @@ const YouTubeWithQuestions = () => {
                     cards={currentQuestion.cards}
                     onWin={(isCorrect) => handleOnAnswer(isCorrect)}
                     explanation={currentQuestion.explanation}
-                    onNext={handleNextClick}
                   />
                 </div>
               )}
-              <div>
+              <div
+              // style={{
+              //   marginTop: "20px",
+              //   color: resultMessage === "You win!" ? "#338168" : "#545454",
+              // }}
+              >
                 {resultMessage}
                 {resultMessage !== "" && (
                   <MainDarkFilledBtn

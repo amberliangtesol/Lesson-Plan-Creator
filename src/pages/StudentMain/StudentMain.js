@@ -32,6 +32,8 @@ function StudentMain() {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log(loading);
+
   function getClassNameById(classId) {
     const className = (user.classNames || []).find((c) => c.id === classId);
     return className?.name || "";
@@ -39,33 +41,24 @@ function StudentMain() {
 
   useEffect(() => {
     async function fetchUserData() {
-      if (!user.account || user.classNames) return;
+      if (!user.classes || user.classNames) return;
 
-      const docRef = doc(db, "users", user.account);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        if (userData) {
-          // Add this condition to check if userData is defined
-          // Fetch class names
-          const classNames = await Promise.all(
-            userData.classes.map(async (classId) => {
-              const classDoc = await getDoc(doc(db, "classes", classId));
-              return {
-                id: classId,
-                name: classDoc.data() && classDoc.data().name,
-              };
-            })
-          );
-          setUser({
-            ...user,
-            image: userData.image,
-            name: userData.name,
-            classes: userData.classes,
-            classNames,
-          });
-        }
-      }
+      // Add this condition to check if userData is defined
+      // Fetch class names
+      const classNames = await Promise.all(
+        user.classes.map(async (classId) => {
+          const classDoc = await getDoc(doc(db, "classes", classId));
+          return {
+            id: classId,
+            name: classDoc.data() && classDoc.data().name,
+          };
+        })
+      );
+
+      setUser({
+        ...user,
+        classNames,
+      });
     }
 
     fetchUserData();
@@ -89,13 +82,17 @@ function StudentMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-        console.log("lessons", lessons);
         setLessons(lessons);
-        setLoading(false);
       }
     };
 
-    fetchClasses();
+    if (loading && user) {
+      if (user.classes && user.classes.length > 0) {
+        fetchClasses();
+      } else {
+        setLoading(false);
+      }
+    }
   }, [lessons, loading, user]);
 
   console.log(lessons.length);

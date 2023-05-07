@@ -119,6 +119,9 @@ const Matching = (props) => {
       if (!card.matched) done = false;
     });
     setGameOver(done);
+    if (done) {
+      props.onWin(true);
+    }
   };
 
   // const GameOver = () => {
@@ -142,7 +145,7 @@ const Matching = (props) => {
   // }, [gameOver]);
 
   const handleNextClick = () => {
-    props.onWin(true);
+    props.onNext();
   };
 
   return (
@@ -178,14 +181,6 @@ const Matching = (props) => {
             />
           ))}
         </div>
-        {gameOver && (
-          <>
-            <WinMessage>{questionData.explanation}</WinMessage>
-            <MainDarkFilledBtn onClick={handleNextClick}>
-              繼續播放
-            </MainDarkFilledBtn>
-          </>
-        )}
       </OptionContainer>
     </div>
   );
