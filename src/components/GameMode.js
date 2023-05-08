@@ -13,7 +13,6 @@ import monster10 from "./Monster/10.png";
 import user from "./Monster/user.png";
 import spinnerImage from "./Monster/spinnerImage.png";
 import vs from "./Monster/vs.png";
-import gamebgm from "./gamesound.mp3";
 
 const monsterImages = [
   monster1,

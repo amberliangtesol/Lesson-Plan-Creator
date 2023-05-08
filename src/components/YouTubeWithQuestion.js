@@ -10,7 +10,6 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  arrayUnion,
   getDocs,
 } from "firebase/firestore";
 import { db } from "../utils/firebaseApp";
@@ -23,13 +22,10 @@ import { Link } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import { MainDarkBorderBtn } from "./Buttons";
-import { MainRedFilledBtn } from "./Buttons";
 import { MainDarkFilledBtn } from "./Buttons";
-import { HiOutlineHome } from "react-icons/hi";
 import Badge1 from "./badge1.gif";
 import Badge2 from "./badge2.gif";
 import Swal from "sweetalert2";
-import modal from "./Modal";
 import winbgm from "./winsound.mp3";
 import losebgm from "./losesound.mp3";
 import gamebgm from "./gamesound.mp3";
@@ -136,8 +132,10 @@ const YouTubeWithQuestions = () => {
             if (questionToShow.gameMode) {
               console.log("play");
               gamesound.current.play();
+              gamesound.current.volume = 0.5;
             } else {
               gamesound.current.pause();
+              gamesound.currentTime = 0;
             }
             refCurrentQuestion.current = questionToShow;
             setCurrentQuestion(questionToShow);
@@ -171,6 +169,7 @@ const YouTubeWithQuestions = () => {
       resultMessage === ""
     ) {
       playerRef.current.playVideo();
+      playerRef.current.volume = 0.5;
     }
     return () => {};
   }, [currentQuestion, resultMessage, showCongratsModal]);
@@ -267,6 +266,7 @@ const YouTubeWithQuestions = () => {
     setCountdown(0);
     if (isCorrect) {
       winsound.current.play();
+      winsound.current.volume = 0.5;
       updatedQuestions(currentQuestion.id, true);
       if (countdown > 0 && !hasShownCongratsModal) {
         playerRef.current.pauseVideo();
@@ -276,6 +276,7 @@ const YouTubeWithQuestions = () => {
       }
     } else {
       losesound.current.play();
+      losesound.current.volume = 0.5;
       updatedQuestions(currentQuestion.id, false);
     }
   };
@@ -361,6 +362,7 @@ const YouTubeWithQuestions = () => {
       currentQuestion.gameMode
     ) {
       gamesound.current.play();
+      gamesound.current.volume = 0.5;
     }
   }, [countdown, currentQuestion]);
 

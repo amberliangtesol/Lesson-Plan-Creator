@@ -43,11 +43,7 @@ const HoverComputer = () => {
           <img src={macbookcover} alt="" className="cover" />
           <div ref={videoRef}>
             <video controls>
-              <source
-                // src="https://d1xm195wioio0k.cloudfront.net/images/video/support.mp4"
-                src={guide}
-                type="video/mp4"
-              />
+              <source src={guide} type="video/mp4" />
             </video>
           </div>
         </div>

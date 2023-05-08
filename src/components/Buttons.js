@@ -1,6 +1,5 @@
-import styled, { css } from "styled-components/macro";
+import styled from "styled-components/macro";
 
-//login & logout page button
 const ColorFilledBtn = styled.div`
   cursor: pointer;
   min-width: 169px;
@@ -214,20 +213,6 @@ const MultipleChoiceOptionCard = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-
-  ${
-    "" /* ${(props) =>
-    props.correct === true &&
-    css`
-      border: solid 2px green;
-    `}
-
-  ${(props) =>
-    props.correct === false &&
-    css`
-      border: solid 2px red;
-    `} */
-  }
 
   &:focus,
   &.selected {
