@@ -1,8 +1,7 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./Matching.css";
 import styled from "styled-components/macro";
-import { MainDarkFilledBtn } from "../Buttons";
 
 const Card = ({ id, name, flipped, matched, clicked }) => {
   return (
@@ -13,18 +12,7 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
       }
     >
       <div className="back">?</div>
-      <div
-        className="front"
-        style={{
-          lineHeight: "20px",
-          fontSize: "16px",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          padding: "10px",
-        }}
-      >
+      <div className="front">
         <span>{name}</span>
       </div>
     </div>
@@ -33,8 +21,7 @@ const Card = ({ id, name, flipped, matched, clicked }) => {
 
 const Matching = (props) => {
   // remove destructuring of questionData
-  const { cards, questionData, onWin } = props; // destructure props here
-  const [win, setWin] = useState("");
+  const { cards, questionData } = props; // destructure props here
 
   const shuffle = (array) => {
     let currentIndex = array.length,
@@ -195,13 +182,6 @@ const OptionContainer = styled.div`
   border-radius: 33px;
   width: 100%;
   padding: 30px 60px 50px 60px;
-`;
-
-const WinMessage = styled.div`
-  padding: 10px;
-  font-size: 16px;
-  margin-top: 20px;
-  color: #545454;
 `;
 
 export default Matching;

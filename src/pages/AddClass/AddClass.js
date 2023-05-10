@@ -89,8 +89,7 @@ function AddClass() {
             style={{
               fontWeight: "bold",
               color: "#f46868",
-            }}
-          >
+            }}>
             Step1 輸入班級
           </span>
           <br />
@@ -114,8 +113,7 @@ function AddClass() {
             style={{
               fontWeight: "bold",
               color: "#f46868",
-            }}
-          >
+            }}>
             Step2 新增學生
           </span>
           <br />
@@ -138,8 +136,7 @@ function AddClass() {
             style={{
               fontWeight: "bold",
               color: "#f46868",
-            }}
-          >
+            }}>
             Step3 指派教師
           </span>
           <br />
@@ -237,8 +234,7 @@ function AddClass() {
     return (
       <table
         className="ExcelTable2007"
-        style={rows.length === 0 ? { border: "none" } : {}}
-      >
+        style={rows.length === 0 ? { border: "none" } : {}}>
         {rows.length > 0 && (
           <thead>
             <tr className="heading">
@@ -257,8 +253,7 @@ function AddClass() {
     return (
       <table
         className="ExcelTable2007"
-        style={selectedTeachers.length === 0 ? { border: "none" } : {}}
-      >
+        style={selectedTeachers.length === 0 ? { border: "none" } : {}}>
         {selectedTeachers.length > 0 && (
           <thead>
             <tr className="heading">
@@ -448,8 +443,7 @@ function AddClass() {
     return (
       <span
         onClick={onDelete}
-        style={{ cursor: "pointer", paddingLeft: "7px" }}
-      >
+        style={{ cursor: "pointer", paddingLeft: "7px" }}>
         <RiDeleteBinLine />
       </span>
     );
@@ -515,8 +509,7 @@ function AddClass() {
                 value={selectedClass}
                 onChange={handleClassNameChange}
                 placeholder="輸入名稱"
-                className="classNameInput"
-              ></ClassNameInput>
+                className="classNameInput"></ClassNameInput>
               <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
             </div>
 
@@ -528,8 +521,7 @@ function AddClass() {
                 alignItems: "center",
                 marginTop: "30px",
               }}
-              className="studentTable"
-            >
+              className="studentTable">
               <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
                 學生
               </h2>
@@ -547,14 +539,12 @@ function AddClass() {
               />
               <MainDarkBorderBtn
                 onClick={handleAddStudentEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}
-              >
+                style={{ cursor: "pointer", marginLeft: "5px" }}>
                 新增學生
               </MainDarkBorderBtn>
               <CustomFileInputButton
                 onClick={triggerFileInput}
-                style={{ marginLeft: "auto", padding: "5px" }}
-              >
+                style={{ marginLeft: "auto", padding: "5px" }}>
                 <RiFileExcel2Line
                   style={{
                     fontSize: "20px",
@@ -576,8 +566,7 @@ function AddClass() {
                 alignItems: "center",
                 marginTop: "30px",
               }}
-              className="teacherTable"
-            >
+              className="teacherTable">
               <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
                 教師
               </h2>
@@ -590,8 +579,7 @@ function AddClass() {
               />
               <MainDarkBorderBtn
                 onClick={handleAddTeacherEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}
-              >
+                style={{ cursor: "pointer", marginLeft: "5px" }}>
                 新增教師
               </MainDarkBorderBtn>
             </TeacherTable>
@@ -600,8 +588,7 @@ function AddClass() {
 
             <MainRedFilledBtn
               onClick={handleSubmit}
-              style={{ width: "100%", marginTop: "30px" }}
-            >
+              style={{ width: "100%", marginTop: "30px" }}>
               新增班級
             </MainRedFilledBtn>
           </MainContent>
