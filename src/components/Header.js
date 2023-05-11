@@ -1,5 +1,5 @@
 import styled from "styled-components/macro";
-import logo from "./logo.png";
+import logo from "./Asset/logo.png";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 

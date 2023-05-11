@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { AiOutlineCloudUpload as BsCloudUpload } from "react-icons/ai";
 import { getAuth, signOut, sendPasswordResetEmail } from "firebase/auth";
@@ -8,16 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-import Header from "../../components/Header";
-import TeacherMainSidebar from "../../components/TeacherMainSidebar";
-import Footer from "../../components/Footer";
+import { TeacherMainSidebar } from "../../components/Sidebar";
+import { StudentMainSidebar } from "../../components/Sidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
 import modal from "../../components/Modal";
-import profile from "./profile.png";
+import teacherprofile from "./ProfileAsset/teacherprofile.png";
+import studentprofile from "./ProfileAsset/studentprofile.png";
 
-function TeacherProfile() {
+function Profile() {
   const [imageURL, setImageURL] = useState("");
   const [imageFile, setImageFile] = useState("");
   const [name, setName] = useState("");
@@ -25,8 +24,6 @@ function TeacherProfile() {
   const [account, setAccount] = useState("");
   const { user, setUser } = useContext(UserContext);
   const [classNames, setClassNames] = useState([]);
-
-  console.log(user.uid);
 
   const navigate = useNavigate();
 
@@ -40,10 +37,7 @@ function TeacherProfile() {
 
   const handleChange = async () => {
     try {
-      // Upload the image to Firebase Storage and get its URL
-      const imageURL = await uploadImageAndGetURL(imageFile); // Replace imageFile with the actual file object
-
-      // Create the document in Firestore with the image URL
+      const imageURL = await uploadImageAndGetURL(imageFile);
       await updateDoc(doc(db, "users", user.account), {
         name: name,
         account: account,
@@ -72,10 +66,8 @@ function TeacherProfile() {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${imageFile.name}`);
 
-    // Upload the image to Firebase Storage
     await uploadBytes(storageRef, imageFile);
 
-    // Get the download URL
     const imageURL = await getDownloadURL(storageRef);
 
     return imageURL;
@@ -87,12 +79,15 @@ function TeacherProfile() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        setImageURL(userData.image || profile);
+        if (userData.role === "teacher") {
+          setImageURL(userData.image || teacherprofile);
+        } else if (userData.role === "student") {
+          setImageURL(userData.image || studentprofile);
+        }
         setName(userData.name || "");
         setAccount(userData.account || "");
         setClasses(userData.classes || []);
 
-        // Fetch class names
         const classNames = await Promise.all(
           userData.classes.map(async (classId) => {
             const classDoc = await getDoc(doc(db, "classes", classId));
@@ -133,10 +128,13 @@ function TeacherProfile() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
-          <TeacherMainSidebar></TeacherMainSidebar>
+          {user.role === "teacher" ? (
+            <TeacherMainSidebar />
+          ) : (
+            <StudentMainSidebar />
+          )}
           <MainContent>
             <Title>個人設定</Title>
             <Container2>
@@ -197,8 +195,6 @@ function TeacherProfile() {
           </MainContent>
         </Container>
       </Content>
-
-      <Footer></Footer>
     </Body>
   );
 }
@@ -343,4 +339,4 @@ const CustomNoBorderBtn = styled(NoBorderBtn)`
   }
 `;
 
-export default TeacherProfile;
+export default Profile;

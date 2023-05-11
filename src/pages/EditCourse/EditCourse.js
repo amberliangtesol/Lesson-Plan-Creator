@@ -9,17 +9,13 @@ import {
   doc,
   orderBy,
   getDocs,
-  addDoc,
   collection,
   query,
-  onSnapshot,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 
@@ -47,8 +43,6 @@ function EditCourse() {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         if (userData) {
-          // Add this condition to check if userData is defined
-          // Fetch class names
           const classNames = await Promise.all(
             userData.classes.map(async (classId) => {
               const classDoc = await getDoc(doc(db, "classes", classId));
@@ -68,12 +62,11 @@ function EditCourse() {
         }
       }
     }
-    // Call fetchUserData on page load
+
     fetchUserData();
   }, [user]);
 
   useEffect(() => {
-    // Set the classList state after the classNames property has been set
     setClassList(user.classNames || []);
   }, [user.classNames]);
 
@@ -101,16 +94,13 @@ function EditCourse() {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${imageFile.name}`);
 
-    // Upload the image to Firebase Storage
     await uploadBytes(storageRef, imageFile);
 
-    // Get the download URL
     const imageURL = await getDownloadURL(storageRef);
 
     return imageURL;
   };
 
-  // Fetch the lesson data
   useEffect(() => {
     const fetchLesson = async () => {
       const lessonRef = doc(db, "lessons", lessonId);
@@ -144,7 +134,6 @@ function EditCourse() {
       }));
       setSortedUnits(units);
 
-      // Add a conditional check to make sure the units array is not empty
       if (units.length > 0) {
         setCurrentUnitId(units[0].id);
       }
@@ -157,11 +146,9 @@ function EditCourse() {
     try {
       let imgUrl = imageURL;
       if (imageFile) {
-        // Upload the image to Firebase Storage and get its URL
         imgUrl = await uploadImageAndGetURL(imageFile);
       }
 
-      // Update the existing lesson document in Firestore
       const lessonRef = doc(db, "lessons", lessonId);
       await updateDoc(lessonRef, {
         name: courseName,
@@ -184,7 +171,6 @@ function EditCourse() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <MainContent>
@@ -306,8 +292,6 @@ function EditCourse() {
           </MainContent>
         </Container>
       </Content>
-
-      <Footer></Footer>
     </Body>
   );
 }
@@ -389,45 +373,6 @@ const VideoImg = styled.div`
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
   background-position: center;
-`;
-
-const StyledParagraphTitle = styled.p`
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.04em;
-  color: black;
-  text-decoration: none;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0em;
-  @media screen and (max-width: 1279px) {
-  }
-`;
-const StyledParagraph = styled.p`
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.04em;
-  color: black;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0em;
-  @media screen and (max-width: 1279px) {
-  }
-`;
-
-const Btnwrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  :first-child {
-    border-bottom: 3px solid #f46868;
-  }
-  @media screen and (max-width: 1279px) {
-  }
 `;
 
 const CourseInput = styled.input`

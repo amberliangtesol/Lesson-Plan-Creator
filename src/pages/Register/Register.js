@@ -6,8 +6,6 @@ import { setDoc, doc } from "firebase/firestore";
 import styled from "styled-components/macro";
 import teacherprofile from "./teacherprofile.png";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { ColorBorderBtn } from "../../components/Buttons";
 import modal from "../../components/Modal";
 import { Link } from "react-router-dom";
@@ -20,13 +18,10 @@ function Register() {
 
   const handleRegister = (e) => {
     e.preventDefault();
-    console.log(email, password);
     createUserWithEmailAndPassword(auth, email, password, name)
       .then((userCredential) => {
-        // Get the user's unique identifier (UID) from the userCredential object
         const uid = userCredential.user.uid;
 
-        // Use the user's UID as the document ID in Firestore
         setDoc(doc(db, "users", email), {
           name: name,
           image: "",
@@ -38,7 +33,6 @@ function Register() {
           modal.success("註冊成功");
           navigate("/login");
         });
-        console.log(userCredential);
       })
       .catch((error) => {
         switch (error.code) {
@@ -59,7 +53,6 @@ function Register() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Wrapper>
           <ProfileIcon></ProfileIcon>
@@ -95,7 +88,6 @@ function Register() {
           </TextContainer>
         </Wrapper>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }

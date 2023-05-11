@@ -1,21 +1,18 @@
 import React, { useContext } from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   getAuth,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
-import profile from "./profile.png";
-import teacherprofile from "./teacherprofile.png";
+import studentprofile from "./LoginAsset/studentprofile.png";
+import teacherprofile from "./LoginAsset/teacherprofile.png";
 import { UserContext } from "../../UserInfoProvider";
 import { Link } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import arrow from "./arrow.png";
+import arrow from "./LoginAsset/arrow.png";
 import { ColorFilledBtn } from "../../components/Buttons";
 import { ColorBorderBtn } from "../../components/Buttons";
 import modal from "../../components/Modal";
@@ -26,7 +23,7 @@ function Login() {
   const [role, setRole] = useState("");
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const profileImage = role === "teacher" ? teacherprofile : profile;
+  const profileImage = role === "teacher" ? teacherprofile : studentprofile;
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
@@ -89,7 +86,6 @@ function Login() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Wrapper>
           <ProfileIcon
@@ -142,7 +138,6 @@ function Login() {
           </RegisterForm>
         </Wrapper>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }
@@ -172,7 +167,7 @@ const Wrapper = styled.div`
 const ProfileIcon = styled.div`
   width: 98px;
   height: 137px;
-  background-image: url(${profile});
+  background-image: url(${studentprofile});
   cursor: pointer;
 `;
 

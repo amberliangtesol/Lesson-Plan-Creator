@@ -7,19 +7,16 @@ import {
   orderBy,
   getDocs,
   query,
-  addDoc,
   updateDoc,
   collection,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
-import arrow from "../Login/arrow.png";
+import arrow from "./arrow.png";
 
 function chunk(array, chunk) {
   let result = [];
@@ -46,7 +43,6 @@ function EditUnit() {
     const fetchLessonData = async () => {
       const lessonDocRef = doc(db, "lessons", lessonId, "units", currentUnitId);
       const lessonSnapshot = await getDoc(lessonDocRef);
-      console.log("lessonDocRef", lessonDocRef);
       if (lessonSnapshot.exists()) {
         setLessonData(lessonSnapshot.data());
         setUnitName(lessonSnapshot.data().unitName);
@@ -57,7 +53,6 @@ function EditUnit() {
         setExplanation(lessonSnapshot.data().explanation);
         setTotalTestArray(lessonSnapshot.data().test);
       }
-      console.log(lessonSnapshot.data());
     };
 
     fetchLessonData();
@@ -116,7 +111,6 @@ function EditUnit() {
       const lessonDocRef = doc(db, `lessons/${lessonId}/units`, currentUnitId);
 
       await updateDoc(lessonDocRef, {
-        // timestamp: new Date().valueOf(),
         description: description,
         subtitle: subTitle,
         test: totalTestArray.map((item, index) => {
@@ -133,8 +127,6 @@ function EditUnit() {
         video: id,
         explanation: explanation,
       });
-
-      console.log("Document updated with ID: ", currentUnitId);
       navigate("/teachermain");
     } catch (e) {
       console.error("Error updating document: ", e);
@@ -146,9 +138,6 @@ function EditUnit() {
     setTotalTestArray([...totalTestArray, { type: "", data: newTest }]);
     e.preventDefault();
   };
-
-  console.log("totalTestArray", { totalTestArray });
-  // console.log("testArray", { testArray });
 
   const handleAddOption = (index) => {
     const newTotalTestArray = [...totalTestArray];
@@ -189,15 +178,8 @@ function EditUnit() {
     setVideoId(e.target.value);
   };
 
-  // const extractVideoId = () => {
-  //   const url = new URL(inputLink);
-  //   const videoId = url.searchParams.get("v");
-  //   setVideoId(videoId);
-  // };
-
   useEffect(() => {
     const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
       const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
       const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
       const querySnapshot = await getDocs(unitsQuery);
@@ -207,7 +189,6 @@ function EditUnit() {
       }));
       setSortedUnits(units);
 
-      // Add a conditional check to make sure the units array is not empty
       if (units.length > 0) {
         setCurrentUnitId(units[0].id);
       }
@@ -218,7 +199,6 @@ function EditUnit() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <Container1>
@@ -289,9 +269,6 @@ function EditUnit() {
                   placeholder="請貼上YouTube連結"
                 ></CourseInput>
 
-                {/* <MainRedFilledBtn type="button" onClick={extractVideoId}>
-                確認連結
-              </MainRedFilledBtn> */}
                 <CourseDetailText>單元小標</CourseDetailText>
                 <CourseInput
                   type="text"
@@ -403,7 +380,6 @@ function EditUnit() {
                           </CourseDetailReminder>
                         </div>
 
-                        {/* <label htmlFor="ans">解答</label> */}
                         {(item.data.options || []).map((option, idx) => (
                           <MultipleChoiceQuestion>
                             <CheckboxInput
@@ -644,8 +620,6 @@ function EditUnit() {
         </Container>
       </Content>
       <CourseDetailText>單元編輯</CourseDetailText>
-
-      <Footer></Footer>
     </Body>
   );
 }

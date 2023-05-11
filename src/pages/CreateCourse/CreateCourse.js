@@ -12,22 +12,17 @@ import {
   addDoc,
   collection,
   query,
-  onSnapshot,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { TbCircleNumber1 } from "react-icons/tb";
 import { TbCircleNumber2 } from "react-icons/tb";
 import { TbCircleNumber3 } from "react-icons/tb";
-import modal from "../../components/Modal";
 
 function CreateCourse() {
   const { user, setUser } = useContext(UserContext);
@@ -44,7 +39,6 @@ function CreateCourse() {
   const navigate = useNavigate();
   const now = new Date().toISOString().slice(0, 16);
 
-  // Call fetchUserData directly inside the component function
   async function fetchUserData() {
     if (!user.account || user.classNames) return;
 
@@ -53,8 +47,6 @@ function CreateCourse() {
     if (docSnap.exists()) {
       const userData = docSnap.data();
       if (userData) {
-        // Add this condition to check if userData is defined
-        // Fetch class names
         const classNames = await Promise.all(
           userData.classes.map(async (classId) => {
             const classDoc = await getDoc(doc(db, "classes", classId));
@@ -76,18 +68,15 @@ function CreateCourse() {
   }
 
   useEffect(() => {
-    // Call fetchUserData on page load
     fetchUserData();
   }, []);
 
   useEffect(() => {
-    // Set the classList state after the classNames property has been set
     setClassList(user.classNames || []);
   }, [user.classNames]);
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
       const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
       const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
       const querySnapshot = await getDocs(unitsQuery);
@@ -97,7 +86,6 @@ function CreateCourse() {
       }));
       setSortedUnits(units);
 
-      // Add a conditional check to make sure the units array is not empty
       if (units.length > 0) {
         setCurrentUnitId(units[0].id);
       }
@@ -105,8 +93,6 @@ function CreateCourse() {
 
     fetchSortedUnits();
   }, [lessonId]);
-
-  console.log("classList", classList);
 
   const UploadIcon = () => {
     return (
@@ -154,12 +140,8 @@ function CreateCourse() {
       await updateDoc(docRef, {
         id: docRef.id,
       });
-
-      console.log(docRef.id);
       const lessonDocId = docRef.id;
       navigate(`/create-unit/${lessonDocId}`);
-
-      console.log("Document created with ID: ", docRef.id);
     } catch (e) {
       console.error("Error creating document: ", e);
     }
@@ -169,10 +151,8 @@ function CreateCourse() {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${imageFile.name}`);
 
-    // Upload the image to Firebase Storage
     await uploadBytes(storageRef, imageFile);
 
-    // Get the download URL
     const imageURL = await getDownloadURL(storageRef);
 
     return imageURL;
@@ -185,7 +165,6 @@ function CreateCourse() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <MainContent>
@@ -335,7 +314,6 @@ function CreateCourse() {
           </MainContent>
         </Container>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }
@@ -418,19 +396,6 @@ const VideoImg = styled.div`
   background-image: url(${(props) => props.imageURL});
   background-size: cover;
   background-position: center;
-`;
-
-const StyledParagraphTitle = styled.p`
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.04em;
-  color: black;
-  text-decoration: none;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0em;
-  @media screen and (max-width: 1279px) {
-  }
 `;
 
 const StyledParagraph = styled.p`

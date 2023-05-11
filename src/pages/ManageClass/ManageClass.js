@@ -4,10 +4,8 @@ import styled from "styled-components/macro";
 import { UserContext } from "../../UserInfoProvider";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-import Header from "../../components/Header";
-import TeacherMainSidebar from "../../components/TeacherMainSidebar";
-import Footer from "../../components/Footer";
-import loadinganimation from "../../components/loading.gif";
+import { TeacherMainSidebar } from "../../components/Sidebar";
+import loadinganimation from "../../components/Asset/loading.gif";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 
@@ -16,27 +14,6 @@ function ManageClass() {
   const [classDetails, setClassDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // First useEffect for fetching and setting user data
-  // useEffect(() => {
-  //   async function fetchUserData() {
-  //     if (user.name && user.name !== "") return;
-
-  //     const docRef = doc(db, "users", user.account);
-  //     const docSnap = await getDoc(docRef);
-  //     if (docSnap.exists()) {
-  //       const userData = docSnap.data();
-  //       setUser({
-  //         ...user,
-  //         image: userData.image,
-  //         name: userData.name,
-  //         classes: userData.classes,
-  //       });
-  //     }
-  //   }
-  //   fetchUserData();
-  // }, [user.account]);
-
-  // Second useEffect for fetching and setting class details
   useEffect(() => {
     async function fetchClassDetails() {
       if (!user.classes || user.classes.length === 0) {
@@ -63,15 +40,11 @@ function ManageClass() {
       setClassDetails(classDetails.filter(Boolean));
       setIsLoading(false);
     }
-    console.log("user_classes", user.classes);
     fetchClassDetails();
   }, [user.classes]);
 
-  console.log(classDetails);
-
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
@@ -79,7 +52,7 @@ function ManageClass() {
             <HeaderContainer>
               <Title>班級管理</Title>
               <MainRedFilledBtn style={{ marginLeft: "auto" }}>
-                <Link to="/AddClass">班級建立</Link>
+                <Link to="/CreateClass">班級建立</Link>
               </MainRedFilledBtn>
             </HeaderContainer>
             <Container2>
@@ -114,7 +87,6 @@ function ManageClass() {
           </MainContent>
         </Container>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }

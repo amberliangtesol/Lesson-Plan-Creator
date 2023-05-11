@@ -13,9 +13,9 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
-import TeacherMainSidebar from "../../components/TeacherMainSidebar";
+import { TeacherMainSidebar } from "../../components/Sidebar";
 import Footer from "../../components/Footer";
-import loadinganimation from "../../components/loading.gif";
+import loadinganimation from "../../components/Asset/loading.gif";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
@@ -38,24 +38,19 @@ function TeacherMain() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if the guide state is stored in the local storage
     const guideState = localStorage.getItem("mainguide");
 
     if (guideState === "true") {
-      // If the guide state is true, don't show the Joyride guide
       setRunJoyride(false);
     } else {
-      // If the guide state is not true (first time or false), show the Joyride guide
       setRunJoyride(true);
     }
   }, []);
 
-  // Joyride callback function to handle onFinish or onSkip event
   const handleJoyrideCallback = (data) => {
     const { status } = data;
 
     if (status === "finished" || status === "skipped") {
-      // If the user finishes or skips the Joyride guide, set the guide state to true in local storage
       localStorage.setItem("mainguide", "true");
     }
   };
@@ -181,8 +176,6 @@ function TeacherMain() {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         if (userData) {
-          // Add this condition to check if userData is defined
-          // Fetch class names
           const classNames = await Promise.all(
             userData.classes.map(async (classId) => {
               const classDoc = await getDoc(doc(db, "classes", classId));
@@ -224,7 +217,6 @@ function TeacherMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-        console.log("lessons", lessons);
         setLessons(lessons);
         setLoading(false);
       }
@@ -260,8 +252,8 @@ function TeacherMain() {
       <Joyride
         steps={steps}
         styles={joyrideStyles}
-        run={runJoyride} // Use the runJoyride state to control when to show the Joyride guide
-        callback={handleJoyrideCallback} // Add the callback function to handle onFinish or onSkip event
+        run={runJoyride}
+        callback={handleJoyrideCallback}
       />
       <Header></Header>
       <Content>
@@ -341,7 +333,6 @@ function TeacherMain() {
                             <MainDarkFilledBtn
                               type="button"
                               onClick={() => handleEditCourse(c.id)}
-                              // disabled={!isCourseOutdated(c)}
                             >
                               <Link to="/EditCourse">課程編輯</Link>
                             </MainDarkFilledBtn>

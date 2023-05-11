@@ -1,18 +1,18 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components/macro";
-import monster1 from "./Monster/1.png";
-import monster2 from "./Monster/2.png";
-import monster3 from "./Monster/3.png";
-import monster4 from "./Monster/4.png";
-import monster5 from "./Monster/5.png";
-import monster6 from "./Monster/6.png";
-import monster7 from "./Monster/7.png";
-import monster8 from "./Monster/8.png";
-import monster9 from "./Monster/9.png";
-import monster10 from "./Monster/10.png";
-import user from "./Monster/user.png";
-import spinnerImage from "./Monster/spinnerImage.png";
-import vs from "./Monster/vs.png";
+import monster1 from "./CourseAsset/Monster/1.png";
+import monster2 from "./CourseAsset/Monster/2.png";
+import monster3 from "./CourseAsset/Monster/3.png";
+import monster4 from "./CourseAsset/Monster/4.png";
+import monster5 from "./CourseAsset/Monster/5.png";
+import monster6 from "./CourseAsset/Monster/6.png";
+import monster7 from "./CourseAsset/Monster/7.png";
+import monster8 from "./CourseAsset/Monster/8.png";
+import monster9 from "./CourseAsset/Monster/9.png";
+import monster10 from "./CourseAsset/Monster/10.png";
+import user from "./CourseAsset/Monster/user.png";
+import spinnerImage from "./CourseAsset/Monster/spinnerImage.png";
+import vs from "./CourseAsset/Monster/vs.png";
 
 const monsterImages = [
   monster1,
@@ -42,7 +42,6 @@ const GameMode = ({ countdown, setCountdown }) => {
   const [initialUserCountdown, setInitialUserCountdown] = useState(null);
   const [initialNpcCountdown, setInitialNpcCountdown] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  // const gamesound = useRef(new Audio(gamebgm));
 
   const randomCountdown = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -54,19 +53,17 @@ const GameMode = ({ countdown, setCountdown }) => {
 
   useEffect(() => {
     if (gamemode) {
-      const userCountdown = randomCountdown(10, 20); // For example, user countdown range: 10 - 20 seconds
-      const npcCountdown = randomCountdown(5, 25); // For example, NPC countdown range: 5 - 25 seconds
+      const userCountdown = randomCountdown(10, 20);
+      const npcCountdown = randomCountdown(5, 25);
       setCountdown(userCountdown);
       setNpcCountdown(npcCountdown);
       setInitialUserCountdown(userCountdown);
       setInitialNpcCountdown(npcCountdown);
-      // gamesound.current.play();
     } else {
       setCountdown(null);
       setNpcCountdown(null);
       setInitialUserCountdown(null);
       setInitialNpcCountdown(null);
-      // gamesound.current.pause();
     }
   }, [gamemode]);
 
@@ -92,7 +89,6 @@ const GameMode = ({ countdown, setCountdown }) => {
     if (countdown === 0) {
       setShowPopup(true);
       setNpcCountdown(0);
-      // gamesound.current.pause();
     } else {
       setShowPopup(false);
     }
@@ -185,13 +181,7 @@ const CountdownBar = styled.div`
   animation: ${(props) => css`
     ${props.initialCountdown}s ${countdownAnimation} linear forwards
   `};
-  ${
-    "" /* ${(props) =>
-    props.countdown === 0 &&
-    css`
-      opacity: 20%;
-    `} */
-  }
+  ${""}
 `;
 
 const ImageContainer = styled.div`
@@ -389,17 +379,6 @@ const CountdownWrapper = styled.div`
   color: #ffffff;
   ${(props) => props.countdown !== null && props.countdown <= 5 && redShake}
 `;
-
-// const popupAnimation = keyframes`
-//   0% {
-//     opacity: 0;
-//     transform: translateY(0);
-//   }
-//   100% {
-//     opacity: 1;
-//     transform: translateY(-50px);
-//   }
-// `;
 
 const bounceAnimation = keyframes`
   0% {

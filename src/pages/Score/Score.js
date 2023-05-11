@@ -1,4 +1,4 @@
-import Chart from "../../components/Chart";
+import Chart from "./Chart";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -13,9 +13,6 @@ import {
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 
 function Score() {
@@ -52,7 +49,6 @@ function Score() {
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
       const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
       const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
       const querySnapshot = await getDocs(unitsQuery);
@@ -89,7 +85,6 @@ function Score() {
         querySnapshot.forEach((doc) => {
           fetchedData[doc.id] = doc.data();
         });
-        console.log("fetchedData after loop", fetchedData);
         setData(fetchedData);
       };
 
@@ -104,33 +99,26 @@ function Score() {
   const currentUnit = sortedUnits.find((unit) => unit.id === currentUnitId);
   const unitQuestions = currentUnit ? currentUnit.data.test.length : 0;
 
-  // Function to generate an array of empty objects
   const generateEmptyAnswers = (count) => {
     return new Array(count).fill(null).map(() => ({}));
   };
 
-  // Initialize an empty data object
   const data = {};
 
-  // Loop through the fetched data object
   for (const student in fetchedData) {
     if (fetchedData.hasOwnProperty(student)) {
       const studentData = fetchedData[student];
 
-      // Check if studentData has an 'answered' property and it's an array
       if (
         studentData.hasOwnProperty("answered") &&
         Array.isArray(studentData.answered)
       ) {
         data[student] = studentData.answered;
       } else {
-        // If studentData doesn't have an 'answered' property, set a default value
         data[student] = generateEmptyAnswers(unitQuestions);
       }
     }
   }
-
-  console.log("data", data);
 
   const isDataValid = Object.values(data).every(
     (studentData) => Array.isArray(studentData) && studentData.length > 0
@@ -142,7 +130,6 @@ function Score() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <MainContent>
@@ -199,8 +186,6 @@ function Score() {
           </MainContent>
         </Container>
       </Content>
-
-      <Footer></Footer>
     </Body>
   );
 }

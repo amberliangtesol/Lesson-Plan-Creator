@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, registerables } from "chart.js";
 import { Bar, Doughnut } from "react-chartjs-2";
 import styled from "styled-components/macro";
-import { db } from "../utils/firebaseApp";
+import { db } from "../../utils/firebaseApp";
 import { doc, getDoc } from "firebase/firestore";
+import modal from "../../components/Modal";
 
 const processDonutData = (data) => {
   const labels = Object.keys(data);
@@ -104,7 +105,9 @@ const Chart = ({ data }) => {
           if (docSnapshot.exists()) {
             fetchedNames[studentId] = docSnapshot.data().name;
           } else {
-            console.log(`No student found with ID: ${studentId}`);
+            modal.success(
+              `找不到帳號為${studentId}的學生，請再次回班級名單確認編輯`
+            );
           }
         }
 

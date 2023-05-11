@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { UserContext } from "../../UserInfoProvider";
 import {
@@ -12,20 +11,16 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-import Header from "../../components/Header";
-import TeacherMainSidebar from "../../components/TeacherMainSidebar";
-import Footer from "../../components/Footer";
+import { TeacherMainSidebar } from "../../components/Sidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
-import arrow from "../Login/arrow.png";
+import arrow from "./arrow.png";
 import modal from "../../components/Modal";
 
 function ManageBadge() {
   const { user, setUser } = useContext(UserContext);
-  const [classNames, setClassNames] = useState([]);
   const [classDetails, setClassDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // First useEffect for fetching and setting user data
   useEffect(() => {
     async function fetchUserData() {
       if (user.name) return;
@@ -45,7 +40,6 @@ function ManageBadge() {
     fetchUserData();
   }, [user.account]);
 
-  // Second useEffect for fetching and setting class details
   useEffect(() => {
     async function fetchClassDetails() {
       if (!user.classes) return;
@@ -221,7 +215,6 @@ function ManageBadge() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
@@ -231,7 +224,6 @@ function ManageBadge() {
           </MainContent>
         </Container>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }

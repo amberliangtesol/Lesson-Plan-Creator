@@ -1,27 +1,23 @@
-import React from "react";
-import { useState } from "react";
-import "./Matching.css";
-import styled from "styled-components/macro";
-
-const Card = ({ id, name, flipped, matched, clicked }) => {
-  return (
-    <div
-      onClick={() => (flipped ? undefined : clicked(name, id))}
-      className={
-        "card" + (flipped ? " flipped" : "") + (matched ? " matched" : "")
-      }
-    >
-      <div className="back">?</div>
-      <div className="front">
-        <span>{name}</span>
-      </div>
-    </div>
-  );
-};
+import React, { useState } from "react";
+import styled, { keyframes } from "styled-components/macro";
 
 const Matching = (props) => {
-  // remove destructuring of questionData
-  const { cards, questionData } = props; // destructure props here
+  const { cards, questionData } = props;
+
+  const Card = ({ id, name, flipped, matched, clicked }) => {
+    return (
+      <CardWrapper
+        onClick={() => (flipped ? undefined : clicked(name, id))}
+        flipped={flipped}
+        matched={matched}
+      >
+        <div className="back">?</div>
+        <div className="front">
+          <span>{name}</span>
+        </div>
+      </CardWrapper>
+    );
+  };
 
   const shuffle = (array) => {
     let currentIndex = array.length,
@@ -60,10 +56,8 @@ const Matching = (props) => {
       index,
     };
 
-    // Log click
     setClickHistory([...clickHistory, currentCard]);
 
-    //update card is flipped
     let updateCards = cardList.map((card) => {
       if (card.id === index) {
         card.flipped = true;
@@ -75,7 +69,6 @@ const Matching = (props) => {
     setFlippedCards(updateFlipped);
     setCardList(updateCards);
 
-    //if 2 cards are flipped, check if they are a match
     if (flippedCards.length === 2) {
       setTimeout(() => {
         check();
@@ -111,30 +104,6 @@ const Matching = (props) => {
     }
   };
 
-  // const GameOver = () => {
-  //   return (
-  //     <div className="centered">
-  //       <h1>Congrats!</h1>
-  //     </div>
-  //   );
-  // };
-
-  // const GameOver = () => {
-  //   alert("you win!");
-  //   props.onWin();
-  // };
-
-  // useEffect(() => {
-  //   if (gameOver && typeof onWin === "function") {
-  //     // access onWin from props
-  //     onWin(); // call onWin function
-  //   }
-  // }, [gameOver]);
-
-  const handleNextClick = () => {
-    props.onNext();
-  };
-
   return (
     <div
       id="question-container"
@@ -152,7 +121,7 @@ const Matching = (props) => {
           第 {questionData.id} 題
         </h3>
         <p>{questionData.question}</p>
-        <div className="game-board">
+        <div>
           {cardList.map((card, index) => (
             <Card
               key={index}
@@ -182,6 +151,74 @@ const OptionContainer = styled.div`
   border-radius: 33px;
   width: 100%;
   padding: 30px 60px 50px 60px;
+`;
+
+const selected = keyframes`
+  0% {
+    opacity: 0.2;
+  }
+  30% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.3;
+  }
+`;
+
+const CardWrapper = styled.div`
+  width: 30%;
+  user-select: none;
+  height: 112px;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+  margin: 16px;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+  transform: ${(props) =>
+    props.flipped || props.matched ? "rotateY(180deg)" : "none"};
+
+  &.matched .front {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05) inset;
+    animation: ${selected} 0.8s 0s ease 1;
+    animation-fill-mode: both;
+    opacity: 0.2;
+  }
+
+  div {
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    transition: 0.6s;
+    background: #e7e7e7;
+
+    &.back {
+      font-size: 50px;
+      line-height: 120px;
+      cursor: pointer;
+      color: #f46868;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &.front {
+      transform: rotateY(180deg);
+      line-height: 110px;
+      text-emphasis: none;
+    }
+  }
 `;
 
 export default Matching;

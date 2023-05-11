@@ -1,13 +1,15 @@
 import styled from "styled-components/macro";
 import { Link, useLocation } from "react-router-dom";
 import { UserContext } from "../UserInfoProvider";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { HiOutlineHome } from "react-icons/hi";
+import { BsFillPeopleFill } from "react-icons/bs";
 import { BsFillPersonFill } from "react-icons/bs";
 import { BiBadgeCheck } from "react-icons/bi";
-import studentprofile from "./defaultstudentprofile.png";
+import teacherprofile from "./Asset/defaultteacherprofile.png";
+import studentprofile from "./Asset/defaultstudentprofile.png";
 
-const StudentMainSidebar = () => {
+const MainSidebar = ({ userType, links }) => {
   const { user, setUser } = useContext(UserContext);
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
@@ -21,44 +23,74 @@ const StudentMainSidebar = () => {
       <ProfileImg imageURL={user.image}></ProfileImg>
       <Greeting>{user.name}</Greeting>
       <BtnContainer>
-        <Link
-          to="/StudentMain"
-          style={{ textDecoration: "none" }}
-          onClick={() => handleLinkClick("/StudentMain")}
-        >
-          <Btnwrapper className={activeLink === "/StudentMain" ? "active" : ""}>
-            <HiOutlineHome style={{ color: "black" }} />
-            <StyledParagraph>課程主頁</StyledParagraph>
-          </Btnwrapper>
-        </Link>
-
-        <Link
-          to="/Badge"
-          style={{ textDecoration: "none" }}
-          onClick={() => handleLinkClick("/Badge")}
-        >
-          <Btnwrapper className={activeLink === "/Badge" ? "active" : ""}>
-            <BiBadgeCheck style={{ color: "black" }} />
-            <StyledParagraph>我的徽章</StyledParagraph>
-          </Btnwrapper>
-        </Link>
-
-        <Link
-          to="/StudentProfile"
-          style={{ textDecoration: "none" }}
-          onClick={() => handleLinkClick("/StudentProfile")}
-        >
-          <Btnwrapper
-            className={activeLink === "/StudentProfile" ? "active" : ""}
+        {links.map((link) => (
+          <Link
+            key={link.path}
+            to={link.path}
+            style={{ textDecoration: "none" }}
+            onClick={() => handleLinkClick(link.path)}
           >
-            <BsFillPersonFill style={{ color: "black" }} />
-            <StyledParagraph>個人設定</StyledParagraph>
-          </Btnwrapper>
-        </Link>
+            <Btnwrapper className={activeLink === link.path ? "active" : ""}>
+              {link.icon}
+              <StyledParagraph>{link.label}</StyledParagraph>
+            </Btnwrapper>
+          </Link>
+        ))}
       </BtnContainer>
     </Container1>
   );
 };
+
+const StudentMainSidebar = () => (
+  <MainSidebar
+    userType="student"
+    links={[
+      {
+        path: "/StudentMain",
+        label: "課程主頁",
+        icon: <HiOutlineHome style={{ color: "black" }} />,
+      },
+      {
+        path: "/Badge",
+        label: "我的徽章",
+        icon: <BiBadgeCheck style={{ color: "black" }} />,
+      },
+      {
+        path: "/Profile",
+        label: "個人設定",
+        icon: <BsFillPersonFill style={{ color: "black" }} />,
+      },
+    ]}
+  />
+);
+
+const TeacherMainSidebar = () => (
+  <MainSidebar
+    userType="teacher"
+    links={[
+      {
+        path: "/TeacherMain",
+        label: "課程主頁",
+        icon: <HiOutlineHome style={{ color: "black" }} />,
+      },
+      {
+        path: "/ManageClass",
+        label: "班級管理",
+        icon: <BsFillPeopleFill style={{ color: "black" }} />,
+      },
+      {
+        path: "/ManageBadge",
+        label: "徽章管理",
+        icon: <BiBadgeCheck style={{ color: "black" }} />,
+      },
+      {
+        path: "/Profile",
+        label: "個人設定",
+        icon: <BsFillPersonFill style={{ color: "black" }} />,
+      },
+    ]}
+  />
+);
 
 const BtnContainer = styled.div`
   display: flex;
@@ -86,10 +118,14 @@ const Container1 = styled.div`
 
 const ProfileImg = styled.div`
   width: 150px;
-  min-height: 150px;
+  height: 150px;
   box-shadow: rgb(0 0 0 / 40%) 0px 1px 4px 0px;
   background-image: url(${(props) =>
-    props.imageURL ? props.imageURL : studentprofile});
+    props.imageURL
+      ? props.imageURL
+      : props.userType === "teacher"
+      ? teacherprofile
+      : studentprofile});
   background-size: cover;
   background-position: center;
   border-radius: 50%;
@@ -150,4 +186,4 @@ const Btnwrapper = styled.div`
   }
 `;
 
-export default StudentMainSidebar;
+export { TeacherMainSidebar, StudentMainSidebar };

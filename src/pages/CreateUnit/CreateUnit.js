@@ -11,13 +11,10 @@ import {
 import { db } from "../../utils/firebaseApp";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
-import arrow from "../Login/arrow.png";
-import modal from "../../components/Modal";
+import arrow from "./arrow.png";
 
 function chunk(array, chunk) {
   let result = [];
@@ -119,9 +116,6 @@ function CreateUnit() {
     e.preventDefault();
   };
 
-  console.log("totalTestArray", { totalTestArray });
-  // console.log("testArray", { testArray });
-
   const handleAddOption = (index) => {
     const newTotalTestArray = [...totalTestArray];
     const { type, data } = newTotalTestArray[index];
@@ -169,7 +163,6 @@ function CreateUnit() {
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
       if (sortedUnits.length === 0 || submitted) {
         const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
         const unitsQuery = query(
@@ -195,7 +188,6 @@ function CreateUnit() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <Container1>
@@ -626,8 +618,6 @@ function CreateUnit() {
         </Container>
       </Content>
       <CourseDetailText>單元建立</CourseDetailText>
-
-      <Footer></Footer>
     </Body>
   );
 }

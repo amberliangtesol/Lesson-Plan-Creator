@@ -1,7 +1,7 @@
 // MultipleChoice.js
 import React, { useState } from "react";
-import { MainRedFilledBtn } from "./Buttons";
-import { MultipleChoiceOptionCard } from "./Buttons";
+import { MainRedFilledBtn } from "../../components/Buttons";
+import { MultipleChoiceOptionCard } from "../../components/Buttons";
 import styled from "styled-components/macro";
 
 const MultipleChoice = ({ questionData, onAnswerClick }) => {

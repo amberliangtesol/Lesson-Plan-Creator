@@ -3,16 +3,14 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import { useState, useEffect, useRef } from "react";
 import { keyframes } from "styled-components";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import HoverComputer from "../../components/HoverComputer/HoverComputer";
+import HoverComputer from "./HoverComputer/HoverComputer";
 import { ColorFilledBtn } from "../../components/Buttons";
 import { ColorBorderBtn } from "../../components/Buttons";
-import arrow from "./arrow.png";
-import logo from "../../components/logo.png";
-import banner from "./banner.png";
-import student from "./student.png";
-import teacher from "./teacher.png";
+import arrow from "./MainAsset/arrow.png";
+import logo from "./MainAsset/logo.png";
+import banner from "./MainAsset/banner.png";
+import studentprofile from "./MainAsset/studentprofile.png";
+import teacherprofile from "./MainAsset/teacherprofile.png";
 
 function Main() {
   const [showTeacher, setShowTeacher] = useState(false);
@@ -199,8 +197,6 @@ function Main() {
       <FooterSlogenWrapper>
         <h2>來看看更多精彩功能吧！ </h2>
       </FooterSlogenWrapper>
-
-      <Footer></Footer>
     </div>
   );
 }
@@ -304,7 +300,7 @@ const ConversationP = styled.p`
 const TeacherImg = styled.div`
   width: 168px;
   height: 245px;
-  background-image: url(${teacher});
+  background-image: url(${teacherprofile});
   background-size: cover;
   background-position: center;
   opacity: 0;
@@ -320,7 +316,7 @@ const TeacherImg = styled.div`
 const StudentImg = styled.div`
   width: 170px;
   height: 248px;
-  background-image: url(${student});
+  background-image: url(${studentprofile});
   background-size: cover;
   background-position: center;
   opacity: 0;

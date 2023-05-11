@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { OutTable, ExcelRenderer } from "react-excel-renderer";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { ExcelRenderer } from "react-excel-renderer";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import "./AddClass.css";
-import { auth, db } from "../../utils/firebaseApp";
+import { db } from "../../utils/firebaseApp";
 import {
-  setDoc,
   addDoc,
   getDoc,
   doc,
@@ -17,11 +14,9 @@ import {
 } from "firebase/firestore";
 import styled from "styled-components/macro";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../UserInfoProvider";
-import Header from "../../components/Header";
-import TeacherMainSidebar from "../../components/TeacherMainSidebar";
-import Footer from "../../components/Footer";
+import { TeacherMainSidebar } from "../../components/Sidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { RiFileExcel2Line } from "react-icons/ri";
@@ -29,15 +24,7 @@ import { MdOutlineSchool } from "react-icons/md";
 import Joyride from "react-joyride";
 import modal from "../../components/Modal";
 
-const HiddenFileInput = styled.input.attrs({ type: "file" })`
-  display: none;
-`;
-
-const CustomFileInputButton = styled(MainDarkBorderBtn)`
-  /* Add any custom styles you want for the input button */
-`;
-
-function AddClass() {
+function CreateClass() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [cols, setCols] = useState([]);
@@ -57,25 +44,21 @@ function AddClass() {
   const [studentNameInput, setStudentNameInput] = useState("");
   const [teacherEmailInput, setTeacherEmailInput] = useState("");
   const [runJoyride, setRunJoyride] = useState(false);
+
   useEffect(() => {
-    // Check if the guide state is stored in the local storage
     const guideState = localStorage.getItem("addclassguide");
 
     if (guideState === "true") {
-      // If the guide state is true, don't show the Joyride guide
       setRunJoyride(false);
     } else {
-      // If the guide state is not true (first time or false), show the Joyride guide
       setRunJoyride(true);
     }
   }, []);
 
-  // Joyride callback function to handle onFinish or onSkip event
   const handleJoyrideCallback = (data) => {
     const { status } = data;
 
     if (status === "finished" || status === "skipped") {
-      // If the user finishes or skips the Joyride guide, set the guide state to true in local storage
       localStorage.setItem("addclassguide", "true");
     }
   };
@@ -89,7 +72,8 @@ function AddClass() {
             style={{
               fontWeight: "bold",
               color: "#f46868",
-            }}>
+            }}
+          >
             Step1 輸入班級
           </span>
           <br />
@@ -101,9 +85,6 @@ function AddClass() {
       showSkipButton: true,
       showCloseButton: true,
       type: "continuous",
-      // hideCloseButton: true,
-      // showProgress: true,
-      // showNextButton: true,
     },
     {
       target: ".studentTable",
@@ -113,7 +94,8 @@ function AddClass() {
             style={{
               fontWeight: "bold",
               color: "#f46868",
-            }}>
+            }}
+          >
             Step2 新增學生
           </span>
           <br />
@@ -125,8 +107,6 @@ function AddClass() {
       disableBeacon: true,
       hideCloseButton: true,
       showNextButton: true,
-      // showSkipButton: true,
-      // hideBackButton: true,
     },
     {
       target: ".teacherTable",
@@ -136,7 +116,8 @@ function AddClass() {
             style={{
               fontWeight: "bold",
               color: "#f46868",
-            }}>
+            }}
+          >
             Step3 指派教師
           </span>
           <br />
@@ -146,8 +127,6 @@ function AddClass() {
       disableBeacon: true,
       hideCloseButton: true,
       showNextButton: true,
-      // hideBackButton: true,
-      // showSkipButton: true,
     },
   ]);
 
@@ -232,9 +211,10 @@ function AddClass() {
 
   const renderStudentTable = () => {
     return (
-      <table
+      <ExcelTable2007
         className="ExcelTable2007"
-        style={rows.length === 0 ? { border: "none" } : {}}>
+        style={rows.length === 0 ? { border: "none" } : {}}
+      >
         {rows.length > 0 && (
           <thead>
             <tr className="heading">
@@ -245,15 +225,16 @@ function AddClass() {
           </thead>
         )}
         <tbody>{renderRows()}</tbody>
-      </table>
+      </ExcelTable2007>
     );
   };
 
   const renderTeacherTable = () => {
     return (
-      <table
+      <ExcelTable2007
         className="ExcelTable2007"
-        style={selectedTeachers.length === 0 ? { border: "none" } : {}}>
+        style={selectedTeachers.length === 0 ? { border: "none" } : {}}
+      >
         {selectedTeachers.length > 0 && (
           <thead>
             <tr className="heading">
@@ -281,7 +262,7 @@ function AddClass() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </ExcelTable2007>
     );
   };
 
@@ -307,7 +288,6 @@ function AddClass() {
   const fileHandler = (event) => {
     let fileObj = event.target.files[0];
 
-    //just pass the fileObj as parameter
     ExcelRenderer(fileObj, (err, resp) => {
       if (err) {
         modal.success(err);
@@ -321,16 +301,13 @@ function AddClass() {
     });
   };
 
-  // console.log("selectedTeachers", selectedTeachers);
-  // console.log("Selected teacher:", selectedTeacher);
-
   const createNewClass = async () => {
     const newClassDocRef = await addDoc(collection(db, "classes"), {
       name: selectedClass,
       students: [],
       teachers: selectedTeachers,
     });
-    // setSelectedClass(newClassDocRef.id);
+
     await updateDoc(newClassDocRef, {
       id: newClassDocRef.id,
     });
@@ -433,7 +410,6 @@ function AddClass() {
   const handleSubmit = async () => {
     if (selectedTeacher) {
       await createOrUpdateClass();
-      // navigate("/ManageClass");
     } else {
       modal.success("請選擇至少一位教師");
     }
@@ -443,7 +419,8 @@ function AddClass() {
     return (
       <span
         onClick={onDelete}
-        style={{ cursor: "pointer", paddingLeft: "7px" }}>
+        style={{ cursor: "pointer", paddingLeft: "7px" }}
+      >
         <RiDeleteBinLine />
       </span>
     );
@@ -467,17 +444,8 @@ function AddClass() {
     ));
   };
 
-  const handleCheckboxChange = (e) => {
-    setUseLoggedInUserEmail(e.target.checked);
-    if (e.target.checked) {
-      setTeacherInput(user.account); // Replace loggedInUserEmail with the actual email of the logged-in user
-    } else {
-      setTeacherInput("");
-    }
-  };
-
   useEffect(() => {
-    const loggedInUserEmail = user.account; // Replace with the actual email of the logged-in user
+    const loggedInUserEmail = user.account;
     setSelectedTeacher(loggedInUserEmail);
     if (useLoggedInUserEmail) {
       setTeacherInput(loggedInUserEmail);
@@ -489,10 +457,9 @@ function AddClass() {
       <Joyride
         steps={steps}
         styles={joyrideStyles}
-        run={runJoyride} // Use the runJoyride state to control when to show the Joyride guide
-        callback={handleJoyrideCallback} // Add the callback function to handle onFinish or onSkip event
+        run={runJoyride}
+        callback={handleJoyrideCallback}
       />
-      <Header></Header>
       <Content>
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
@@ -509,7 +476,8 @@ function AddClass() {
                 value={selectedClass}
                 onChange={handleClassNameChange}
                 placeholder="輸入名稱"
-                className="classNameInput"></ClassNameInput>
+                className="classNameInput"
+              ></ClassNameInput>
               <HiddenFileInput ref={fileInputRef} onChange={fileHandler} />
             </div>
 
@@ -521,7 +489,8 @@ function AddClass() {
                 alignItems: "center",
                 marginTop: "30px",
               }}
-              className="studentTable">
+              className="studentTable"
+            >
               <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
                 學生
               </h2>
@@ -539,12 +508,14 @@ function AddClass() {
               />
               <MainDarkBorderBtn
                 onClick={handleAddStudentEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}>
+                style={{ cursor: "pointer", marginLeft: "5px" }}
+              >
                 新增學生
               </MainDarkBorderBtn>
               <CustomFileInputButton
                 onClick={triggerFileInput}
-                style={{ marginLeft: "auto", padding: "5px" }}>
+                style={{ marginLeft: "auto", padding: "5px" }}
+              >
                 <RiFileExcel2Line
                   style={{
                     fontSize: "20px",
@@ -566,7 +537,8 @@ function AddClass() {
                 alignItems: "center",
                 marginTop: "30px",
               }}
-              className="teacherTable">
+              className="teacherTable"
+            >
               <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
                 教師
               </h2>
@@ -579,7 +551,8 @@ function AddClass() {
               />
               <MainDarkBorderBtn
                 onClick={handleAddTeacherEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}>
+                style={{ cursor: "pointer", marginLeft: "5px" }}
+              >
                 新增教師
               </MainDarkBorderBtn>
             </TeacherTable>
@@ -588,13 +561,13 @@ function AddClass() {
 
             <MainRedFilledBtn
               onClick={handleSubmit}
-              style={{ width: "100%", marginTop: "30px" }}>
+              style={{ width: "100%", marginTop: "30px" }}
+            >
               新增班級
             </MainRedFilledBtn>
           </MainContent>
         </Container>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }
@@ -674,4 +647,53 @@ const Splict = styled.div`
   width: 60vw;
 `;
 
-export default AddClass;
+const HiddenFileInput = styled.input.attrs({ type: "file" })`
+  display: none;
+`;
+
+const CustomFileInputButton = styled(MainDarkBorderBtn)``;
+
+const ExcelTable2007 = styled.table`
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 14px;
+  border-radius: 20px;
+  border: #545454 2px solid;
+
+  th {
+    padding: 10px 30px;
+    text-align: left;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #545454;
+    border-bottom: solid 2px #545454;
+    width: 40%;
+
+    &:first-child {
+      border-top-left-radius: 13px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 13px;
+      width: 20%;
+    }
+  }
+
+  td {
+    padding: 10px 30px;
+    font-size: 16px;
+  }
+
+  tr:last-child {
+    td:first-child {
+      border-bottom-left-radius: 13px;
+    }
+
+    td:last-child {
+      border-bottom-right-radius: 13px;
+    }
+  }
+`;
+
+export default CreateClass;

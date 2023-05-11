@@ -11,12 +11,9 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-import Header from "../../components/Header";
-import StudentMainSidebar from "../../components/StudentMainSidebar";
-import Footer from "../../components/Footer";
-import loadinganimation from "../../components/loading.gif";
+import { StudentMainSidebar } from "../../components/Sidebar";
+import loadinganimation from "../../components/Asset/loading.gif";
 import { MainRedFilledBtn } from "../../components/Buttons";
-import { MainDarkFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { BiTimeFive } from "react-icons/bi";
 import { BsFillBookmarkStarFill } from "react-icons/bs";
@@ -41,8 +38,6 @@ function StudentMain() {
     async function fetchUserData() {
       if (!user.classes || user.classes.length === 0 || user.classNames) return;
 
-      // Add this condition to check if userData is defined
-      // Fetch class names
       const classNames = await Promise.all(
         user.classes.map(async (classId) => {
           const classDoc = await getDoc(doc(db, "classes", classId));
@@ -79,7 +74,6 @@ function StudentMain() {
         const lessons = results.docs.map((doc) => {
           return doc.data();
         });
-        console.log(lessons);
         setLessons(lessons);
       }
     };
@@ -101,10 +95,10 @@ function StudentMain() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <StudentMainSidebar></StudentMainSidebar>
+          {/* <TeacherMainSidebar></TeacherMainSidebar> */}
           <MainContent>
             <Title>課程主頁</Title>
             {lessons.length > 0 ? (
@@ -165,9 +159,7 @@ function StudentMain() {
                           </CourseContent>
                           <BtnContainer>
                             <MainRedFilledBtn>
-                              <Link to={`/YouTubeWithQuestion/${c.id}`}>
-                                進入課程
-                              </Link>
+                              <Link to={`/course/${c.id}`}>進入課程</Link>
                             </MainRedFilledBtn>
                           </BtnContainer>
                         </OutdatedCourse>
@@ -242,8 +234,6 @@ function StudentMain() {
           </MainContent>
         </Container>
       </Content>
-
-      <Footer></Footer>
     </Body>
   );
 }

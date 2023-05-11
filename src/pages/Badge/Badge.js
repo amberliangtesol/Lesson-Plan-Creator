@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import styled, { keyframes } from "styled-components/macro";
+import styled from "styled-components/macro";
 import { UserContext } from "../../UserInfoProvider";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebaseApp";
-import wow from "./wow.gif";
-import badge1 from "../../components/badge1.gif";
-import badge2 from "../../components/badge2.gif";
-import Header from "../../components/Header";
-import StudentMainSidebar from "../../components/StudentMainSidebar";
-import Footer from "../../components/Footer";
+import wow from "./BadgeAsset/wow.gif";
+import badge1 from "./BadgeAsset/badge1.gif";
+import badge2 from "./BadgeAsset/badge2.gif";
+import { StudentMainSidebar } from "../../components/Sidebar";
 
 function Badge() {
   const { user, setUser } = useContext(UserContext);
@@ -26,8 +24,6 @@ function Badge() {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         if (userData) {
-          // Add this condition to check if userData is defined
-          // Fetch class names
           const classNames = await Promise.all(
             userData.classes.map(async (classId) => {
               const classDoc = await getDoc(doc(db, "classes", classId));
@@ -59,7 +55,6 @@ function Badge() {
         if (badgeData) {
           setCollectedBadges(badgeData.collected || []);
           setUsedBadges(badgeData.outdated || []);
-          console.log("badgeData", badgeData);
         }
         const collectedCountsLocal = badgeData.collected.reduce((acc, cur) => {
           acc[cur] = (acc[cur] || 0) + 1;
@@ -77,48 +72,45 @@ function Badge() {
     fetchBadgeData();
   }, [user]);
 
+  const BADGE_TYPE_IMAGES = {
+    badge1,
+    badge2,
+  };
+
+  const Badge = ({ type }) => (
+    <Container2>
+      <BadgeImage src={BADGE_TYPE_IMAGES[type]}></BadgeImage>
+      <BadgeText>
+        目前擁有<WowWords>{collectedCounts[type] || 0}</WowWords>個
+      </BadgeText>
+      <BadgeText>
+        已經兌換
+        <WowWords>{outdatedCounts[`used${type}`] || 0}</WowWords>個
+      </BadgeText>
+    </Container2>
+  );
+
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
-          <StudentMainSidebar></StudentMainSidebar>
+          <StudentMainSidebar />
           <MainContent>
             <Title>我的徽章</Title>
             <Container1>
-              <Wow></Wow>
+              <Wow />
               <WowText>
                 可以用徽章跟老師<WowWords> 兌換獎品 </WowWords>喔！！！
               </WowText>
             </Container1>
             <SubContent>
-              <Container2>
-                <Badge1></Badge1>
-                <BadgeText>
-                  目前擁有<WowWords>{collectedCounts["badge1"] || 0}</WowWords>
-                  個
-                </BadgeText>
-                <BadgeText>
-                  已經兌換
-                  <WowWords>{outdatedCounts["usedbadge1"] || 0}</WowWords>個
-                </BadgeText>
-              </Container2>
-              <Container2>
-                <Badge2></Badge2>
-                <BadgeText>
-                  目前擁有<WowWords>{collectedCounts["badge2"] || 0}</WowWords>
-                  個
-                </BadgeText>
-                <BadgeText>
-                  已經兌換
-                  <WowWords>{outdatedCounts["usedbadge2"] || 0}</WowWords>個
-                </BadgeText>
-              </Container2>
+              {["badge1", "badge2"].map((badgeType) => (
+                <Badge key={badgeType} type={badgeType} />
+              ))}
             </SubContent>
           </MainContent>
         </Container>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }
@@ -226,18 +218,10 @@ const WowWords = styled.span`
   padding-left: 3px;
 `;
 
-const Badge1 = styled.div`
+const BadgeImage = styled.div`
   width: 200px;
   height: 200px;
-  background-image: url(${badge1});
-  background-size: cover;
-  position: relative;
-`;
-
-const Badge2 = styled.div`
-  width: 200px;
-  height: 200px;
-  background-image: url(${badge2});
+  background-image: url(${(props) => props.src});
   background-size: cover;
   position: relative;
 `;

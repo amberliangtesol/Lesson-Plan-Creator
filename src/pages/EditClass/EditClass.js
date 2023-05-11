@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { OutTable, ExcelRenderer } from "react-excel-renderer";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import "./EditClass.css";
-import { auth, db } from "../../utils/firebaseApp";
+import { db } from "../../utils/firebaseApp";
 import {
-  setDoc,
-  addDoc,
   getDoc,
   doc,
   updateDoc,
@@ -18,14 +13,10 @@ import {
 } from "firebase/firestore";
 import styled from "styled-components/macro";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
 import { UserContext } from "../../UserInfoProvider";
-import Header from "../../components/Header";
-import TeacherMainSidebar from "../../components/TeacherMainSidebar";
-import Footer from "../../components/Footer";
+import { TeacherMainSidebar } from "../../components/Sidebar";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
-import { RiFileExcel2Line } from "react-icons/ri";
 import { MdOutlineSchool } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useParams } from "react-router-dom";
@@ -33,10 +24,8 @@ import modal from "../../components/Modal";
 
 function EditClass() {
   const navigate = useNavigate();
-
   const { classId } = useParams();
   const { user, setUser } = useContext(UserContext);
-  const [cols, setCols] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState("");
@@ -45,7 +34,6 @@ function EditClass() {
   const [teachers, setTeachers] = useState([]);
   const [teachersName, setTeachersName] = useState([]);
   const [useLoggedInUserEmail, setUseLoggedInUserEmail] = useState(false);
-
   const [studentEmailInput, setStudentEmailInput] = useState("");
   const [studentNameInput, setStudentNameInput] = useState("");
   const [teacherEmailInput, setTeacherEmailInput] = useState("");
@@ -71,8 +59,6 @@ function EditClass() {
     setStudentName(studentsName);
   };
 
-  // console.log("classId:", classId);
-
   const fetchClassData = async (classId) => {
     const classDocRef = doc(db, "classes", classId);
     const classDoc = await getDoc(classDocRef);
@@ -80,7 +66,6 @@ function EditClass() {
     setRows(classData.students);
     setSelectedTeachers(classData.teachers);
     setSelectedClass(classData.name);
-    // console.log("classData.students:", classData.students);
 
     if (classData.students && classData.students.length > 0) {
       fetchStudents(classData.students);
@@ -144,11 +129,9 @@ function EditClass() {
     }
   };
 
-  // console.log("selectedTeachers", selectedTeachers);
-
   const renderStudentTable = () => {
     return (
-      <table
+      <ExcelTable2007
         className="ExcelTable2007"
         style={rows.length === 0 ? { border: "none" } : {}}
       >
@@ -162,13 +145,13 @@ function EditClass() {
           </thead>
         )}
         <tbody>{renderRows()}</tbody>
-      </table>
+      </ExcelTable2007>
     );
   };
 
   const renderTeacherTable = () => {
     return (
-      <table
+      <ExcelTable2007
         className="ExcelTable2007"
         style={selectedTeachers.length === 0 ? { border: "none" } : {}}
       >
@@ -205,7 +188,7 @@ function EditClass() {
             );
           })}
         </tbody>
-      </table>
+      </ExcelTable2007>
     );
   };
 
@@ -226,13 +209,6 @@ function EditClass() {
 
   const handleClassNameChange = (e) => {
     setSelectedClass(e.target.value);
-  };
-
-  const handleTeacherInputBlur = () => {
-    if (teachers.includes(teacherEmailInput)) {
-    } else {
-      modal.success("無此教師帳號!");
-    }
   };
 
   const createOrUpdateClass = async () => {
@@ -365,7 +341,6 @@ function EditClass() {
     );
   };
 
-  // console.log("rows", rows);
   const renderRows = () => {
     return rows.map((row, rowIndex) => {
       const email = Array.isArray(row) ? row[1] : row;
@@ -395,7 +370,7 @@ function EditClass() {
   };
 
   useEffect(() => {
-    const loggedInUserEmail = user.account; // Replace with the actual email of the logged-in user
+    const loggedInUserEmail = user.account;
     setSelectedTeacher(loggedInUserEmail);
     if (useLoggedInUserEmail) {
       setTeacherInput(loggedInUserEmail);
@@ -404,7 +379,6 @@ function EditClass() {
 
   return (
     <Body>
-      <Header></Header>
       <Content>
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
@@ -440,7 +414,6 @@ function EditClass() {
                   />
                 )}
               </div>
-              {/* <HiddenFileInput ref={fileInputRef} onChange={fileHandler} /> */}
             </div>
 
             <Splict></Splict>
@@ -473,19 +446,6 @@ function EditClass() {
               >
                 新增學生
               </MainDarkBorderBtn>
-              {/* <CustomFileInputButton
-                onClick={triggerFileInput}
-                style={{ marginLeft: "auto", padding: "5px" }}
-              >
-                <RiFileExcel2Line
-                  style={{
-                    fontSize: "20px",
-                    marginRight: "5px",
-                    color: "#1d6f42",
-                  }}
-                />
-                上傳
-              </CustomFileInputButton> */}
             </StudentTable>
             <p style={{ fontSize: "15px", margin: "0px" }}>
               * 未曾註冊之信箱將『建立帳號』，系統預設初始『帳號』與『密碼』相同
@@ -506,7 +466,6 @@ function EditClass() {
                 type="text"
                 value={teacherEmailInput}
                 onChange={(e) => setTeacherEmailInput(e.target.value)}
-                // onBlur={handleTeacherInputBlur}
                 style={{ width: "100%" }}
                 placeholder="輸入信箱"
               />
@@ -529,7 +488,6 @@ function EditClass() {
           </MainContent>
         </Container>
       </Content>
-      <Footer></Footer>
     </Body>
   );
 }
@@ -607,6 +565,49 @@ const ClassNameInput = styled.input`
 const Splict = styled.div`
   border-bottom: solid 2px #f46868;
   width: 60vw;
+`;
+
+const ExcelTable2007 = styled.table`
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 14px;
+  border-radius: 20px;
+  border: #545454 2px solid;
+
+  th {
+    padding: 10px 30px;
+    text-align: left;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #545454;
+    border-bottom: solid 2px #545454;
+    width: 40%;
+
+    &:first-child {
+      border-top-left-radius: 13px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 13px;
+      width: 20%;
+    }
+  }
+
+  td {
+    padding: 10px 30px;
+    font-size: 16px;
+  }
+
+  tr:last-child {
+    td:first-child {
+      border-bottom-left-radius: 13px;
+    }
+
+    td:last-child {
+      border-bottom-right-radius: 13px;
+    }
+  }
 `;
 
 export default EditClass;

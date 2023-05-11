@@ -7,25 +7,27 @@ import {
   Outlet,
 } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
-import YouTubeWithQuestion from "./components/YouTubeWithQuestion";
+import UserInfoProvider, { UserContext } from "./UserInfoProvider";
+
+import Course from "./pages/Course/Course";
 import Badge from "./pages/Badge/Badge";
 import CreateCourse from "./pages/CreateCourse/CreateCourse";
 import CreateUnit from "./pages/CreateUnit/CreateUnit";
 import EditCourse from "./pages/EditCourse/EditCourse";
 import EditUnit from "./pages/EditUnit/EditUnit";
-import AddClass from "./pages/AddClass/AddClass";
+import CreateClass from "./pages/CreateClass/CreateClass";
 import EditClass from "./pages/EditClass/EditClass";
 import Login from "./pages/Login/Login";
 import ManageBadge from "./pages/ManageBadge/ManageBadge";
 import ManageClass from "./pages/ManageClass/ManageClass";
-import TeacherProfile from "./pages/TeacherProfile/TeacherProfile";
-import StudentProfile from "./pages/StudentProfile/StudentProfile";
+import Profile from "./pages/Profile/Profile";
 import Register from "./pages/Register/Register";
 import Score from "./pages/Score/Score";
 import Main from "./pages/Main/Main";
 import TeacherMain from "./pages/TeacherMain/TeacherMain";
 import StudentMain from "./pages/StudentMain/StudentMain";
-import UserInfoProvider, { UserContext } from "./UserInfoProvider";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -76,24 +78,33 @@ const StudentRouter = () => {
   return <Outlet />;
 };
 
+const ShareRouter = () => {
+  const { user, isLoading } = useContext(UserContext);
+  if (!isLoading && !user.role) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Outlet />;
+};
+
 function App() {
   return (
     <UserInfoProvider>
       <GlobalStyle />
+      <Header />
       <Routes>
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        <Route element={<ShareRouter />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
         <Route element={<StudentRouter />}>
           <Route path="/studentmain" element={<StudentMain />} />
           <Route path="/badge" element={<Badge />} />
-          <Route path="/studentprofile" element={<StudentProfile />} />
-          <Route
-            path="/youtubewithquestion/:lessonId"
-            element={<YouTubeWithQuestion />}
-          />
+          <Route path="/course/:lessonId" element={<Course />} />
         </Route>
 
         <Route element={<TeacherRouter />}>
@@ -104,15 +115,15 @@ function App() {
           <Route path="/editcourse/:lessonId" element={<EditCourse />} />
           <Route path="/edit-unit/:lessonId" element={<EditUnit />} />
           <Route path="/editunit/:lessonId" element={<EditUnit />} />
-          <Route path="/addclass" element={<AddClass />} />
+          <Route path="/createclass" element={<CreateClass />} />
           <Route path="/edit-class/:classId" element={<EditClass />} />
           <Route path="/score/:lessonId" element={<Score />} />
           <Route path="/score" element={<Score />} />
           <Route path="/managebadge" element={<ManageBadge />} />
           <Route path="/manageclass" element={<ManageClass />} />
-          <Route path="/teacherprofile" element={<TeacherProfile />} />
         </Route>
       </Routes>
+      <Footer />
     </UserInfoProvider>
   );
 }

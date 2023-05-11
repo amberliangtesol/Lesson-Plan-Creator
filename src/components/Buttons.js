@@ -75,7 +75,6 @@ const ColorBorderBtn = styled.div`
   }
 `;
 
-//main page button
 const MainRedFilledBtn = styled.div`
   cursor: pointer;
   min-width: 104px;
@@ -216,7 +215,7 @@ const MultipleChoiceOptionCard = styled.div`
 
   &:focus,
   &.selected {
-    ${"" /* background-color: #ffefef; */}
+    ${""}
     border: solid 3px #F46868;
   }
 

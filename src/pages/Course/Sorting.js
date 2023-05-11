@@ -1,15 +1,11 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { MainRedFilledBtn } from "./Buttons";
-import { MainDarkFilledBtn } from "./Buttons";
+import { MainRedFilledBtn } from "../../components/Buttons";
 
 function Sorting(props) {
-  const [resultMessage, setResultMessage] = useState("");
   const [win, setWin] = useState("");
-  const { sorted, questionData, onWin } = props; // destructure props here
+  const { questionData } = props;
   const correctOrder = props.sorted || [];
-  const explanation = props.explanation; // Get the explanation prop
   const [dragId, setDragId] = useState();
   const [boxes, setBoxes] = useState(
     correctOrder.map((id) => ({
@@ -54,18 +50,12 @@ function Sorting(props) {
 
   const handleSubmitClick = () => {
     if (checkWin(boxes)) {
-      // setResultMessage("You win!");
       setWin(true);
       props.onWin(true);
     } else {
-      // setResultMessage(questionData.explanation);
       setWin(false);
       props.onWin(false);
     }
-  };
-
-  const handleNextClick = () => {
-    props.onWin(win);
   };
 
   const Box = ({ boxColor, boxNumber, handleDrag, handleDrop, win }) => {
@@ -172,25 +162,6 @@ function Sorting(props) {
         >
           送出答案
         </MainRedFilledBtn>
-        {/* <div
-          style={{
-            marginTop: "20px",
-            color: resultMessage === "You win!" ? "#338168" : "#545454",
-          }}
-        >
-          {resultMessage}
-          {resultMessage !== "" && (
-            <MainDarkFilledBtn
-              onClick={handleNextClick}
-              style={{
-                marginTop: "20px",
-                marginBottom: "20px",
-              }}
-            >
-              繼續播放
-            </MainDarkFilledBtn>
-          )}
-        </div> */}
       </OptionContainer>
     </div>
   );
