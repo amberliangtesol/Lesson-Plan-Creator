@@ -15,6 +15,7 @@ import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 import { NoBorderBtn } from "../../components/Buttons";
 import arrow from "./arrow.png";
+import modal from "../../components/Modal";
 
 function chunk(array, chunk) {
   let result = [];
@@ -73,14 +74,51 @@ function CreateUnit() {
     { type: "", data: {} },
   ]);
 
+  const validateYouTubeUrl = (inputLink) => {
+    if (inputLink !== undefined && inputLink !== "") {
+      const regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+      const match = inputLink.match(regExp);
+      if (match && match[2].length === 11) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const handleCreate = () => {
     let videoId = "";
-    if (inputLink) {
-      const url = new URL(inputLink);
-      videoId = url.searchParams.get("v");
+    if (!unitName) {
+      modal.success("請輸入單元名稱");
+      return;
     }
+    if (!validateYouTubeUrl(inputLink)) {
+      modal.success("請確認影片連結是否正確");
+      return;
+    }
+    if (!totalTestArray || totalTestArray.some((item) => item.type === "")) {
+      modal.success("請選擇題型");
+      return;
+    }
+    if (
+      totalTestArray.some(
+        (item) => item.data.time === "" || item.data.time === undefined
+      )
+    ) {
+      modal.success("請輸入欲插入影片的時間");
+      return;
+    }
+    if (
+      totalTestArray.some(
+        (item) => item.data.question === "" || item.data.question === undefined
+      )
+    ) {
+      modal.success("請輸入題目");
+      return;
+    }
+    const url = new URL(inputLink);
+    videoId = url.searchParams.get("v");
 
-    // addDoc(collection(db, `lessons/${lessonDocId}/units`), {
     addDoc(collection(db, `lessons/${lessonId}/units`), {
       timestamp: new Date().valueOf(),
       description: description,
@@ -199,12 +237,13 @@ function CreateUnit() {
                     fontWeight: "700",
                     alignSelf: "flex-start",
                     marginTop: "30px",
+                    cursor: "not-allowed",
                   }}
                   onClick={() => {
                     setCurrentUnitId(unit.id);
                   }}
                 >
-                  Unit {index + 1} : {unit.data.unitName}
+                  單元 {index + 1} : {unit.data.unitName}
                 </h3>
               ))}
               <MainDarkBorderBtn
@@ -233,6 +272,8 @@ function CreateUnit() {
                   type="text"
                   value={unitName}
                   onChange={(e) => setUnitName(e.target.value)}
+                  placeholder="字數上限20字"
+                  maxLength={20}
                 ></CourseInput>
 
                 <div
@@ -244,7 +285,7 @@ function CreateUnit() {
                 >
                   <CourseDetailText>影音資料</CourseDetailText>
                   <CourseDetailReminder>
-                    * 請檢查YouTube影片權限是否為公開
+                    * 請檢查YouTube影片權限是否設定為公開
                   </CourseDetailReminder>
                 </div>
                 <CourseInput
@@ -259,6 +300,8 @@ function CreateUnit() {
                   type="text"
                   value={subTitle}
                   onChange={(e) => setSubTitle(e.target.value)}
+                  placeholder="字數上限20字"
+                  maxLength={20}
                 ></CourseInput>
 
                 <CourseDetailText>單元說明</CourseDetailText>
@@ -266,6 +309,8 @@ function CreateUnit() {
                   type="text"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  placeholder="字數上限50字"
+                  maxLength={50}
                 ></CourseInput>
               </UnitInfo>
 
@@ -342,6 +387,8 @@ function CreateUnit() {
                             questionArray[index].data.question = e.target.value;
                             setTotalTestArray(questionArray);
                           }}
+                          placeholder="字數上限50字"
+                          maxLength={50}
                         ></CourseInput>
                         <CourseDetailText>詳解</CourseDetailText>
                         <CourseInput
@@ -353,6 +400,8 @@ function CreateUnit() {
                               e.target.value;
                             setTotalTestArray(explanationArray);
                           }}
+                          placeholder="字數上限100字"
+                          maxLength={100}
                         ></CourseInput>
 
                         <div
@@ -388,6 +437,7 @@ function CreateUnit() {
                               key={`multiple_choice_text_${idx}`}
                               type="text"
                               placeholder="輸入選項"
+                              maxLength={50}
                               style={{
                                 marginTop: "10px",
                                 marginBottom: "10px",
@@ -449,7 +499,7 @@ function CreateUnit() {
                           <option value="true">開啟</option>
                           <option value="false">關閉</option>
                         </SelectOptions>
-                        <CourseDetailText>問題</CourseDetailText>
+                        <CourseDetailText>題目</CourseDetailText>
                         <CourseInput
                           type="text"
                           value={item.data.question}
@@ -458,6 +508,8 @@ function CreateUnit() {
                             questionArray[index].data.question = e.target.value;
                             setTotalTestArray(questionArray);
                           }}
+                          placeholder="字數上限50字"
+                          maxLength={50}
                         ></CourseInput>
                         <CourseDetailText>詳解</CourseDetailText>
                         <CourseInput
@@ -469,6 +521,8 @@ function CreateUnit() {
                               e.target.value;
                             setTotalTestArray(explanationArray);
                           }}
+                          placeholder="字數上限100字"
+                          maxLength={100}
                         ></CourseInput>
                         <CourseDetailText>配對</CourseDetailText>
                         {chunk(item.data.cards || [], 2).map(
@@ -492,6 +546,7 @@ function CreateUnit() {
                                   };
                                   handleChange(index, "cards", cards);
                                 }}
+                                maxLength={30}
                               />
                             ));
                           }
@@ -540,7 +595,7 @@ function CreateUnit() {
                           <option value="true">開啟</option>
                           <option value="false">關閉</option>
                         </SelectOptions>
-                        <CourseDetailText>問題</CourseDetailText>
+                        <CourseDetailText>題目</CourseDetailText>
                         <CourseInput
                           type="text"
                           value={item.data.question}
@@ -549,6 +604,8 @@ function CreateUnit() {
                             questionArray[index].data.question = e.target.value;
                             setTotalTestArray(questionArray);
                           }}
+                          placeholder="字數上限50字"
+                          maxLength={50}
                         ></CourseInput>
                         <CourseDetailText>詳解</CourseDetailText>
                         <CourseInput
@@ -560,6 +617,8 @@ function CreateUnit() {
                               e.target.value;
                             setTotalTestArray(explanationArray);
                           }}
+                          placeholder="字數上限100字"
+                          maxLength={100}
                         ></CourseInput>
                         <CourseDetailText>選項</CourseDetailText>
                         {(item.data.sorted || []).map((sorted, idx) => (
@@ -578,6 +637,7 @@ function CreateUnit() {
                                 sorted[idx] = e.target.value;
                                 handleChange(index, "sorted", sorted);
                               }}
+                              maxLength={30}
                             />
                           </div>
                         ))}
@@ -658,6 +718,8 @@ const Container1 = styled.div`
   background-color: rgb(245, 245, 245);
   min-height: 100vh;
   padding-top: 90px;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const Container2 = styled.div`

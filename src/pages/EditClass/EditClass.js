@@ -398,6 +398,7 @@ function EditClass() {
                   onFocus={() => setInputFocused(true)}
                   onBlur={() => setInputFocused(false)}
                   placeholder="輸入名稱"
+                  maxLength={20}
                 />
 
                 {!inputFocused && (
@@ -433,12 +434,14 @@ function EditClass() {
                 value={studentNameInput}
                 onChange={(e) => setStudentNameInput(e.target.value)}
                 placeholder="輸入姓名"
+                maxLength={10}
               />
               <ClassInput
                 type="text"
                 value={studentEmailInput}
                 onChange={(e) => setStudentEmailInput(e.target.value)}
                 placeholder="輸入信箱"
+                maxLength={256}
               />
               <MainDarkBorderBtn
                 onClick={handleAddStudentEmail}
@@ -448,7 +451,8 @@ function EditClass() {
               </MainDarkBorderBtn>
             </StudentTable>
             <p style={{ fontSize: "15px", margin: "0px" }}>
-              * 未曾註冊之信箱將『建立帳號』，系統預設初始『帳號』與『密碼』相同
+              ⚠️
+              未曾註冊之信箱將自動『建立帳號』，系統預設初始『帳號』與『密碼』相同
             </p>
             {renderStudentTable()}
 
@@ -468,6 +472,7 @@ function EditClass() {
                 onChange={(e) => setTeacherEmailInput(e.target.value)}
                 style={{ width: "100%" }}
                 placeholder="輸入信箱"
+                maxLength={256}
               />
               <MainDarkBorderBtn
                 onClick={handleAddTeacherEmail}

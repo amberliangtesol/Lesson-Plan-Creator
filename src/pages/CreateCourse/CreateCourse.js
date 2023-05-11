@@ -23,6 +23,7 @@ import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { TbCircleNumber1 } from "react-icons/tb";
 import { TbCircleNumber2 } from "react-icons/tb";
 import { TbCircleNumber3 } from "react-icons/tb";
+import modal from "../../components/Modal";
 
 function CreateCourse() {
   const { user, setUser } = useContext(UserContext);
@@ -129,6 +130,26 @@ function CreateCourse() {
 
   const handleCreate = async () => {
     try {
+      if (!imageFile) {
+        modal.success("請上傳課程縮圖");
+        return;
+      }
+      if (!courseName) {
+        modal.success("請輸入課程名稱");
+        return;
+      }
+      if (!classChoose) {
+        modal.success("請設定班級");
+        return;
+      }
+      if (!startTimestamp) {
+        modal.success("請選擇開始時間");
+        return;
+      }
+      if (!endTimestamp) {
+        modal.success("請選擇結束時間");
+        return;
+      }
       const imageURL = await uploadImageAndGetURL(imageFile);
       const docRef = await addDoc(collection(db, "lessons"), {
         name: courseName,
@@ -239,6 +260,7 @@ function CreateCourse() {
                 <CourseInput
                   type="text"
                   onChange={(e) => setCourseName(e.target.value)}
+                  maxLength={30}
                 ></CourseInput>
                 <div
                   style={{
@@ -370,6 +392,8 @@ const Container1 = styled.div`
   background-color: rgb(245, 245, 245);
   min-height: 100vh;
   padding-top: 90px;
+  padding-left: 50px;
+  padding-right: 50px;
 `;
 
 const Container2 = styled.div`

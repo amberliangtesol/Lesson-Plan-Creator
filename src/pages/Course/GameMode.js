@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../../UserInfoProvider";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../../utils/firebaseApp";
 import styled, { keyframes, css } from "styled-components/macro";
 import monster1 from "./CourseAsset/Monster/1.png";
 import monster2 from "./CourseAsset/Monster/2.png";
@@ -10,7 +13,7 @@ import monster7 from "./CourseAsset/Monster/7.png";
 import monster8 from "./CourseAsset/Monster/8.png";
 import monster9 from "./CourseAsset/Monster/9.png";
 import monster10 from "./CourseAsset/Monster/10.png";
-import user from "./CourseAsset/Monster/user.png";
+// import user from "./CourseAsset/Monster/user.png";
 import spinnerImage from "./CourseAsset/Monster/spinnerImage.png";
 import vs from "./CourseAsset/Monster/vs.png";
 
@@ -37,6 +40,8 @@ const shuffleArray = (array) => {
 
 const GameMode = ({ countdown, setCountdown }) => {
   const [gamemode, setGamemode] = useState(true);
+  const { user, setUser } = useContext(UserContext);
+  const [userImage, setUserImage] = useState(user);
   const [npcCountdown, setNpcCountdown] = useState(null);
   const [currentMonster, setCurrentMonster] = useState(monsterImages[0]);
   const [initialUserCountdown, setInitialUserCountdown] = useState(null);
@@ -46,6 +51,20 @@ const GameMode = ({ countdown, setCountdown }) => {
   const randomCountdown = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
+
+  useEffect(() => {
+    const fetchUserImage = async () => {
+      if (user) {
+        const userDoc = doc(db, "users", user.account);
+        const userSnap = await getDoc(userDoc);
+        if (userSnap.exists()) {
+          setUserImage(userSnap.data().image);
+        }
+      }
+    };
+
+    fetchUserImage();
+  }, []);
 
   useEffect(() => {
     setCurrentMonster(shuffleArray(monsterImages)[0]);
@@ -110,7 +129,7 @@ const GameMode = ({ countdown, setCountdown }) => {
               剩餘作答時間 {countdown} 秒
             </CountdownWrapper>
             <ImageContainer countdown={countdown}>
-              <UserImage countdown={countdown} src={user} alt="User" />
+              <UserImage countdown={countdown} src={userImage} alt="User" />
               <SpinnerContainer>
                 <Vs src={vs} alt="User" />
                 <SpinnerImage
@@ -314,6 +333,7 @@ const NpcImage = styled.img`
 const UserImage = styled.img`
   width: 70%;
   height: 70%;
+  border-radius: 50%;
   animation: ${(props) =>
     props.countdown === 0
       ? "none"
