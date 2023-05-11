@@ -16,6 +16,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import Swal from "sweetalert2";
+import modal from "../../components/Modal";
 import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching";
@@ -282,16 +283,15 @@ const Course = () => {
   };
 
   const handleNextUnitClick = async () => {
-    setShowNextButton(false); // Add this line to hide the button when clicked
-
-    // Check if the user has answered all questions in the current unit
+    setShowNextButton(false);
     const answeredQuestions = questions.current.filter((q) => q.answered);
-    if (answeredQuestions.length === questions.current.length) {
-      // Give the user badge1 if they have answered all questions
+    if (
+      answeredQuestions.length === questions.current.length &&
+      !hasShownCongratsModal
+    ) {
       updateUserBadgeData("badge1");
       // setCurrentBadge(Badge1);
       // setShowCongratsModal(true);
-      // setHasShownCongratsModal(true); // Update the hasShownCongratsModal state
     }
 
     // Fetch the current unit's timestamp
@@ -320,10 +320,10 @@ const Course = () => {
           setResultMessage("");
           setCurrentUnitId(nextUnitId);
         } else {
-          alert("No more units available.");
+          modal.backToMain("課程結束");
         }
       } else {
-        alert("No more units available.");
+        modal.backToMain("課程結束");
       }
     });
 
@@ -407,6 +407,7 @@ const Course = () => {
                       color: unit.id === currentUnitId ? "#F46868" : "black",
                       fontWeight: unit.id === currentUnitId ? "700" : "400",
                       alignSelf: "flex-start",
+                      cursor: "not-allowed",
                     }}
                   >
                     單元 {index + 1} : {unit.data.unitName}
@@ -441,6 +442,7 @@ const Course = () => {
                   onClick={handleNextUnitClick}
                   style={{
                     marginTop: "20px",
+                    padding: "5px",
                   }}
                 >
                   繼續觀看下個單元

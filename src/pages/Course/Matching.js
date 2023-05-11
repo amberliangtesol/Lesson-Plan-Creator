@@ -1,23 +1,24 @@
-import React, { useState } from "react";
-import styled, { keyframes } from "styled-components/macro";
+import React from "react";
+import { useState } from "react";
+import styled, { css, keyframes } from "styled-components/macro";
+
+const Card = ({ id, name, flipped, matched, clicked }) => {
+  return (
+    <CardItem
+      onClick={() => (flipped ? undefined : clicked(name, id))}
+      flipped={flipped}
+      matched={matched}
+    >
+      <CardBack>?</CardBack>
+      <CardFront>
+        <CardText>{name}</CardText>
+      </CardFront>
+    </CardItem>
+  );
+};
 
 const Matching = (props) => {
   const { cards, questionData } = props;
-
-  const Card = ({ id, name, flipped, matched, clicked }) => {
-    return (
-      <CardWrapper
-        onClick={() => (flipped ? undefined : clicked(name, id))}
-        flipped={flipped}
-        matched={matched}
-      >
-        <div className="back">?</div>
-        <div className="front">
-          <span>{name}</span>
-        </div>
-      </CardWrapper>
-    );
-  };
 
   const shuffle = (array) => {
     let currentIndex = array.length,
@@ -56,8 +57,10 @@ const Matching = (props) => {
       index,
     };
 
+    // Log click
     setClickHistory([...clickHistory, currentCard]);
 
+    //update card is flipped
     let updateCards = cardList.map((card) => {
       if (card.id === index) {
         card.flipped = true;
@@ -69,6 +72,7 @@ const Matching = (props) => {
     setFlippedCards(updateFlipped);
     setCardList(updateCards);
 
+    //if 2 cards are flipped, check if they are a match
     if (flippedCards.length === 2) {
       setTimeout(() => {
         check();
@@ -121,7 +125,7 @@ const Matching = (props) => {
           第 {questionData.id} 題
         </h3>
         <p>{questionData.question}</p>
-        <div>
+        <GameBoard>
           {cardList.map((card, index) => (
             <Card
               key={index}
@@ -136,7 +140,7 @@ const Matching = (props) => {
               }
             />
           ))}
-        </div>
+        </GameBoard>
       </OptionContainer>
     </div>
   );
@@ -171,7 +175,15 @@ const selected = keyframes`
   }
 `;
 
-const CardWrapper = styled.div`
+const GameBoard = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  perspective: 1000px;
+  margin-bottom: -15px;
+`;
+
+const CardItem = styled.div`
   width: 30%;
   user-select: none;
   height: 112px;
@@ -182,43 +194,66 @@ const CardWrapper = styled.div`
   transition: 0.6s;
   transform-style: preserve-3d;
   position: relative;
-  transform: ${(props) =>
-    props.flipped || props.matched ? "rotateY(180deg)" : "none"};
+  transform: ${(props) => (props.flipped ? "rotateY(180deg)" : "none")};
 
-  &.matched .front {
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05) inset;
-    animation: ${selected} 0.8s 0s ease 1;
-    animation-fill-mode: both;
-    opacity: 0.2;
-  }
-
-  div {
-    backface-visibility: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    transition: 0.6s;
-    background: #e7e7e7;
-
-    &.back {
-      font-size: 50px;
-      line-height: 120px;
-      cursor: pointer;
-      color: #f46868;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    &.front {
+  ${(props) =>
+    props.matched &&
+    css`
       transform: rotateY(180deg);
-      line-height: 110px;
-      text-emphasis: none;
-    }
-  }
+      ${CardFront} {
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05) inset;
+        animation: ${selected} 0.8s 0s ease 1;
+        animation-fill-mode: both;
+        opacity: 0.2;
+      }
+    `}
+`;
+
+const CardBack = styled.div`
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  transition: 0.6s;
+  background: #e7e7e7;
+  font-size: 50px;
+  cursor: pointer;
+  color: #f46868;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CardFront = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  white-space: wrap;
+  padding-left: 10px;
+  padding-right: 10px;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  transition: 0.6s;
+  background: #e7e7e7;
+  transform: rotateY(180deg);
+  text-emphasis: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
+
+const CardText = styled.p`
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
 `;
 
 export default Matching;

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MultipleChoiceOptionCard } from "../../components/Buttons";
 import styled from "styled-components/macro";
+import modal from "../../components/Modal";
 
 const MultipleChoice = ({ questionData, onAnswerClick }) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -17,7 +18,7 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
       onAnswerClick(selectedOption);
       setSubmitted(true);
     } else {
-      alert("請選擇一個答案");
+      modal.success("請選擇一個答案");
     }
   };
 

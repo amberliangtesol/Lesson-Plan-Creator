@@ -1,0 +1,100 @@
+Date : 2023-05-11 10:44:09
+Directory : /Users/amber/Lesson Plan Creator
+Total : 45 files,  38404 codes, 756 comments, 820 blanks, all 39980 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          7 |     29,926 |         29 |          6 |     29,961 |
+| JavaScript |         33 |      8,271 |        727 |        763 |      9,761 |
+| CSS        |          2 |        111 |          0 |         15 |        126 |
+| HTML       |          2 |         58 |          0 |          3 |         61 |
+| Markdown   |          1 |         38 |          0 |         33 |         71 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                           | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                              |         45 |     38,404 |        756 |        820 |     39,980 |
+| . (Files)                                                                      |          5 |     23,776 |         29 |         36 |     23,841 |
+| functions                                                                      |          3 |      6,197 |          6 |          8 |      6,211 |
+| public                                                                         |          3 |         83 |          0 |          4 |         87 |
+| src                                                                            |         34 |      8,348 |        721 |        772 |      9,841 |
+| src (Files)                                                                    |          4 |        212 |          0 |         22 |        234 |
+| src/components                                                                 |          5 |        520 |          0 |         50 |        570 |
+| src/pages                                                                      |         24 |      7,599 |        715 |        694 |      9,008 |
+| src/pages/Badge                                                                |          1 |        214 |          0 |         24 |        238 |
+| src/pages/Course                                                               |          6 |      1,411 |         36 |        143 |      1,590 |
+| src/pages/CreateClass                                                          |          1 |        645 |          0 |         55 |        700 |
+| src/pages/CreateCourse                                                         |          1 |        210 |        254 |         22 |        486 |
+| src/pages/CreateUnit                                                           |          1 |        734 |          1 |         39 |        774 |
+| src/pages/EditClass                                                            |          1 |        559 |          0 |         55 |        614 |
+| src/pages/EditCourse                                                           |          1 |        199 |        218 |         22 |        439 |
+| src/pages/EditUnit                                                             |          1 |        746 |          0 |         38 |        784 |
+| src/pages/Login                                                                |          1 |        285 |          0 |         22 |        307 |
+| src/pages/Main                                                                 |          2 |        439 |         12 |         55 |        506 |
+| src/pages/Main (Files)                                                         |          1 |        310 |         12 |         32 |        354 |
+| src/pages/Main/HoverComputer                                                   |          1 |        129 |          0 |         23 |        152 |
+| src/pages/ManageBadge                                                          |          1 |        271 |          0 |         33 |        304 |
+| src/pages/ManageClass                                                          |          1 |        185 |          0 |         18 |        203 |
+| src/pages/Profile                                                              |          1 |        137 |        191 |         15 |        343 |
+| src/pages/Register                                                             |          1 |        183 |          0 |         18 |        201 |
+| src/pages/Score                                                                |          2 |        444 |          3 |         63 |        510 |
+| src/pages/StudentMain                                                          |          1 |        370 |          0 |         30 |        400 |
+| src/pages/TeacherMain                                                          |          1 |        567 |          0 |         42 |        609 |
+| src/utils                                                                      |          1 |         17 |          6 |          6 |         29 |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                       | language   | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /Users/amber/Lesson Plan Creator/README.md                                     | Markdown   |         38 |          0 |         33 |         71 |
+| /Users/amber/Lesson Plan Creator/firebase.json                                 | JSON       |          7 |         29 |          0 |         36 |
+| /Users/amber/Lesson Plan Creator/firestore.indexes.json                        | JSON       |          4 |          0 |          1 |          5 |
+| /Users/amber/Lesson Plan Creator/functions/index.js                            | JavaScript |         34 |          6 |          6 |         46 |
+| /Users/amber/Lesson Plan Creator/functions/package-lock.json                   | JSON       |      6,140 |          0 |          1 |      6,141 |
+| /Users/amber/Lesson Plan Creator/functions/package.json                        | JSON       |         23 |          0 |          1 |         24 |
+| /Users/amber/Lesson Plan Creator/package-lock.json                             | JSON       |     23,669 |          0 |          1 |     23,670 |
+| /Users/amber/Lesson Plan Creator/package.json                                  | JSON       |         58 |          0 |          1 |         59 |
+| /Users/amber/Lesson Plan Creator/public/404.html                               | HTML       |         32 |          0 |          2 |         34 |
+| /Users/amber/Lesson Plan Creator/public/index.html                             | HTML       |         26 |          0 |          1 |         27 |
+| /Users/amber/Lesson Plan Creator/public/manifest.json                          | JSON       |         25 |          0 |          1 |         26 |
+| /Users/amber/Lesson Plan Creator/src/App.js                                    | JavaScript |        121 |          0 |         11 |        132 |
+| /Users/amber/Lesson Plan Creator/src/UserInfoProvider.js                       | JavaScript |         66 |          0 |          6 |         72 |
+| /Users/amber/Lesson Plan Creator/src/components/Buttons.js                     | JavaScript |        246 |          0 |         20 |        266 |
+| /Users/amber/Lesson Plan Creator/src/components/Footer.js                      | JavaScript |         29 |          0 |          5 |         34 |
+| /Users/amber/Lesson Plan Creator/src/components/Header.js                      | JavaScript |         52 |          0 |          8 |         60 |
+| /Users/amber/Lesson Plan Creator/src/components/Modal.js                       | JavaScript |         17 |          0 |          3 |         20 |
+| /Users/amber/Lesson Plan Creator/src/components/Sidebar.js                     | JavaScript |        176 |          0 |         14 |        190 |
+| /Users/amber/Lesson Plan Creator/src/index.css                                 | CSS        |         13 |          0 |          2 |         15 |
+| /Users/amber/Lesson Plan Creator/src/index.js                                  | JavaScript |         12 |          0 |          3 |         15 |
+| /Users/amber/Lesson Plan Creator/src/pages/Badge/Badge.js                      | JavaScript |        214 |          0 |         24 |        238 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Course.js                    | JavaScript |        523 |         14 |         50 |        587 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/GameMode.js                  | JavaScript |        370 |          0 |         36 |        406 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Matching.css                 | CSS        |         98 |          0 |         13 |        111 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Matching.js                  | JavaScript |        148 |         21 |         19 |        188 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/MultipleChoice.js            | JavaScript |         94 |          1 |          7 |        102 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Sorting.js                   | JavaScript |        178 |          0 |         18 |        196 |
+| /Users/amber/Lesson Plan Creator/src/pages/CreateClass/CreateClass.js          | JavaScript |        645 |          0 |         55 |        700 |
+| /Users/amber/Lesson Plan Creator/src/pages/CreateCourse/CreateCourse.js        | JavaScript |        210 |        254 |         22 |        486 |
+| /Users/amber/Lesson Plan Creator/src/pages/CreateUnit/CreateUnit.js            | JavaScript |        734 |          1 |         39 |        774 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditClass/EditClass.js              | JavaScript |        559 |          0 |         55 |        614 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditCourse/EditCourse.js            | JavaScript |        199 |        218 |         22 |        439 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditUnit/EditUnit.js                | JavaScript |        746 |          0 |         38 |        784 |
+| /Users/amber/Lesson Plan Creator/src/pages/Login/Login.js                      | JavaScript |        285 |          0 |         22 |        307 |
+| /Users/amber/Lesson Plan Creator/src/pages/Main/HoverComputer/HoverComputer.js | JavaScript |        129 |          0 |         23 |        152 |
+| /Users/amber/Lesson Plan Creator/src/pages/Main/Main.js                        | JavaScript |        310 |         12 |         32 |        354 |
+| /Users/amber/Lesson Plan Creator/src/pages/ManageBadge/ManageBadge.js          | JavaScript |        271 |          0 |         33 |        304 |
+| /Users/amber/Lesson Plan Creator/src/pages/ManageClass/ManageClass.js          | JavaScript |        185 |          0 |         18 |        203 |
+| /Users/amber/Lesson Plan Creator/src/pages/Profile/Profile.js                  | JavaScript |        137 |        191 |         15 |        343 |
+| /Users/amber/Lesson Plan Creator/src/pages/Register/Register.js                | JavaScript |        183 |          0 |         18 |        201 |
+| /Users/amber/Lesson Plan Creator/src/pages/Score/Chart.js                      | JavaScript |        219 |          3 |         26 |        248 |
+| /Users/amber/Lesson Plan Creator/src/pages/Score/Score.js                      | JavaScript |        225 |          0 |         37 |        262 |
+| /Users/amber/Lesson Plan Creator/src/pages/StudentMain/StudentMain.js          | JavaScript |        370 |          0 |         30 |        400 |
+| /Users/amber/Lesson Plan Creator/src/pages/TeacherMain/TeacherMain.js          | JavaScript |        567 |          0 |         42 |        609 |
+| /Users/amber/Lesson Plan Creator/src/utils/firebaseApp.js                      | JavaScript |         17 |          6 |          6 |         29 |
+| Total                                                                          |            |     38,404 |        756 |        820 |     39,980 |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

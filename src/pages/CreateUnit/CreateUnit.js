@@ -155,12 +155,6 @@ function CreateUnit() {
     setInputLink(e.target.value);
   };
 
-  // const extractVideoId = () => {
-  //   const url = new URL(inputLink);
-  //   const videoId = url.searchParams.get("v");
-  //   setVideoId(videoId);
-  // };
-
   useEffect(() => {
     const fetchSortedUnits = async () => {
       if (sortedUnits.length === 0 || submitted) {
@@ -175,7 +169,6 @@ function CreateUnit() {
           data: doc.data(),
         }));
         setSortedUnits(units);
-        // Add a conditional check to make sure the units array is not empty
         if (units.length > 0) {
           setCurrentUnitId(units[0].id);
           setSubmitted(false);

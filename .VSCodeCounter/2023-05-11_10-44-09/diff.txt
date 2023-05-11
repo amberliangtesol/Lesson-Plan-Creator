@@ -1,0 +1,99 @@
+Date : 2023-05-11 10:44:09
+Directory : /Users/amber/Lesson Plan Creator
+Total : 45 files,  -455 codes, -430 comments, -76 blanks, all -961 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| CSS        |          4 |        -72 |         -4 |        -16 |        -92 |
+| JavaScript |         41 |       -383 |       -426 |        -60 |       -869 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                           | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                              |         45 |       -455 |       -430 |        -76 |       -961 |
+| src                                                                            |         45 |       -455 |       -430 |        -76 |       -961 |
+| src (Files)                                                                    |          1 |          8 |          0 |          3 |         11 |
+| src/components                                                                 |         15 |     -1,962 |        -95 |       -227 |     -2,284 |
+| src/components (Files)                                                         |         12 |     -1,587 |        -74 |       -172 |     -1,833 |
+| src/components/HoverComputer                                                   |          1 |       -129 |          0 |        -23 |       -152 |
+| src/components/Matching                                                        |          2 |       -246 |        -21 |        -32 |       -299 |
+| src/pages                                                                      |         29 |      1,499 |       -335 |        148 |      1,312 |
+| src/pages/AddClass                                                             |          2 |       -661 |        -20 |        -56 |       -737 |
+| src/pages/Badge                                                                |          1 |        -15 |         -2 |          1 |        -16 |
+| src/pages/Course                                                               |          6 |      1,406 |         36 |        140 |      1,582 |
+| src/pages/CreateClass                                                          |          1 |        645 |          0 |         55 |        700 |
+| src/pages/CreateCourse                                                         |          1 |        -10 |        -22 |         -3 |        -35 |
+| src/pages/CreateUnit                                                           |          1 |         -7 |         -7 |         -3 |        -17 |
+| src/pages/EditClass                                                            |          2 |        -21 |        -18 |         -6 |        -45 |
+| src/pages/EditCourse                                                           |          1 |         -5 |        -51 |          1 |        -55 |
+| src/pages/EditUnit                                                             |          1 |        -13 |         -9 |         -4 |        -26 |
+| src/pages/Login                                                                |          1 |         -5 |          0 |          0 |         -5 |
+| src/pages/Main                                                                 |          2 |        126 |          0 |         22 |        148 |
+| src/pages/Main (Files)                                                         |          1 |         -3 |          0 |         -1 |         -4 |
+| src/pages/Main/HoverComputer                                                   |          1 |        129 |          0 |         23 |        152 |
+| src/pages/ManageBadge                                                          |          1 |         -6 |         -2 |          0 |         -8 |
+| src/pages/ManageClass                                                          |          1 |         -6 |        -19 |         -3 |        -28 |
+| src/pages/Profile                                                              |          1 |        137 |        191 |         15 |        343 |
+| src/pages/Register                                                             |          1 |         -6 |         -2 |          0 |         -8 |
+| src/pages/Score                                                                |          2 |        211 |         -2 |         24 |        233 |
+| src/pages/StudentMain                                                          |          1 |         -7 |         -2 |         -1 |        -10 |
+| src/pages/StudentProfile                                                       |          1 |       -131 |       -200 |        -17 |       -348 |
+| src/pages/TeacherMain                                                          |          1 |         -1 |         -8 |          0 |         -9 |
+| src/pages/TeacherProfile                                                       |          1 |       -132 |       -198 |        -17 |       -347 |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                       | language   | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /Users/amber/Lesson Plan Creator/src/App.js                                    | JavaScript |          8 |          0 |          3 |         11 |
+| /Users/amber/Lesson Plan Creator/src/components/Buttons.js                     | JavaScript |          0 |         -1 |          0 |         -1 |
+| /Users/amber/Lesson Plan Creator/src/components/Chart.js                       | JavaScript |       -216 |         -3 |        -26 |       -245 |
+| /Users/amber/Lesson Plan Creator/src/components/GameMode.js                    | JavaScript |       -372 |        -18 |        -37 |       -427 |
+| /Users/amber/Lesson Plan Creator/src/components/HoverComputer/HoverComputer.js | JavaScript |       -129 |          0 |        -23 |       -152 |
+| /Users/amber/Lesson Plan Creator/src/components/Matching/Matching.css          | CSS        |        -98 |          0 |        -13 |       -111 |
+| /Users/amber/Lesson Plan Creator/src/components/Matching/Matching.js           | JavaScript |       -148 |        -21 |        -19 |       -188 |
+| /Users/amber/Lesson Plan Creator/src/components/Modal.js                       | JavaScript |        -24 |        -13 |          0 |        -37 |
+| /Users/amber/Lesson Plan Creator/src/components/MultipleChoice.js              | JavaScript |        -93 |         -1 |         -7 |       -101 |
+| /Users/amber/Lesson Plan Creator/src/components/Sidebar.js                     | JavaScript |        176 |          0 |         14 |        190 |
+| /Users/amber/Lesson Plan Creator/src/components/Sorting.js                     | JavaScript |       -187 |        -19 |        -19 |       -225 |
+| /Users/amber/Lesson Plan Creator/src/components/StudentMainSidebar.js          | JavaScript |       -140 |          0 |        -14 |       -154 |
+| /Users/amber/Lesson Plan Creator/src/components/StudentMainTopbar.js           | JavaScript |        -13 |         -1 |         -7 |        -21 |
+| /Users/amber/Lesson Plan Creator/src/components/TeacherMainSidebar.js          | JavaScript |       -172 |          0 |        -16 |       -188 |
+| /Users/amber/Lesson Plan Creator/src/components/TeacherMainTopbar.js           | JavaScript |        -13 |         -1 |         -7 |        -21 |
+| /Users/amber/Lesson Plan Creator/src/components/YouTubeWithQuestion.js         | JavaScript |       -533 |        -17 |        -53 |       -603 |
+| /Users/amber/Lesson Plan Creator/src/pages/AddClass/AddClass.css               | CSS        |        -36 |         -2 |         -8 |        -46 |
+| /Users/amber/Lesson Plan Creator/src/pages/AddClass/AddClass.js                | JavaScript |       -625 |        -18 |        -48 |       -691 |
+| /Users/amber/Lesson Plan Creator/src/pages/Badge/Badge.js                      | JavaScript |        -15 |         -2 |          1 |        -16 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Course.js                    | JavaScript |        518 |         14 |         47 |        579 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/GameMode.js                  | JavaScript |        370 |          0 |         36 |        406 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Matching.css                 | CSS        |         98 |          0 |         13 |        111 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Matching.js                  | JavaScript |        148 |         21 |         19 |        188 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/MultipleChoice.js            | JavaScript |         94 |          1 |          7 |        102 |
+| /Users/amber/Lesson Plan Creator/src/pages/Course/Sorting.js                   | JavaScript |        178 |          0 |         18 |        196 |
+| /Users/amber/Lesson Plan Creator/src/pages/CreateClass/CreateClass.js          | JavaScript |        645 |          0 |         55 |        700 |
+| /Users/amber/Lesson Plan Creator/src/pages/CreateCourse/CreateCourse.js        | JavaScript |        -10 |        -22 |         -3 |        -35 |
+| /Users/amber/Lesson Plan Creator/src/pages/CreateUnit/CreateUnit.js            | JavaScript |         -7 |         -7 |         -3 |        -17 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditClass/EditClass.css             | CSS        |        -36 |         -2 |         -8 |        -46 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditClass/EditClass.js              | JavaScript |         15 |        -16 |          2 |          1 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditCourse/EditCourse.js            | JavaScript |         -5 |        -51 |          1 |        -55 |
+| /Users/amber/Lesson Plan Creator/src/pages/EditUnit/EditUnit.js                | JavaScript |        -13 |         -9 |         -4 |        -26 |
+| /Users/amber/Lesson Plan Creator/src/pages/Login/Login.js                      | JavaScript |         -5 |          0 |          0 |         -5 |
+| /Users/amber/Lesson Plan Creator/src/pages/Main/HoverComputer/HoverComputer.js | JavaScript |        129 |          0 |         23 |        152 |
+| /Users/amber/Lesson Plan Creator/src/pages/Main/Main.js                        | JavaScript |         -3 |          0 |         -1 |         -4 |
+| /Users/amber/Lesson Plan Creator/src/pages/ManageBadge/ManageBadge.js          | JavaScript |         -6 |         -2 |          0 |         -8 |
+| /Users/amber/Lesson Plan Creator/src/pages/ManageClass/ManageClass.js          | JavaScript |         -6 |        -19 |         -3 |        -28 |
+| /Users/amber/Lesson Plan Creator/src/pages/Profile/Profile.js                  | JavaScript |        137 |        191 |         15 |        343 |
+| /Users/amber/Lesson Plan Creator/src/pages/Register/Register.js                | JavaScript |         -6 |         -2 |          0 |         -8 |
+| /Users/amber/Lesson Plan Creator/src/pages/Score/Chart.js                      | JavaScript |        219 |          3 |         26 |        248 |
+| /Users/amber/Lesson Plan Creator/src/pages/Score/Score.js                      | JavaScript |         -8 |         -5 |         -2 |        -15 |
+| /Users/amber/Lesson Plan Creator/src/pages/StudentMain/StudentMain.js          | JavaScript |         -7 |         -2 |         -1 |        -10 |
+| /Users/amber/Lesson Plan Creator/src/pages/StudentProfile/StudentProfile.js    | JavaScript |       -131 |       -200 |        -17 |       -348 |
+| /Users/amber/Lesson Plan Creator/src/pages/TeacherMain/TeacherMain.js          | JavaScript |         -1 |         -8 |          0 |         -9 |
+| /Users/amber/Lesson Plan Creator/src/pages/TeacherProfile/TeacherProfile.js    | JavaScript |       -132 |       -198 |        -17 |       -347 |
+| Total                                                                          |            |       -455 |       -430 |        -76 |       -961 |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
