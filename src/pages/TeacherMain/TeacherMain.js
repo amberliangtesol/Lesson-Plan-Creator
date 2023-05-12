@@ -60,14 +60,7 @@ function TeacherMain() {
       target: ".manageClassButton",
       content: (
         <>
-          <span
-            style={{
-              fontWeight: "bold",
-              color: "#f46868",
-            }}
-          >
-            Step1
-          </span>
+          <GuideText>Step1</GuideText>
           <br />
           請先建立班級
         </>
@@ -83,14 +76,7 @@ function TeacherMain() {
       target: ".createClass",
       content: (
         <>
-          <span
-            style={{
-              fontWeight: "bold",
-              color: "#f46868",
-            }}
-          >
-            Step2
-          </span>
+          <GuideText>Step2</GuideText>
           <br />
           再建立課程
         </>
@@ -263,31 +249,21 @@ function TeacherMain() {
             <HeaderContainer>
               <Title>課程主頁</Title>
               <CreateCourseP>
-                <MainRedFilledBtn
-                  style={{ marginLeft: "auto" }}
+                <CreateCourseBtn
                   className="createClass"
                   onClick={handleCreateCourseClick}
                 >
                   課程建立
-                </MainRedFilledBtn>
+                </CreateCourseBtn>
               </CreateCourseP>
             </HeaderContainer>
             {lessons.length > 0 ? (
               <CourseOutsideWrapper>
                 <Container2>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <BsFillBookmarkStarFill
-                      style={{ color: "#F46868", fontSize: "24px" }}
-                    ></BsFillBookmarkStarFill>
+                  <CourseSubheader>
+                    <CourseSubheaderIcon></CourseSubheaderIcon>
                     <SubTitle>進行中課程</SubTitle>
-                  </div>
+                  </CourseSubheader>
 
                   <CourseWrapper>
                     {lessons
@@ -311,22 +287,12 @@ function TeacherMain() {
                                 <b>課程</b>
                                 <br /> {c.name}
                               </p>
-                              <p
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <BiTimeFive
-                                  style={{
-                                    marginRight: "5px",
-                                    fontSize: "24px",
-                                  }}
-                                />
+                              <TimeText>
+                                <TimeIcon />
                                 {`${formatDate(c.start_date)}~${formatDate(
                                   c.end_date
                                 )}`}
-                              </p>
+                              </TimeText>
                             </CourseTextWrapper>
                           </CourseContent>
                           <BtnContainer>
@@ -349,19 +315,10 @@ function TeacherMain() {
                 </Container2>
 
                 <Container2>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <BsCheckCircleFill
-                      style={{ color: "#F46868", fontSize: "24px" }}
-                    ></BsCheckCircleFill>
+                  <CourseSubheader>
+                    <CourseSubheaderIcon1></CourseSubheaderIcon1>
                     <SubTitle>已完成課程</SubTitle>
-                  </div>
+                  </CourseSubheader>
                   <CourseWrapper>
                     {lessons
                       .filter((c) => isCourseOutdated(c))
@@ -384,22 +341,12 @@ function TeacherMain() {
                                 <b>課程</b>
                                 <br /> {c.name}
                               </p>
-                              <p
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <BiTimeFive
-                                  style={{
-                                    marginRight: "5px",
-                                    fontSize: "24px",
-                                  }}
-                                />
+                              <TimeText>
+                                <TimeIcon />
                                 {`${formatDate(c.start_date)}~${formatDate(
                                   c.end_date
                                 )}`}
-                              </p>
+                              </TimeText>
                             </CourseTextWrapper>
                           </CourseContent>
                           <BtnContainer>
@@ -603,6 +550,42 @@ const LoadingSvg = styled.div`
   width: 200px;
   height: 200px;
   opacity: 30%;
+`;
+
+const TimeText = styled.p`
+  display: flex;
+  align-items: center;
+`;
+
+const TimeIcon = styled(BiTimeFive)`
+  margin-right: 5px;
+  font-size: 24px;
+`;
+
+const CourseSubheaderIcon1 = styled(BsCheckCircleFill)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
+const CourseSubheaderIcon = styled(BsFillBookmarkStarFill)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
+const CourseSubheader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+const CreateCourseBtn = styled(MainRedFilledBtn)`
+  margin-left: auto;
+`;
+
+const GuideText = styled.span`
+  font-weight: bold;
+  color: #f46868;
 `;
 
 export default TeacherMain;

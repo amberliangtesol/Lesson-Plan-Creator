@@ -19,32 +19,6 @@ import { useParams } from "react-router-dom";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 
-const EditUnitBtn = styled(MainRedFilledBtn)`
-  width: 100%;
-  margin-left: auto;
-  margin-top: 30px;
-`;
-
-const ClassSelectWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const CourseImgInput = styled.input`
-  display: none;
-`;
-
-const UnitText = styled.h3`
-  align-self: flex-start;
-  cursor: pointer;
-`;
-
-const BtnContainerText = styled.h3`
-  border-bottom: 3px solid #f46868;
-  padding-bottom: 18px;
-`;
-
 function EditCourse() {
   const { user, setUser } = useContext(UserContext);
   const { lessonId } = useParams();
@@ -438,6 +412,32 @@ const CourseDetailReminder = styled.p`
   line-height: 19px;
   margin: 10px;
   color: #f46868;
+`;
+
+const EditUnitBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-left: auto;
+  margin-top: 30px;
+`;
+
+const ClassSelectWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CourseImgInput = styled.input`
+  display: none;
+`;
+
+const UnitText = styled.h3`
+  align-self: flex-start;
+  cursor: pointer;
+`;
+
+const BtnContainerText = styled.h3`
+  border-bottom: 3px solid #f46868;
+  padding-bottom: 18px;
 `;
 
 export default EditCourse;

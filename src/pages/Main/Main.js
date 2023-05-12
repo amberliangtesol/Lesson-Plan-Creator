@@ -53,22 +53,13 @@ function Main() {
 
   return (
     <div>
-      <HeaderWrapper style={{ zIndex: "10000" }}>
+      <HeaderWrapper>
         <Link to="/">
           <Logo />
         </Link>
-        <ColorFilledBtn
-          type="button"
-          style={{
-            zIndex: 10001,
-            width: "104px",
-            right: "31px",
-            top: "26px",
-            position: "fixed",
-          }}
-        >
+        <LogInBtn type="button">
           <Link to="/Login">登入</Link>
-        </ColorFilledBtn>
+        </LogInBtn>
       </HeaderWrapper>
 
       <SlogenWrapper>
@@ -76,106 +67,47 @@ function Main() {
           讓學習更輕鬆 <br />
           使教學更生動 !
         </h1>
-        <ColorBorderBtn
-          type="button"
-          style={{
-            zIndex: 1000,
-            width: "104px",
-            position: "absolute",
-            top: "300px",
-          }}
-        >
+        <RegisterBtn type="button">
           <Link to="/Register">註冊</Link>
-        </ColorBorderBtn>
+        </RegisterBtn>
         <SlogenWrapperImg></SlogenWrapperImg>
         <Liner></Liner>
         <Arrow></Arrow>
       </SlogenWrapper>
 
       <ConversationWrapper ref={conversationWrapperRef}>
-        <ConversationInsideWrapper style={{ justifyContent: "flex-start" }}>
+        <ConversationInsideWrapper>
           <TeacherImg
             className={showTeacher ? "show" : ""}
             ref={teacherImgRef}
           ></TeacherImg>
           <ConversationP>
             更方便快速的建立
-            <span
-              style={{
-                color: "#f46868",
-                fontWeight: "700",
-                paddingLeft: "10px",
-              }}
-            >
-              影音教案
-            </span>
+            <KeyText>影音教案</KeyText>
             <br />
             設計更吸引學生的
-            <span
-              style={{
-                color: "#f46868",
-                fontWeight: "700",
-                paddingLeft: "10px",
-              }}
-            >
-              互動問答
-            </span>
+            <KeyText>互動問答</KeyText>
             <br />
             更有效容易的管理
-            <span
-              style={{
-                color: "#f46868",
-                fontWeight: "700",
-                paddingLeft: "10px",
-              }}
-            >
-              學生後台
-            </span>
+            <KeyText>學生後台</KeyText>
           </ConversationP>
         </ConversationInsideWrapper>
-        <ConversationInsideWrapper
-          style={{ justifyContent: "flex-end" }}
-          ref={studentImgRef}
-        >
+        <ConversationInsideWrapper ref={studentImgRef}>
           <ConversationP>
-            <span
-              style={{
-                color: "#f46868",
-                fontWeight: "700",
-                paddingRight: "10px",
-              }}
-            >
-              隨時隨地
-            </span>
+            <KeyText1>隨時隨地 </KeyText1>
             學習讓上課不無聊
             <br />
-            <span
-              style={{
-                color: "#f46868",
-                fontWeight: "700",
-                paddingRight: "10px",
-              }}
-            >
-              遊戲模式
-            </span>
+            <KeyText1>遊戲模式 </KeyText1>
             超級刺激欲罷不能
             <br />
-            <span
-              style={{
-                color: "#f46868",
-                fontWeight: "700",
-                paddingRight: "10px",
-              }}
-            >
-              徽章集點
-            </span>
+            <KeyText1>徽章集點 </KeyText1>
             讓我想準時寫作業
           </ConversationP>
           <StudentImg className={showStudent ? "show" : ""}></StudentImg>
         </ConversationInsideWrapper>
       </ConversationWrapper>
 
-      <ComputerWrapper style={{ marginTop: "50px", marginBottom: "50px" }}>
+      <ComputerWrapper>
         <HoverComputer />
       </ComputerWrapper>
 
@@ -288,6 +220,7 @@ const ConversationInsideWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
 `;
 
 const ConversationP = styled.p`
@@ -332,13 +265,9 @@ const StudentImg = styled.div`
 const ComputerWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
+  margin-bottom: 50px;
 `;
-
-const FeatureWrapper = styled.div``;
-
-const Feature = styled.div``;
-
-const FeatureImg = styled.div``;
 
 const FooterSlogenWrapper = styled.div`
   display: flex;
@@ -349,5 +278,38 @@ const FooterSlogenWrapper = styled.div`
   margin-top: 50px;
   margin-bottom: 150px;
 `;
+
+const KeyText = styled.span`
+  color: #f46868;
+  font-weight: 700;
+  padding-left: 10px;
+`;
+
+const KeyText1 = styled.span`
+  color: #f46868;
+  font-weight: 700;
+  padding-right: 10px;
+`;
+
+const RegisterBtn = styled(ColorBorderBtn)`
+  z-index: 1000;
+  width: 104px;
+  position: absolute;
+  top: 300px;
+`;
+
+const LogInBtn = styled(ColorFilledBtn)`
+  z-index: 10001;
+  width: 104px;
+  right: 31px;
+  top: 26px;
+  position: fixed;
+`;
+
+const FeatureWrapper = styled.div``;
+
+const Feature = styled.div``;
+
+const FeatureImg = styled.div``;
 
 export default Main;

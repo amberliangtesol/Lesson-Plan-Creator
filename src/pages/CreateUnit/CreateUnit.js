@@ -223,48 +223,24 @@ function CreateUnit() {
         <Container>
           <Container1>
             <BtnContainer>
-              <h3
-                style={{
-                  marginBottom: "50px",
-                }}
-              >
-                單元列表
-              </h3>
+              <BtnContainerText>單元列表</BtnContainerText>
               {sortedUnits.map((unit, index) => (
-                <h3
+                <UnitText
                   key={unit.id}
-                  style={{
-                    fontWeight: "700",
-                    alignSelf: "flex-start",
-                    marginTop: "30px",
-                    cursor: "not-allowed",
-                  }}
                   onClick={() => {
                     setCurrentUnitId(unit.id);
                   }}
                 >
                   單元 {index + 1} : {unit.data.unitName}
-                </h3>
+                </UnitText>
               ))}
-              <MainDarkBorderBtn
-                style={{
-                  marginTop: "100px",
-                }}
-              >
+              <BackToMainBtn>
                 <Link to="/TeacherMain">回首頁</Link>
-              </MainDarkBorderBtn>
+              </BackToMainBtn>
             </BtnContainer>
           </Container1>
           <Container2>
-            <Title
-              style={{
-                textAlign: "center",
-                marginTop: "30px",
-                marginBottom: "30px",
-              }}
-            >
-              單元編輯
-            </Title>
+            <Title>單元編輯</Title>
             <form>
               <UnitInfo>
                 <CourseDetailText>單元名稱</CourseDetailText>
@@ -276,18 +252,12 @@ function CreateUnit() {
                   maxLength={20}
                 ></CourseInput>
 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <VideoLinkWrapper>
                   <CourseDetailText>影音資料</CourseDetailText>
                   <CourseDetailReminder>
                     * 請檢查YouTube影片權限是否設定為公開
                   </CourseDetailReminder>
-                </div>
+                </VideoLinkWrapper>
                 <CourseInput
                   type="text"
                   value={inputLink}
@@ -314,23 +284,10 @@ function CreateUnit() {
                 ></CourseInput>
               </UnitInfo>
 
-              <Title
-                style={{
-                  textAlign: "center",
-                  marginTop: "30px",
-                  marginBottom: "30px",
-                }}
-              >
-                加入測驗
-              </Title>
+              <Title>加入測驗</Title>
               <div>
                 {totalTestArray.map((item, index) => (
-                  <Addtest
-                    key={`test_${index}`}
-                    style={{
-                      marginBottom: "20px",
-                    }}
-                  >
+                  <Addtest key={`test_${index}`}>
                     <CourseDetailText>選擇題型</CourseDetailText>
                     <SelectOptions
                       value={item.type}
@@ -343,18 +300,12 @@ function CreateUnit() {
                     </SelectOptions>
                     {item.type === "multiple-choice" && (
                       <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                          }}
-                        >
+                        <TimeInputWrapper>
                           <CourseDetailText>插入時間</CourseDetailText>
                           <CourseDetailReminder>
                             * 請輸入該題目在影片出現的秒數
                           </CourseDetailReminder>
-                        </div>
+                        </TimeInputWrapper>
 
                         <CourseInput
                           type="number"
@@ -404,18 +355,12 @@ function CreateUnit() {
                           maxLength={100}
                         ></CourseInput>
 
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                          }}
-                        >
+                        <OptionInputWrapper>
                           <CourseDetailText>選項</CourseDetailText>
                           <CourseDetailReminder>
                             * 請將選項為解答的項目打勾
                           </CourseDetailReminder>
-                        </div>
+                        </OptionInputWrapper>
 
                         {/* <label for="ans">解答</label> */}
                         {(item.data.options || []).map((option, idx) => (
@@ -438,10 +383,6 @@ function CreateUnit() {
                               type="text"
                               placeholder="輸入選項"
                               maxLength={50}
-                              style={{
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                              }}
                               value={option.text}
                               onChange={(e) => {
                                 const options = [...item.data.options];
@@ -465,18 +406,12 @@ function CreateUnit() {
                     )}
                     {item.type === "matching" && (
                       <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                          }}
-                        >
+                        <TimeInputWrapper>
                           <CourseDetailText>插入時間</CourseDetailText>
                           <CourseDetailReminder>
                             * 請輸入該題目在影片出現的秒數
                           </CourseDetailReminder>
-                        </div>
+                        </TimeInputWrapper>
                         <CourseInput
                           type="number"
                           min={1}
@@ -533,10 +468,6 @@ function CreateUnit() {
                                 type="text"
                                 placeholder="輸入對應內容"
                                 value={card.text}
-                                style={{
-                                  marginTop: "10px",
-                                  marginBottom: "10px",
-                                }}
                                 onChange={(e) => {
                                   const cards = [...item.data.cards];
                                   const current = idx * 2 + iidx;
@@ -561,18 +492,12 @@ function CreateUnit() {
                     )}
                     {item.type === "sorting" && (
                       <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                          }}
-                        >
+                        <TimeInputWrapper>
                           <CourseDetailText>插入時間</CourseDetailText>
                           <CourseDetailReminder>
                             * 請輸入該題目在影片出現的秒數
                           </CourseDetailReminder>
-                        </div>
+                        </TimeInputWrapper>
                         <CourseInput
                           type="number"
                           min={1}
@@ -627,10 +552,6 @@ function CreateUnit() {
                               key={`sorting_text_${idx}`}
                               type="text"
                               placeholder="請依序輸入排序內容"
-                              style={{
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                              }}
                               value={sorted}
                               onChange={(e) => {
                                 const sorted = [...item.data.sorted];
@@ -653,19 +574,10 @@ function CreateUnit() {
                 ))}
               </div>
 
-              <MainDarkBorderBtn
-                onClick={handleAddTest}
-                style={{ marginTop: "15px" }}
-              >
-                再加一題
-              </MainDarkBorderBtn>
-              <MainRedFilledBtn
-                type="button"
-                onClick={handleCreate}
-                style={{ width: "100%", marginTop: "20px" }}
-              >
+              <AddQuestion onClick={handleAddTest}>再加一題</AddQuestion>
+              <SubmitBtn type="button" onClick={handleCreate}>
                 完成送出
-              </MainRedFilledBtn>
+              </SubmitBtn>
             </form>
           </Container2>
         </Container>
@@ -702,6 +614,9 @@ const Title = styled.p`
   margin-right: auto;
   padding-left: 50px;
   padding-right: 50px;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
 `;
 
 const BtnContainer = styled.div`
@@ -738,6 +653,8 @@ const Container2 = styled.div`
 `;
 
 const CourseInput = styled.input`
+  margin-top: 10px;
+  margin-bottom: 10px;
   width: 100%;
   height: 40px;
   background: #ffffff;
@@ -808,6 +725,7 @@ const Addtest = styled.div`
   border-radius: 33px;
   width: 100%;
   padding: 30px 60px 50px 60px;
+  margin-bottom: 20px;
 `;
 
 const CheckboxInput = styled.input`
@@ -830,6 +748,49 @@ const MultipleChoiceQuestion = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const SubmitBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-top: 20px;
+`;
+
+const AddQuestion = styled(MainDarkBorderBtn)`
+  margin-top: 15px;
+`;
+
+const OptionInputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const TimeInputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const VideoLinkWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const BackToMainBtn = styled(MainDarkBorderBtn)`
+  margin-top: 100px;
+`;
+
+const UnitText = styled.h3`
+  font-weight: 700;
+  align-self: flex-start;
+  margin-top: 30px;
+  cursor: not-allowed;
+`;
+
+const BtnContainerText = styled.h3`
+  border-bottom: 3px solid #f46868;
+  padding-bottom: 18px;
 `;
 
 export default CreateUnit;

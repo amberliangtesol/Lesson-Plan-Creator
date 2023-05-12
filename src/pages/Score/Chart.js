@@ -177,19 +177,19 @@ const Chart = ({ data }) => {
         {donutData1 && (
           <DonutChartContainer>
             <Doughnut data={donutData1} />
-            <p style={{ textAlign: "center" }}>作業完成率</p>
+            <DoughnutText>作業完成率</DoughnutText>
           </DonutChartContainer>
         )}
         {donutData2 && (
           <DonutChartContainer>
             <Doughnut data={donutData2} />
-            <p style={{ textAlign: "center" }}>答題正確率</p>
+            <DoughnutText>答題正確率</DoughnutText>
           </DonutChartContainer>
         )}
         {donutData3 && (
           <DonutChartContainer>
             <Doughnut data={donutData3} />
-            <p style={{ textAlign: "center" }}>需特別關注學生</p>
+            <DoughnutText>需特別關注學生</DoughnutText>
           </DonutChartContainer>
         )}
       </DonutChartsContainer>
@@ -242,6 +242,10 @@ const DonutChartContainer = styled.div`
 const BarChartContainer = styled.div`
   margin-top: 20px;
   width: 50%;
+`;
+
+const DoughnutText = styled.p`
+  text-align: center;
 `;
 
 export default Chart;

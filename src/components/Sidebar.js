@@ -24,17 +24,16 @@ const MainSidebar = ({ userType, links }) => {
       <Greeting>{user.name}</Greeting>
       <BtnContainer>
         {links.map((link) => (
-          <Link
+          <LinkText
             key={link.path}
             to={link.path}
-            style={{ textDecoration: "none" }}
             onClick={() => handleLinkClick(link.path)}
           >
             <Btnwrapper className={activeLink === link.path ? "active" : ""}>
               {link.icon}
               <StyledParagraph>{link.label}</StyledParagraph>
             </Btnwrapper>
-          </Link>
+          </LinkText>
         ))}
       </BtnContainer>
     </Container1>
@@ -48,17 +47,17 @@ const StudentMainSidebar = () => (
       {
         path: "/StudentMain",
         label: "課程主頁",
-        icon: <HiOutlineHome style={{ color: "black" }} />,
+        icon: <StudentMainIcon />,
       },
       {
         path: "/Badge",
         label: "我的徽章",
-        icon: <BiBadgeCheck style={{ color: "black" }} />,
+        icon: <BadgeIcon />,
       },
       {
         path: "/Profile",
         label: "個人設定",
-        icon: <BsFillPersonFill style={{ color: "black" }} />,
+        icon: <ProfileIcon />,
       },
     ]}
   />
@@ -71,22 +70,22 @@ const TeacherMainSidebar = () => (
       {
         path: "/TeacherMain",
         label: "課程主頁",
-        icon: <HiOutlineHome style={{ color: "black" }} />,
+        icon: <TeacherMainIcon />,
       },
       {
         path: "/ManageClass",
         label: "班級管理",
-        icon: <BsFillPeopleFill style={{ color: "black" }} />,
+        icon: <ManageClassIcon />,
       },
       {
         path: "/ManageBadge",
         label: "徽章管理",
-        icon: <BiBadgeCheck style={{ color: "black" }} />,
+        icon: <ManageBadgeIcon />,
       },
       {
         path: "/Profile",
         label: "個人設定",
-        icon: <BsFillPersonFill style={{ color: "black" }} />,
+        icon: <ProfileIcon />,
       },
     ]}
   />
@@ -184,6 +183,34 @@ const Btnwrapper = styled.div`
   }
   @media screen and (max-width: 1279px) {
   }
+`;
+
+const LinkText = styled(Link)`
+  text-decoration: none;
+`;
+
+const ManageBadgeIcon = styled(BiBadgeCheck)`
+  color: black;
+`;
+
+const ManageClassIcon = styled(BsFillPeopleFill)`
+  color: black;
+`;
+
+const TeacherMainIcon = styled(HiOutlineHome)`
+  color: black;
+`;
+
+const ProfileIcon = styled(BsFillPersonFill)`
+  color: black;
+`;
+
+const BadgeIcon = styled(BiBadgeCheck)`
+  color: black;
+`;
+
+const StudentMainIcon = styled(HiOutlineHome)`
+  color: black;
 `;
 
 export { TeacherMainSidebar, StudentMainSidebar };

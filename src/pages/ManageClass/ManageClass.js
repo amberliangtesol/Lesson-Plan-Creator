@@ -51,9 +51,9 @@ function ManageClass() {
           <MainContent>
             <HeaderContainer>
               <Title>班級管理</Title>
-              <MainRedFilledBtn style={{ marginLeft: "auto" }}>
+              <CreateClassBtn>
                 <Link to="/CreateClass">班級建立</Link>
-              </MainRedFilledBtn>
+              </CreateClassBtn>
             </HeaderContainer>
             <Container2>
               {isLoading ? (
@@ -72,13 +72,13 @@ function ManageClass() {
                     <ClassContainer key={index}>
                       <p>
                         <b>班級名稱</b> {classItem.name}
-                        <b style={{ color: "#F46868" }}> / </b>
+                        <Slash> / </Slash>
                         <b>學生人數</b>
                         {classItem.studentNumber}人
                       </p>
-                      <MainDarkBorderBtn style={{ marginLeft: "auto" }}>
+                      <EditClassButton>
                         <Link to={`/edit-class/${classItem.id}`}>班級編輯</Link>
-                      </MainDarkBorderBtn>
+                      </EditClassButton>
                     </ClassContainer>
                   ))}
                 </ClassWrapper>
@@ -197,6 +197,18 @@ const LoadingSvg = styled.div`
   width: 200px;
   height: 200px;
   opacity: 30%;
+`;
+
+const EditClassButton = styled(MainDarkBorderBtn)`
+  margin-left: auto;
+`;
+
+const Slash = styled.b`
+  color: #f46868;
+`;
+
+const CreateClassBtn = styled(MainRedFilledBtn)`
+  margin-left: auto;
 `;
 
 export default ManageClass;

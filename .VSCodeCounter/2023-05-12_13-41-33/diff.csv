@@ -1,0 +1,13 @@
+"filename", "language", "JavaScript", "JSON", "comment", "blank", "total"
+"/Users/amber/Lesson Plan Creator/package-lock.json", "JSON", 0, -46, 0, 0, -46
+"/Users/amber/Lesson Plan Creator/src/App.test.js", "JavaScript", 23, 0, 16, 9, 48
+"/Users/amber/Lesson Plan Creator/src/pages/Badge/Badge.js", "JavaScript", -26, 0, 0, -3, -29
+"/Users/amber/Lesson Plan Creator/src/pages/Course/Course.js", "JavaScript", -12, 0, -9, 7, -14
+"/Users/amber/Lesson Plan Creator/src/pages/Course/Matching.js", "JavaScript", -5, 0, 0, 2, -3
+"/Users/amber/Lesson Plan Creator/src/pages/Course/MultipleChoice.js", "JavaScript", -13, 0, 0, 5, -8
+"/Users/amber/Lesson Plan Creator/src/pages/Course/Sorting.js", "JavaScript", -15, 0, 0, 5, -10
+"/Users/amber/Lesson Plan Creator/src/pages/CreateClass/CreateClass.js", "JavaScript", -18, 0, 0, 11, -7
+"/Users/amber/Lesson Plan Creator/src/pages/CreateCourse/CreateCourse.js", "JavaScript", -2, 0, 0, 2, 0
+"/Users/amber/Lesson Plan Creator/src/pages/EditClass/EditClass.js", "JavaScript", 2, 0, 0, 10, 12
+"/Users/amber/Lesson Plan Creator/src/pages/EditCourse/EditCourse.js", "JavaScript", 8, 0, -11, 5, 2
+"Total", "-", -58, -46, -4, 53, -55

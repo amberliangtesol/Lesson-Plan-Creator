@@ -88,9 +88,7 @@ function Login() {
     <Body>
       <Content>
         <Wrapper>
-          <ProfileIcon
-            style={{ backgroundImage: `url(${profileImage})` }}
-          ></ProfileIcon>
+          <ProfileIcon profileImage={profileImage}></ProfileIcon>
           <h2>登入</h2>
           <RegisterForm>
             <RegisterSelect value={role} onChange={handleRoleChange}>
@@ -167,7 +165,7 @@ const Wrapper = styled.div`
 const ProfileIcon = styled.div`
   width: 98px;
   height: 137px;
-  background-image: url(${studentprofile});
+  background-image: ${({ profileImage }) => `url(${profileImage})`};
   cursor: pointer;
 `;
 

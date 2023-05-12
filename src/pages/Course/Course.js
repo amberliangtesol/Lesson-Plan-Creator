@@ -385,7 +385,10 @@ const Course = () => {
               <BtnContainer>
                 <BtnContainerText>單元列表</BtnContainerText>
                 {sortedUnits.map((unit, index) => (
-                  <UnitText key={unit.id}>
+                  <UnitText
+                    key={unit.id}
+                    isSelected={unit.id === currentUnitId}
+                  >
                     單元 {index + 1} : {unit.data.unitName}
                   </UnitText>
                 ))}
@@ -556,6 +559,8 @@ const UnitSubtitleText = styled.h4`
 `;
 
 const UnitText = styled.h3`
+  color: ${({ isSelected }) => (isSelected ? "#F46868" : "black")};
+  font-weight: ${({ isSelected }) => (isSelected ? "700" : "400")};
   align-self: flex-start;
   cursor: not-allowed;
 `;

@@ -135,40 +135,20 @@ function Score() {
           <MainContent>
             <Container1>
               <BtnContainer>
-                <h3
-                  style={{
-                    borderBottom: "3px solid #f46868",
-                    paddingBottom: "18px",
-                  }}
-                >
-                  單元列表
-                </h3>
+                <UnitText>單元列表</UnitText>
                 {sortedUnits.map((unit, index) => (
-                  <h3
+                  <UnitName
                     key={unit.id}
-                    style={{
-                      color: unit.id === currentUnitId ? "#F46868" : "black",
-                      fontWeight: unit.id === currentUnitId ? "700" : "400",
-                      alignSelf: "flex-start",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      setCurrentUnitId(unit.id);
-                    }}
+                    isSelected={unit.id === currentUnitId}
+                    onClick={() => setCurrentUnitId(unit.id)}
                   >
                     單元 {index + 1} : {unit.data.unitName}
-                  </h3>
+                  </UnitName>
                 ))}
 
-                <MainDarkBorderBtn
-                  style={{
-                    position: "absolute",
-                    bottom: "250px",
-                    alignSelf: "center",
-                  }}
-                >
+                <BackToMainBtn>
                   <Link to="/TeacherMain">回首頁</Link>
-                </MainDarkBorderBtn>
+                </BackToMainBtn>
               </BtnContainer>
             </Container1>
 
@@ -256,6 +236,24 @@ const Container2 = styled.div`
   select {
     pointer-events: auto;
   }
+`;
+
+const UnitName = styled.h3`
+  color: ${({ isSelected }) => (isSelected ? "#F46868" : "black")};
+  font-weight: ${({ isSelected }) => (isSelected ? "700" : "400")};
+  align-self: flex-start;
+  cursor: pointer;
+`;
+
+const BackToMainBtn = styled(MainDarkBorderBtn)`
+  position: absolute;
+  bottom: 250px;
+  align-self: center;
+`;
+
+const UnitText = styled.h3`
+  border-bottom: 3px solid #f46868;
+  padding-bottom: 18px;
 `;
 
 export default Score;

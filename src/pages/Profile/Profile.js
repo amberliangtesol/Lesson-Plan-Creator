@@ -146,15 +146,14 @@ function Profile() {
                   </UploadLabel>
                 </IconWrapper>
               </ProfileImg>
-              <input
+              <ProfileImgUploadIcon
                 id="imageUpload"
                 type="file"
                 accept="image/*"
                 name="上傳"
                 cursor="pointer"
                 onChange={handleImageUpload}
-                style={{ display: "none" }}
-              ></input>
+              ></ProfileImgUploadIcon>
               <ProfileDetail>
                 <ProfileDetailContainer>
                   <ProfileText>姓名</ProfileText> {name}
@@ -173,16 +172,7 @@ function Profile() {
 
                 <ProfileDetailContainer>
                   <ProfileText>密碼</ProfileText>
-                  <CustomNoBorderBtn
-                    onClick={handleResetPassword}
-                    style={{
-                      height: "30px",
-                      width: "80px",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    變更
-                  </CustomNoBorderBtn>
+                  <EditIcon onClick={handleResetPassword}>變更</EditIcon>
                 </ProfileDetailContainer>
               </ProfileDetail>
             </Container2>
@@ -337,6 +327,16 @@ const CustomNoBorderBtn = styled(NoBorderBtn)`
     color: #f46868;
     margin-right: 5px;
   }
+`;
+
+const ProfileImgUploadIcon = styled.input`
+  display: none;
+`;
+
+const EditIcon = styled(CustomNoBorderBtn)`
+  height: 30px;
+  width: 80px;
+  justify-content: flex-start;
 `;
 
 export default Profile;

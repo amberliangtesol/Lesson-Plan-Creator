@@ -198,17 +198,16 @@ function ManageBadge() {
           <option value="準時完成作業">準時完成作業</option>
           <option value="挑戰打怪成功">挑戰打怪成功</option>
         </SelectOptions>
-        <MainRedFilledBtn
+        <ConfirmBtn
           onClick={() => {
             redeemBadge(selectedStudent, selectedBadge);
             setSelectedClass("");
             setSelectedStudent("");
             setSelectedBadge("");
           }}
-          style={{ fontSize: "16px" }}
         >
           確認兌換
-        </MainRedFilledBtn>
+        </ConfirmBtn>
       </Container2>
     );
   };
@@ -298,6 +297,10 @@ const SelectOptions = styled.select`
   option:checked {
     background-color: #febebe;
   }
+`;
+
+const ConfirmBtn = styled(MainRedFilledBtn)`
+  font-size: 16px;
 `;
 
 export default ManageBadge;

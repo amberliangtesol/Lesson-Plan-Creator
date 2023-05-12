@@ -97,9 +97,9 @@ function CreateCourse() {
 
   const UploadIcon = () => {
     return (
-      <UploadIconWrapper>
-        <UploadIcon />
-      </UploadIconWrapper>
+      <IconWrapper>
+        <Icon />
+      </IconWrapper>
     );
   };
 
@@ -183,36 +183,36 @@ function CreateCourse() {
                   <h3>Tips</h3>
                 </Btnwrapper>
 
-                <Btnwrapper>
-                  <NumberIcon />
+                <TargetBtnwrapper>
+                  <NumOneIcon />
                   <StyledParagraph>確認課程總體目標</StyledParagraph>
-                </Btnwrapper>
+                </TargetBtnwrapper>
 
                 <Btnwrapper>
-                  <NumberIcon />
+                  <NumTwoIcon />
                   <StyledParagraph>切分目標至小單元</StyledParagraph>
                 </Btnwrapper>
 
-                <LastBtnWrapper>
-                  <NumberIcon />
+                <SeperateUnitBtnwrapper>
+                  <NumThreeIcon />
                   <StyledParagraph>每個單元一段影片</StyledParagraph>
-                </LastBtnWrapper>
+                </SeperateUnitBtnwrapper>
 
-                <BackToMainBtn>
+                <BackToMain>
                   <Link to="/TeacherMain">回首頁</Link>
-                </BackToMainBtn>
+                </BackToMain>
               </BtnContainer>
             </Container1>
 
             <Container2>
               <Title>課程建立</Title>
               <CourseDetail>
-                <CourseImgUpload>
+                <ImgUploadWrapper>
                   <CourseDetailText>縮圖上傳</CourseDetailText>
                   <CourseDetailReminder>
                     * 最佳尺寸為300*150px
                   </CourseDetailReminder>
-                </CourseImgUpload>
+                </ImgUploadWrapper>
                 <VideoImg imageURL={imageURL}>
                   <UploadLabel htmlFor="imageUpload">
                     <UploadIcon />
@@ -230,7 +230,8 @@ function CreateCourse() {
                 <CourseInput
                   type="text"
                   onChange={(e) => setCourseName(e.target.value)}
-                  maxLength={30}
+                  maxLength={20}
+                  placeholder="字數上限20字"
                 ></CourseInput>
                 <ClassSelectWrapper>
                   <CourseDetailText>班級設定</CourseDetailText>
@@ -387,7 +388,6 @@ const StyledParagraph = styled.p`
 
 const Btnwrapper = styled.div`
   display: flex;
-  margin-top: 50px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -431,10 +431,9 @@ const SelectOptions = styled.select`
   background: #ffffff;
   border-radius: 24px;
   font-size: 18px;
-  padding-left: 15px;
+  padding: 10px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
-  padding: 10px;
   :focus {
     outline: 2px solid #f46868;
   }
@@ -458,8 +457,12 @@ const CourseDetailReminder = styled.p`
   color: #f46868;
 `;
 
-const LastBtnWrapper = styled(Btnwrapper)`
+const SeperateUnitBtnwrapper = styled(Btnwrapper)`
   margin-bottom: 100px;
+`;
+
+const TargetBtnwrapper = styled(Btnwrapper)`
+  margin-top: 50px;
 `;
 
 const CreateUnitBtn = styled(MainRedFilledBtn)`
@@ -483,18 +486,28 @@ const CourseImgInput = styled.input`
   display: none;
 `;
 
-const CourseImgUpload = styled.div`
+const ImgUploadWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
 
-const BackToMainBtn = styled(MainDarkBorderBtn)`
+const BackToMain = styled(MainDarkBorderBtn)`
   width: 104px;
   align-self: center;
 `;
 
-const NumberIcon = styled(TbCircleNumber1)`
+const NumThreeIcon = styled(TbCircleNumber3)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
+const NumTwoIcon = styled(TbCircleNumber2)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
+const NumOneIcon = styled(TbCircleNumber1)`
   color: #f46868;
   font-size: 24px;
 `;
@@ -504,13 +517,13 @@ const TipsIcon = styled(MdOutlineTipsAndUpdates)`
   font-size: 24px;
 `;
 
-const UploadIconWrapper = styled.span`
+const IconWrapper = styled.span`
   display: flex;
   justify-content: center;
   position: relative;
 `;
 
-const UploadIcon = styled(BsCloudUpload)`
+const Icon = styled(BsCloudUpload)`
   color: #f46868;
   font-size: 40px;
   position: absolute;

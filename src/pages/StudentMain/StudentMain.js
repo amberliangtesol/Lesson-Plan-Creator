@@ -19,6 +19,33 @@ import { BiTimeFive } from "react-icons/bi";
 import { BsFillBookmarkStarFill } from "react-icons/bs";
 import { BsCheckCircleFill } from "react-icons/bs";
 
+const CourseSubheaderIcon1 = styled(BsCheckCircleFill)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
+const TimeIcon = styled(BiTimeFive)`
+  margin-right: 5px;
+  font-size: 24px;
+`;
+
+const TimeText = styled.p`
+  display: flex;
+  align-items: center;
+`;
+
+const CourseSubheader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+const CourseSubheaderIcon = styled(BsFillBookmarkStarFill)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   return date.toLocaleDateString();
@@ -98,25 +125,15 @@ function StudentMain() {
       <Content>
         <Container>
           <StudentMainSidebar></StudentMainSidebar>
-          {/* <TeacherMainSidebar></TeacherMainSidebar> */}
           <MainContent>
             <Title>課程主頁</Title>
             {lessons.length > 0 ? (
               <CourseOutsideWrapper>
                 <Container2>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <BsFillBookmarkStarFill
-                      style={{ color: "#F46868", fontSize: "24px" }}
-                    ></BsFillBookmarkStarFill>
+                  <CourseSubheader>
+                    <CourseSubheaderIcon></CourseSubheaderIcon>
                     <SubTitle>進行中課程</SubTitle>
-                  </div>
+                  </CourseSubheader>
 
                   <CourseWrapper>
                     {lessons
@@ -139,22 +156,12 @@ function StudentMain() {
                                 <b>課程</b>
                                 <br /> {c.name}
                               </p>
-                              <p
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <BiTimeFive
-                                  style={{
-                                    marginRight: "5px",
-                                    fontSize: "24px",
-                                  }}
-                                />
+                              <TimeText>
+                                <TimeIcon />
                                 {`${formatDate(c.start_date)}~${formatDate(
                                   c.end_date
                                 )}`}
-                              </p>
+                              </TimeText>
                             </CourseTextWrapper>
                           </CourseContent>
                           <BtnContainer>
@@ -167,19 +174,10 @@ function StudentMain() {
                   </CourseWrapper>
                 </Container2>
                 <Container2>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <BsCheckCircleFill
-                      style={{ color: "#F46868", fontSize: "24px" }}
-                    ></BsCheckCircleFill>
+                  <CourseSubheader>
+                    <CourseSubheaderIcon1></CourseSubheaderIcon1>
                     <SubTitle>已完成課程</SubTitle>
-                  </div>
+                  </CourseSubheader>
                   <CourseWrapper>
                     {lessons
                       .filter((c) => isCourseOutdated(c))
@@ -201,22 +199,12 @@ function StudentMain() {
                                 <b>課程</b>
                                 <br /> {c.name}
                               </p>
-                              <p
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <BiTimeFive
-                                  style={{
-                                    marginRight: "5px",
-                                    fontSize: "24px",
-                                  }}
-                                />
+                              <TimeText>
+                                <TimeIcon />
                                 {`${formatDate(c.start_date)}~${formatDate(
                                   c.end_date
                                 )}`}
-                              </p>
+                              </TimeText>
                             </CourseTextWrapper>
                           </CourseContent>
                           <BtnContainer></BtnContainer>
