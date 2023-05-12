@@ -19,6 +19,32 @@ import { useParams } from "react-router-dom";
 import { MainRedFilledBtn } from "../../components/Buttons";
 import { MainDarkBorderBtn } from "../../components/Buttons";
 
+const EditUnitBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-left: auto;
+  margin-top: 30px;
+`;
+
+const ClassSelectWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CourseImgInput = styled.input`
+  display: none;
+`;
+
+const UnitText = styled.h3`
+  align-self: flex-start;
+  cursor: pointer;
+`;
+
+const BtnContainerText = styled.h3`
+  border-bottom: 3px solid #f46868;
+  padding-bottom: 18px;
+`;
+
 function EditCourse() {
   const { user, setUser } = useContext(UserContext);
   const { lessonId } = useParams();
@@ -176,29 +202,16 @@ function EditCourse() {
           <MainContent>
             <Container1>
               <BtnContainer>
-                <h3
-                  style={{
-                    borderBottom: "3px solid #f46868",
-                    paddingBottom: "18px",
-                  }}
-                >
-                  單元列表
-                </h3>
+                <BtnContainerText>單元列表</BtnContainerText>
                 {sortedUnits.map((unit, index) => (
-                  <h3
+                  <UnitText
                     key={unit.id}
-                    style={{
-                      color: unit.id === currentUnitId ? "#F46868" : "black",
-                      fontWeight: unit.id === currentUnitId ? "700" : "400",
-                      alignSelf: "flex-start",
-                      cursor: "pointer",
-                    }}
                     onClick={() => {
                       setCurrentUnitId(unit.id);
                     }}
                   >
                     單元 {index + 1} : {unit.data.unitName}
-                  </h3>
+                  </UnitText>
                 ))}
                 <MainDarkBorderBtn>
                   <Link to="/TeacherMain">回首頁</Link>
@@ -215,15 +228,14 @@ function EditCourse() {
                     <UploadIcon />
                   </UploadLabel>
                 </VideoImg>
-                <input
+                <CourseImgInput
                   id="imageUpload"
                   type="file"
                   accept="image/*"
                   name="上傳"
                   cursor="pointer"
-                  style={{ display: "none" }}
                   onChange={handleImageUpload}
-                ></input>
+                ></CourseImgInput>
                 <CourseDetailText>課程名稱</CourseDetailText>
                 <CourseInput
                   type="text"
@@ -231,21 +243,14 @@ function EditCourse() {
                   onChange={(e) => setCourseName(e.target.value)}
                   maxLength={30}
                 ></CourseInput>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <ClassSelectWrapper>
                   <CourseDetailText>班級設定</CourseDetailText>
                   <CourseDetailReminder>
                     * 按下command或control鍵可多選
                   </CourseDetailReminder>
-                </div>
+                </ClassSelectWrapper>
 
                 <SelectOptions
-                  style={{ padding: "10px" }}
                   multiple
                   value={classChoose}
                   onChange={(e) => {
@@ -282,13 +287,9 @@ function EditCourse() {
                   }
                 />
               </CourseDetail>
-              <MainRedFilledBtn
-                type="button"
-                onClick={handleUpdate}
-                style={{ width: "100%", marginLeft: "auto", marginTop: "30px" }}
-              >
+              <EditUnitBtn type="button" onClick={handleUpdate}>
                 單元編輯
-              </MainRedFilledBtn>
+              </EditUnitBtn>
             </Container2>
           </MainContent>
         </Container>
@@ -410,6 +411,7 @@ const SelectOptions = styled.select`
   border-radius: 24px;
   font-size: 18px;
   padding-left: 15px;
+  padding: 10px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
   option:checked {

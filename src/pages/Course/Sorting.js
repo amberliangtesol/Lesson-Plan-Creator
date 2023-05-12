@@ -2,6 +2,33 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { MainRedFilledBtn } from "../../components/Buttons";
 
+const SubmitAnsBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-top: 10px;
+  align-self: flex-end;
+`;
+
+const OptionContainerText = styled.h3`
+  margin-bottom: 0px;
+  color: #f46868;
+`;
+
+const QuestionContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const WrongMark = styled.span`
+  color: red;
+  font-size: 21px;
+  margin-left: 20px;
+`;
+
+const CorrectMark = styled.span`
+  color: green;
+  font-size: 21px;
+  margin-left: 20px;
+`;
+
 function Sorting(props) {
   const [win, setWin] = useState("");
   const { questionData } = props;
@@ -83,36 +110,14 @@ function Sorting(props) {
         onDragOver={(ev) => ev.preventDefault()}
         onDragStart={handleDrag}
         onDrop={handleDrop}
-        style={{
-          backgroundColor: "transparent",
-          borderRadius: "7px",
-          color: "#666666",
-          width: "40%",
-          padding: "20px",
-          border: "solid 2px #666666",
-        }}
       >
         {boxNumber}
         {win !== "" && (
           <>
             {correct ? (
-              <span
-                style={{
-                  color: "green",
-                  fontSize: "21px",
-                  marginLeft: "20px",
-                }}
-              >
-                {" "}
-                ✔︎{" "}
-              </span>
+              <CorrectMark> ✔︎ </CorrectMark>
             ) : (
-              <span
-                style={{ color: "red", fontSize: "21px", marginLeft: "20px" }}
-              >
-                {" "}
-                ✘{" "}
-              </span>
+              <WrongMark> ✘ </WrongMark>
             )}
           </>
         )}
@@ -121,21 +126,9 @@ function Sorting(props) {
   };
 
   return (
-    <div
-      id="question-container"
-      style={{
-        marginTop: "20px",
-      }}
-    >
+    <QuestionContainer id="question-container">
       <OptionContainer>
-        <h3
-          style={{
-            marginBottom: "0px",
-            color: "#F46868",
-          }}
-        >
-          第 {questionData.id} 題
-        </h3>
+        <OptionContainerText>第 {questionData.id} 題</OptionContainerText>
         <p>{questionData.question}</p>
         <BoxContainer>
           {boxes
@@ -152,18 +145,9 @@ function Sorting(props) {
               />
             ))}
         </BoxContainer>
-        <MainRedFilledBtn
-          onClick={handleSubmitClick}
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            alignSelf: "flex-end",
-          }}
-        >
-          送出答案
-        </MainRedFilledBtn>
+        <SubmitAnsBtn onClick={handleSubmitClick}>送出答案</SubmitAnsBtn>
       </OptionContainer>
-    </div>
+    </QuestionContainer>
   );
 }
 
@@ -179,6 +163,12 @@ const BoxContainer = styled.div`
 
 const SingleBox = styled.div`
   cursor: pointer;
+  background-color: transparent;
+  border-radius: 7px;
+  color: #666666;
+  width: 40%;
+  padding: 20px;
+  border: 2px solid #666666;
 `;
 
 const OptionContainer = styled.div`

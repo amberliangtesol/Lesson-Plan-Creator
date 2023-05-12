@@ -97,22 +97,9 @@ function CreateCourse() {
 
   const UploadIcon = () => {
     return (
-      <span
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          position: "relative",
-        }}
-      >
-        <BsCloudUpload
-          style={{
-            color: "#f46868",
-            fontSize: "40px",
-            position: "absolute",
-            top: "52px",
-          }}
-        />
-      </span>
+      <UploadIconWrapper>
+        <UploadIcon />
+      </UploadIconWrapper>
     );
   };
 
@@ -192,90 +179,66 @@ function CreateCourse() {
             <Container1>
               <BtnContainer>
                 <Btnwrapper>
-                  <MdOutlineTipsAndUpdates
-                    style={{ color: "black", fontSize: "24px" }}
-                  />
+                  <TipsIcon />
                   <h3>Tips</h3>
                 </Btnwrapper>
 
-                <Btnwrapper style={{ marginTop: "50px" }}>
-                  <TbCircleNumber1
-                    style={{ color: "#f46868", fontSize: "24px" }}
-                  />
+                <Btnwrapper>
+                  <NumberIcon />
                   <StyledParagraph>確認課程總體目標</StyledParagraph>
                 </Btnwrapper>
 
                 <Btnwrapper>
-                  <TbCircleNumber2
-                    style={{ color: "#f46868", fontSize: "24px" }}
-                  />
+                  <NumberIcon />
                   <StyledParagraph>切分目標至小單元</StyledParagraph>
                 </Btnwrapper>
 
-                <Btnwrapper style={{ marginBottom: "100px" }}>
-                  <TbCircleNumber3
-                    style={{ color: "#f46868", fontSize: "24px" }}
-                  />
+                <LastBtnWrapper>
+                  <NumberIcon />
                   <StyledParagraph>每個單元一段影片</StyledParagraph>
-                </Btnwrapper>
+                </LastBtnWrapper>
 
-                <MainDarkBorderBtn
-                  style={{ width: "104px", alignSelf: "center" }}
-                >
+                <BackToMainBtn>
                   <Link to="/TeacherMain">回首頁</Link>
-                </MainDarkBorderBtn>
+                </BackToMainBtn>
               </BtnContainer>
             </Container1>
 
             <Container2>
               <Title>課程建立</Title>
               <CourseDetail>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <CourseImgUpload>
                   <CourseDetailText>縮圖上傳</CourseDetailText>
                   <CourseDetailReminder>
                     * 最佳尺寸為300*150px
                   </CourseDetailReminder>
-                </div>
+                </CourseImgUpload>
                 <VideoImg imageURL={imageURL}>
                   <UploadLabel htmlFor="imageUpload">
                     <UploadIcon />
                   </UploadLabel>
                 </VideoImg>
-                <input
+                <CourseImgInput
                   id="imageUpload"
                   type="file"
                   accept="image/*"
                   name="上傳"
                   cursor="pointer"
-                  style={{ display: "none" }}
                   onChange={handleImageUpload}
-                ></input>
+                ></CourseImgInput>
                 <CourseDetailText>課程名稱</CourseDetailText>
                 <CourseInput
                   type="text"
                   onChange={(e) => setCourseName(e.target.value)}
                   maxLength={30}
                 ></CourseInput>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <ClassSelectWrapper>
                   <CourseDetailText>班級設定</CourseDetailText>
                   <CourseDetailReminder>
                     * ⌘ 或 Ctrl 可多選
                   </CourseDetailReminder>
-                </div>
+                </ClassSelectWrapper>
                 <SelectOptions
-                  style={{ padding: "10px" }}
                   multiple
                   value={classChoose}
                   onChange={(e) => {
@@ -302,15 +265,9 @@ function CreateCourse() {
                     setStartTimestamp(new Date(e.target.value).getTime())
                   }
                 />
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <EndTimeWrapper>
                   <CourseDetailText>結束時間</CourseDetailText>
-                </div>
+                </EndTimeWrapper>
                 <CourseInput
                   type="datetime-local"
                   min={new Date(startTimestamp + 24 * 60 * 60 * 1000)
@@ -322,16 +279,9 @@ function CreateCourse() {
                   }
                 />
               </CourseDetail>
-              <MainRedFilledBtn
-                type="button"
-                onClick={handleCreate}
-                style={{
-                  width: "100%",
-                  marginTop: "30px",
-                }}
-              >
+              <CreateUnitBtn type="button" onClick={handleCreate}>
                 單元建立
-              </MainRedFilledBtn>
+              </CreateUnitBtn>
             </Container2>
           </MainContent>
         </Container>
@@ -437,6 +387,7 @@ const StyledParagraph = styled.p`
 
 const Btnwrapper = styled.div`
   display: flex;
+  margin-top: 50px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -483,6 +434,7 @@ const SelectOptions = styled.select`
   padding-left: 15px;
   border: none;
   box-shadow: 0px 1px 4px 0px #00000033;
+  padding: 10px;
   :focus {
     outline: 2px solid #f46868;
   }
@@ -504,6 +456,65 @@ const CourseDetailReminder = styled.p`
   line-height: 19px;
   margin: 10px;
   color: #f46868;
+`;
+
+const LastBtnWrapper = styled(Btnwrapper)`
+  margin-bottom: 100px;
+`;
+
+const CreateUnitBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-top: 30px;
+`;
+
+const EndTimeWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ClassSelectWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CourseImgInput = styled.input`
+  display: none;
+`;
+
+const CourseImgUpload = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const BackToMainBtn = styled(MainDarkBorderBtn)`
+  width: 104px;
+  align-self: center;
+`;
+
+const NumberIcon = styled(TbCircleNumber1)`
+  color: #f46868;
+  font-size: 24px;
+`;
+
+const TipsIcon = styled(MdOutlineTipsAndUpdates)`
+  color: black;
+  font-size: 24px;
+`;
+
+const UploadIconWrapper = styled.span`
+  display: flex;
+  justify-content: center;
+  position: relative;
+`;
+
+const UploadIcon = styled(BsCloudUpload)`
+  color: #f46868;
+  font-size: 40px;
+  position: absolute;
+  top: 52px;
 `;
 
 export default CreateCourse;

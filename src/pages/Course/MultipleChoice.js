@@ -23,21 +23,9 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
   };
 
   return (
-    <div
-      id="question-container"
-      style={{
-        marginTop: "20px",
-      }}
-    >
+    <QuestionContainer id="question-container">
       <OptionContainer>
-        <h3
-          style={{
-            marginBottom: "0px",
-            color: "#F46868",
-          }}
-        >
-          第 {questionData.id} 題
-        </h3>
+        <OptionContainerText>第 {questionData.id} 題</OptionContainerText>
         <p>{questionData.question}</p>
         {questionData.options.map((option, index) => (
           <MultipleChoiceOptionCard
@@ -49,41 +37,18 @@ const MultipleChoice = ({ questionData, onAnswerClick }) => {
             {option.text}
             {isSubmitted && selectedOption ? (
               option.correct ? (
-                <span
-                  style={{
-                    color: "green",
-                    fontSize: "24px",
-                    marginLeft: "20px",
-                  }}
-                >
-                  {" "}
-                  ✔︎{" "}
-                </span>
+                <CorrectMark> ✔︎ </CorrectMark>
               ) : (
-                <span
-                  style={{ color: "red", fontSize: "24px", marginLeft: "20px" }}
-                >
-                  {" "}
-                  ✘{" "}
-                </span>
+                <WrongMark> ✘ </WrongMark>
               )
             ) : (
               ""
             )}
           </MultipleChoiceOptionCard>
         ))}
-        <MainRedFilledBtn
-          onClick={handleSubmitClick}
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            alignSelf: "flex-end",
-          }}
-        >
-          送出答案
-        </MainRedFilledBtn>
+        <SubmitAnsBtn onClick={handleSubmitClick}>送出答案</SubmitAnsBtn>
       </OptionContainer>
-    </div>
+    </QuestionContainer>
   );
 };
 
@@ -96,6 +61,33 @@ const OptionContainer = styled.div`
   border-radius: 33px;
   width: 100%;
   padding: 30px 60px 50px 60px;
+`;
+
+const SubmitAnsBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-top: 10px;
+  align-self: flex-end;
+`;
+
+const WrongMark = styled.span`
+  color: red;
+  font-size: 24px;
+  margin-left: 20px;
+`;
+
+const CorrectMark = styled.span`
+  color: green;
+  font-size: 24px;
+  margin-left: 20px;
+`;
+
+const OptionContainerText = styled.h3`
+  margin-bottom: 0px;
+  color: #f46868;
+`;
+
+const QuestionContainer = styled.div`
+  margin-top: 20px;
 `;
 
 export default MultipleChoice;

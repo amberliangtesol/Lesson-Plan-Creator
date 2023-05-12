@@ -21,24 +21,20 @@ import Sorting from "./Sorting";
 import MultipleChoice from "./MultipleChoice";
 import Matching from "./Matching";
 import GameMode from "./GameMode";
-import { MainDarkBorderBtn } from "../../components/Buttons";
-import { MainDarkFilledBtn } from "../../components/Buttons";
 import Badge1 from "./CourseAsset/badge1.gif";
 import Badge2 from "./CourseAsset/badge2.gif";
 import winbgm from "./CourseAsset/winsound.mp3";
 import losebgm from "./CourseAsset/losesound.mp3";
 import gamebgm from "./CourseAsset/gamesound.mp3";
+import { MainDarkBorderBtn } from "../../components/Buttons";
+import { MainDarkFilledBtn } from "../../components/Buttons";
 
 const Course = () => {
   const { lessonId } = useParams();
+  const { user, setUser } = useContext(UserContext);
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const refCurrentQuestion = useRef(null);
   const [currentUnitId, setCurrentUnitId] = useState();
   const [showNextButton, setShowNextButton] = useState(false);
-  const { user, setUser } = useContext(UserContext);
-  const questions = useRef([]);
-  const interval = useRef(null);
-  const playerRef = useRef(null);
   const [unsubscribeNextUnit, setUnsubscribeNextUnit] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [sortedUnits, setSortedUnits] = useState([]);
@@ -50,6 +46,10 @@ const Course = () => {
   const [showCongratsModal, setShowCongratsModal] = useState(false);
   const [currentBadge, setCurrentBadge] = useState("");
   const [hasShownCongratsModal, setHasShownCongratsModal] = useState(false);
+  const questions = useRef([]);
+  const interval = useRef(null);
+  const playerRef = useRef(null);
+  const refCurrentQuestion = useRef(null);
   const winsound = useRef(new Audio(winbgm));
   const losesound = useRef(new Audio(losebgm));
   const gamesound = useRef(new Audio(gamebgm));
@@ -218,16 +218,13 @@ const Course = () => {
       user.account
     );
 
-    // Check if the document exists
     const docSnap = await getDoc(unitDocRef);
 
     if (docSnap.exists()) {
       const answered = [...docSnap.data().answered];
       answered[index] = { [currentQuestion.type]: isCorrect };
-      // Update the existing document
       await updateDoc(unitDocRef, { answered });
     } else {
-      // Create a new document
       await setDoc(unitDocRef, {
         answered: [{ [currentQuestion.type]: isCorrect }],
       });
@@ -237,14 +234,12 @@ const Course = () => {
   const updateUserBadgeData = async (badgeId) => {
     const userDocRef = doc(db, "users", user.account);
 
-    // Check if the document exists
     const docSnap = await getDoc(userDocRef);
 
     if (docSnap.exists()) {
       const userDocData = docSnap.data();
       const userBadges = userDocData.badge.collected || [];
 
-      // Update the existing document
       await updateDoc(userDocRef, {
         "badge.collected": [...userBadges, badgeId],
       });
@@ -294,7 +289,6 @@ const Course = () => {
       // setShowCongratsModal(true);
     }
 
-    // Fetch the current unit's timestamp
     const currentUnitRef = doc(
       db,
       `lessons/${lessonId}/units/${currentUnitId}`
@@ -302,11 +296,9 @@ const Course = () => {
     const currentUnitSnap = await getDoc(currentUnitRef);
     const currentUnitTimestamp = currentUnitSnap.data().timestamp;
 
-    // Construct the query for the next unit in the units subcollection
     const unitsCollection = collection(db, `lessons/${lessonId}/units`);
     const nextUnitQuery = query(unitsCollection, orderBy("timestamp", "asc"));
 
-    // Listen to the query's result and set the currentUnitId to the next unit
     const unsubscribe = onSnapshot(nextUnitQuery, (querySnapshot) => {
       if (!querySnapshot.empty) {
         const nextUnitDoc = querySnapshot.docs.find(
@@ -327,7 +319,6 @@ const Course = () => {
       }
     });
 
-    // Set the unsubscribe function
     setUnsubscribeNextUnit(() => unsubscribe);
   };
 
@@ -392,64 +383,30 @@ const Course = () => {
           <MainContent>
             <Container1>
               <BtnContainer>
-                <h3
-                  style={{
-                    borderBottom: "3px solid #f46868",
-                    paddingBottom: "18px",
-                  }}
-                >
-                  單元列表
-                </h3>
+                <BtnContainerText>單元列表</BtnContainerText>
                 {sortedUnits.map((unit, index) => (
-                  <h3
-                    key={unit.id}
-                    style={{
-                      color: unit.id === currentUnitId ? "#F46868" : "black",
-                      fontWeight: unit.id === currentUnitId ? "700" : "400",
-                      alignSelf: "flex-start",
-                      cursor: "not-allowed",
-                    }}
-                  >
+                  <UnitText key={unit.id}>
                     單元 {index + 1} : {unit.data.unitName}
-                  </h3>
+                  </UnitText>
                 ))}
 
-                <MainDarkBorderBtn
-                  style={{
-                    marginTop: "150px",
-                    width: "104px",
-                    alignSelf: "center",
-                  }}
-                >
+                <BackToMainBtn>
                   <Link to="/StudentMain">回首頁</Link>
-                </MainDarkBorderBtn>
+                </BackToMainBtn>
               </BtnContainer>
             </Container1>
 
             <Container2>
               <Title>{currentUnitName}</Title>
-              <h4
-                style={{
-                  marginBottom: "0px",
-                }}
-              >
-                {currentUnitSubtitle}
-              </h4>
+              <UnitSubtitleText>{currentUnitSubtitle}</UnitSubtitleText>
               <p>{currentUnitDescription}</p>
               <div id="player"></div>
               {showNextButton && (
-                <MainDarkFilledBtn
-                  onClick={handleNextUnitClick}
-                  style={{
-                    marginTop: "20px",
-                    padding: "5px",
-                  }}
-                >
+                <NextUnitBtn onClick={handleNextUnitClick}>
                   繼續觀看下個單元
-                </MainDarkFilledBtn>
+                </NextUnitBtn>
               )}
               <CongratsModal show={showCongratsModal} imageUrl={currentBadge} />
-              <div></div>
               {currentQuestion && currentQuestion.gameMode && (
                 <GameMode countdown={countdown} setCountdown={setCountdown} />
               )}
@@ -483,24 +440,14 @@ const Course = () => {
                   />
                 </div>
               )}
-              <div
-                style={{
-                  marginTop: "20px",
-                }}
-              >
+              <ExplanationWrapper>
                 {resultMessage}
                 {resultMessage !== "" && (
-                  <MainDarkFilledBtn
-                    onClick={handleNextClick}
-                    style={{
-                      marginTop: "20px",
-                      marginBottom: "20px",
-                    }}
-                  >
+                  <ContinuePlayBtn onClick={handleNextClick}>
                     繼續播放
-                  </MainDarkFilledBtn>
+                  </ContinuePlayBtn>
                 )}
-              </div>
+              </ExplanationWrapper>
             </Container2>
           </MainContent>
         </Container>
@@ -582,6 +529,40 @@ const Container2 = styled.div`
   select {
     pointer-events: auto;
   }
+`;
+
+const ContinuePlayBtn = styled(MainDarkFilledBtn)`
+  margin-top: 20px;
+  margin-bottom: 20px;
+`;
+
+const ExplanationWrapper = styled.div`
+  margin-top: 20px;
+`;
+
+const NextUnitBtn = styled(MainDarkFilledBtn)`
+  margin-top: 20px;
+  padding: 5px;
+`;
+
+const BackToMainBtn = styled(MainDarkBorderBtn)`
+  margin-top: 150px;
+  width: 104px;
+  align-self: center;
+`;
+
+const UnitSubtitleText = styled.h4`
+  margin-bottom: 0px;
+`;
+
+const UnitText = styled.h3`
+  align-self: flex-start;
+  cursor: not-allowed;
+`;
+
+const BtnContainerText = styled.h3`
+  border-bottom: 3px solid #f46868;
+  padding-bottom: 18px;
 `;
 
 export default Course;

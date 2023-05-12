@@ -109,21 +109,9 @@ const Matching = (props) => {
   };
 
   return (
-    <div
-      id="question-container"
-      style={{
-        marginTop: "20px",
-      }}
-    >
+    <QuestionContainer id="question-container">
       <OptionContainer>
-        <h3
-          style={{
-            marginBottom: "0px",
-            color: "#F46868",
-          }}
-        >
-          第 {questionData.id} 題
-        </h3>
+        <OptionContainertText>第 {questionData.id} 題</OptionContainertText>
         <p>{questionData.question}</p>
         <GameBoard>
           {cardList.map((card, index) => (
@@ -142,7 +130,7 @@ const Matching = (props) => {
           ))}
         </GameBoard>
       </OptionContainer>
-    </div>
+    </QuestionContainer>
   );
 };
 
@@ -155,6 +143,15 @@ const OptionContainer = styled.div`
   border-radius: 33px;
   width: 100%;
   padding: 30px 60px 50px 60px;
+`;
+
+const OptionContainertText = styled.h3`
+  margin-bottom: 0px;
+  color: #f46868;
+`;
+
+const QuestionContainer = styled.div`
+  margin-top: 20px;
 `;
 
 const selected = keyframes`

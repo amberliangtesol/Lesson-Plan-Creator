@@ -332,12 +332,9 @@ function EditClass() {
 
   const DeleteIcon = ({ onDelete }) => {
     return (
-      <span
-        onClick={onDelete}
-        style={{ cursor: "pointer", paddingLeft: "7px" }}
-      >
+      <DeleteIconWrapper onClick={onDelete}>
         <RiDeleteBinLine />
-      </span>
+      </DeleteIconWrapper>
     );
   };
 
@@ -383,14 +380,10 @@ function EditClass() {
         <Container>
           <TeacherMainSidebar></TeacherMainSidebar>
           <MainContent>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <MdOutlineSchool
-                style={{ marginRight: "20px", fontSize: "40px" }}
-              />
-              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
-                班級
-              </h2>
-              <div style={{ position: "relative", width: "100%" }}>
+            <ClassNameHeader>
+              <SchoolIcon />
+              <MainContentText>班級</MainContentText>
+              <MainContentTextEdit>
                 <ClassNameInput
                   type="text"
                   value={selectedClass}
@@ -401,34 +394,14 @@ function EditClass() {
                   maxLength={20}
                 />
 
-                {!inputFocused && (
-                  <FiEdit
-                    style={{
-                      position: "absolute",
-                      right: "0",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                      fontSize: "20px",
-                      color: "#F46868",
-                    }}
-                  />
-                )}
-              </div>
-            </div>
+                {!inputFocused && <EditIcon />}
+              </MainContentTextEdit>
+            </ClassNameHeader>
 
             <Splict></Splict>
 
-            <StudentTable
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: "30px",
-              }}
-            >
-              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
-                學生
-              </h2>
+            <StudentTable>
+              <MainContentText>學生</MainContentText>
               <ClassInput
                 type="text"
                 value={studentNameInput}
@@ -443,53 +416,33 @@ function EditClass() {
                 placeholder="輸入信箱"
                 maxLength={256}
               />
-              <MainDarkBorderBtn
-                onClick={handleAddStudentEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}
-              >
+              <CreateStudentBtn onClick={handleAddStudentEmail}>
                 新增學生
-              </MainDarkBorderBtn>
+              </CreateStudentBtn>
             </StudentTable>
-            <p style={{ fontSize: "15px", margin: "0px" }}>
+            <WarningText>
               ⚠️
               未曾註冊之信箱將自動『建立帳號』，系統預設初始『帳號』與『密碼』相同
-            </p>
+            </WarningText>
             {renderStudentTable()}
 
-            <TeacherTable
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: "30px",
-              }}
-            >
-              <h2 style={{ marginRight: "20px", whiteSpace: "nowrap" }}>
-                教師
-              </h2>
+            <TeacherTable>
+              <MainContentText>教師</MainContentText>
               <ClassInput
                 type="text"
                 value={teacherEmailInput}
                 onChange={(e) => setTeacherEmailInput(e.target.value)}
-                style={{ width: "100%" }}
                 placeholder="輸入信箱"
                 maxLength={256}
               />
-              <MainDarkBorderBtn
-                onClick={handleAddTeacherEmail}
-                style={{ cursor: "pointer", marginLeft: "5px" }}
-              >
+              <AddTeacherBtn onClick={handleAddTeacherEmail}>
                 新增教師
-              </MainDarkBorderBtn>
+              </AddTeacherBtn>
             </TeacherTable>
 
             {renderTeacherTable()}
 
-            <MainRedFilledBtn
-              onClick={handleSubmit}
-              style={{ width: "100%", marginTop: "30px" }}
-            >
-              確認修改
-            </MainRedFilledBtn>
+            <ConfirmEditBtn onClick={handleSubmit}>確認修改</ConfirmEditBtn>
           </MainContent>
         </Container>
       </Content>
@@ -528,18 +481,22 @@ const MainContent = styled.div`
 
 const StudentTable = styled.div`
   display: flex;
+  align-items: center;
+  margin-top: 30px;
   flex-direction: row;
   gap: 5px;
 `;
 
 const TeacherTable = styled.div`
   display: flex;
+  align-items: center;
+  margin-top: 30px;
   flex-direction: row;
   gap: 5px;
 `;
 
 const ClassInput = styled.input`
-  width: 50%;
+  width: 100%;
   height: 35px;
   background-color: #ffffff;
   border-radius: 24px;
@@ -613,6 +570,61 @@ const ExcelTable2007 = styled.table`
       border-bottom-right-radius: 13px;
     }
   }
+`;
+
+const AddTeacherBtn = styled(MainDarkBorderBtn)`
+  cursor: pointer;
+  margin-left: 5px;
+`;
+
+const ConfirmEditBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-top: 30px;
+`;
+
+const WarningText = styled.p`
+  font-size: 15px;
+  margin: 0px;
+`;
+
+const CreateStudentBtn = styled(MainDarkBorderBtn)`
+  cursor: pointer;
+  margin-left: 5px;
+`;
+
+const SchoolIcon = styled(MdOutlineSchool)`
+  margin-right: 20px;
+  font-size: 40px;
+`;
+
+const EditIcon = styled(FiEdit)`
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 20px;
+  color: #f46868;
+`;
+
+const MainContentTextEdit = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const MainContentText = styled.h2`
+  margin-right: 20px;
+  white-space: nowrap;
+`;
+
+const ClassNameHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const DeleteIconWrapper = styled.span`
+  cursor: pointer;
+  padding-left: 7px;
 `;
 
 export default EditClass;

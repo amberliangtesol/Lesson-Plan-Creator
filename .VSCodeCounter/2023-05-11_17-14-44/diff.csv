@@ -1,0 +1,13 @@
+"filename", "language", "JavaScript", "CSS", "comment", "blank", "total"
+"/Users/amber/Lesson Plan Creator/src/components/Modal.js", "JavaScript", 13, 0, 0, 0, 13
+"/Users/amber/Lesson Plan Creator/src/pages/Course/Course.js", "JavaScript", 5, 0, -3, -1, 1
+"/Users/amber/Lesson Plan Creator/src/pages/Course/GameMode.js", "JavaScript", 17, 0, 1, 2, 20
+"/Users/amber/Lesson Plan Creator/src/pages/Course/Matching.css", "CSS", 0, -98, 0, -13, -111
+"/Users/amber/Lesson Plan Creator/src/pages/Course/Matching.js", "JavaScript", 87, 0, -18, 3, 72
+"/Users/amber/Lesson Plan Creator/src/pages/CreateClass/CreateClass.js", "JavaScript", 8, 0, 0, 0, 8
+"/Users/amber/Lesson Plan Creator/src/pages/CreateCourse/CreateCourse.js", "JavaScript", 21, 0, 3, 0, 24
+"/Users/amber/Lesson Plan Creator/src/pages/CreateUnit/CreateUnit.js", "JavaScript", 62, 0, -1, 1, 62
+"/Users/amber/Lesson Plan Creator/src/pages/EditClass/EditClass.js", "JavaScript", 5, 0, 0, 0, 5
+"/Users/amber/Lesson Plan Creator/src/pages/EditCourse/EditCourse.js", "JavaScript", 0, 0, 3, 0, 3
+"/Users/amber/Lesson Plan Creator/src/pages/EditUnit/EditUnit.js", "JavaScript", 2, 0, 0, 0, 2
+"Total", "-", 220, -98, -15, -8, 99
