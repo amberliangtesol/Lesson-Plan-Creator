@@ -2,7 +2,7 @@ import styled from "styled-components/macro";
 
 const ColorFilledBtn = styled.div`
   cursor: pointer;
-  min-width: 169px;
+  width: 150px;
   height: 40px;
   border-radius: 24px;
   background-color: #f46868;
@@ -33,14 +33,16 @@ const ColorFilledBtn = styled.div`
     transform: translate(0.05em, 0.05em);
     box-shadow: 0.05em 0.05em;
   }
-  @media screen and (max-width: 1279px) {
+  @media screen and (max-width: 768px) {
+    width: 120px;
+    font-size: 18px;
   }
 `;
 
 const ColorBorderBtn = styled.div`
   border: solid 2px #f46868;
   cursor: pointer;
-  min-width: 169px;
+  width: 150px;
   height: 40px;
   border-radius: 24px;
   background-color: transparent;
@@ -71,7 +73,9 @@ const ColorBorderBtn = styled.div`
     transform: translate(0.05em, 0.05em);
     box-shadow: 0.05em 0.05em;
   }
-  @media screen and (max-width: 1279px) {
+  @media screen and (max-width: 768px) {
+    width: 120px;
+    font-size: 18px;
   }
 `;
 

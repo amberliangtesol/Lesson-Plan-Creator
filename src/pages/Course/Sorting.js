@@ -2,33 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { MainRedFilledBtn } from "../../components/Buttons";
 
-const SubmitAnsBtn = styled(MainRedFilledBtn)`
-  width: 100%;
-  margin-top: 10px;
-  align-self: flex-end;
-`;
-
-const OptionContainerText = styled.h3`
-  margin-bottom: 0px;
-  color: #f46868;
-`;
-
-const QuestionContainer = styled.div`
-  margin-top: 20px;
-`;
-
-const WrongMark = styled.span`
-  color: red;
-  font-size: 21px;
-  margin-left: 20px;
-`;
-
-const CorrectMark = styled.span`
-  color: green;
-  font-size: 21px;
-  margin-left: 20px;
-`;
-
 function Sorting(props) {
   const [win, setWin] = useState("");
   const { questionData } = props;
@@ -180,6 +153,33 @@ const OptionContainer = styled.div`
   border-radius: 33px;
   width: 100%;
   padding: 30px 60px 50px 60px;
+`;
+
+const SubmitAnsBtn = styled(MainRedFilledBtn)`
+  width: 100%;
+  margin-top: 10px;
+  align-self: flex-end;
+`;
+
+const OptionContainerText = styled.h3`
+  margin-bottom: 0px;
+  color: #f46868;
+`;
+
+const QuestionContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const WrongMark = styled.span`
+  color: red;
+  font-size: 21px;
+  margin-left: 20px;
+`;
+
+const CorrectMark = styled.span`
+  color: green;
+  font-size: 21px;
+  margin-left: 20px;
 `;
 
 export default Sorting;
