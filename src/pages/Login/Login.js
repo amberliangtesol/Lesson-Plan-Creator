@@ -26,7 +26,15 @@ function Login() {
   const profileImage = role === "teacher" ? teacherprofile : studentprofile;
 
   const handleRoleChange = (e) => {
-    setRole(e.target.value);
+    const selectedRole = e.target.value;
+    setRole(selectedRole);
+    if (selectedRole === "teacher") {
+      setEmail("teacher@gmail.com");
+      setPassword("teacher");
+    } else if (selectedRole === "student") {
+      setEmail("student@gmail.com");
+      setPassword("student@gmail.com");
+    }
   };
 
   const handleLogin = async () => {
@@ -100,11 +108,13 @@ function Login() {
             </RegisterSelect>
             <RegisterInput
               type="text"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="請輸入信箱"
             ></RegisterInput>
             <RegisterInput
               type="password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="請輸入密碼"
             ></RegisterInput>
