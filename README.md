@@ -50,7 +50,7 @@
 1. Homepage animations and introductory videos enhance user experience.  
    ![main page](./src/components/Asset/readme/demo_mainpage.gif)
 2. Student interface's game mode rewards correct answers with badges.
-   ![game mode](./src/components/Assets/readme/demo_gamemode.gif)
+   ![game mode](./src/components/Asset/readme/demo_gamemode.gif)
 3. Teacher interface has a course creation feature with three question types to choose from.
    ![create course](./src/components/Asset/readme/demo_createcourse.gif)
 4. Teachers can view student performance data through a dedicated section with chart options in their interface.
