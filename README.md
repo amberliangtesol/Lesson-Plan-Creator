@@ -47,15 +47,15 @@
 
 ### Demo
 
-1. Homepage animations and introductory videos enhance user experience.  
+1. Homepage animations and introductory videos enhance `user experience`.  
    ![main page](./src/components/Asset/readme/demo_mainpage.gif)
-2. Student interface's game mode rewards correct answers with badges.
+2. Student interface's `game mode` rewards correct answers with `badges`.
    ![game mode](./src/components/Asset/readme/demo_gamemode.gif)
-3. Teacher interface has a course creation feature with three question types to choose from.
+3. Teacher interface has a `course creation` feature with three question types to choose from.
    ![create course](./src/components/Asset/readme/demo_createcourse.gif)
-4. Teachers can view student performance data through a dedicated section with chart options in their interface.
+4. Teachers can view student performance data through a dedicated section with `chart options` in their interface.
    ![manage score](./src/components/Asset/readme/demo_score.gif)
-5. Teacher interface allows class creation, with options to manually add students or upload a list from Excel. Student accounts are created and managed by teachers; thus unregistered students automatically get an account.  
+5. Teacher interface allows `class creation`, with options to manually add students or upload a list from `Excel`. Student accounts are created and managed by teachers; thus unregistered students automatically get an account.  
    ![create class](./src/components/Asset/readme/demo_createclass.gif)
-6. Teacher interface has a badge redemption feature; students without badges can't redeem.
+6. Teacher interface has a `badge redemption` feature; students without badges can't redeem.
    ![redeem badge](./src/components/Asset/readme/demo_redeembadge.gif)
