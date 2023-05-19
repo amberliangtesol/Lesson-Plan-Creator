@@ -11,6 +11,8 @@
     <a href="https://lesson-plan-creator.web.app/">EduTube</a>
     |
     <a href="https://youtu.be/BENZstmD930">Demo</a>
+    |
+    <a href="mailto:amberliangtesol@gmail.com">Contact</a>
   </p>
 </div>
 
@@ -30,9 +32,25 @@
 - Allowed teachers to upload and edit student data through **excel file** using the `react-excel-renderer library`.
 - **Visualized student performance** data using the `Chart.js library`.
 
+## Test Account
+
+For you to better understanding of project, we provide the following test accounts.
+
+**Teacher User**
+
+- Username: `amber22467@gmail.com`
+- Password: `amber22467`
+  This is a test account with teacher permissions. Upon the first entry to the website, there will be a user guide on the homepage and the class creation page. Teachers can create and edit classes, add and modify courses, view student scores, validate student badges, and modify personal information.
+
+**Student User**
+
+- Username: `amber@gmail.com`
+- Password: `amber@gmail.com`
+  This is a test account with student permissions. Students can click into the course to take classes, experience the class game mode, view badge records, and modify personal information.
+
 ## Built with
 
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Styled Components](https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase) ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![Styled Components](https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase) ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
 
 **Libraries**
 
@@ -49,13 +67,18 @@
 
 1. Homepage animations and introductory videos enhance `user experience`.  
    ![main page](./src/components/Asset/readme/demo_mainpage.gif)
+
 2. Student interface's `game mode` rewards correct answers with `badges`.
    ![game mode](./src/components/Asset/readme/demo_gamemode.gif)
+
 3. Teacher interface has a `course creation` feature with three question types to choose from.
    ![create course](./src/components/Asset/readme/demo_createcourse.gif)
+
 4. Teachers can view student performance data through a dedicated section with `chart options` in their interface.
    ![manage score](./src/components/Asset/readme/demo_score.gif)
+
 5. Teacher interface allows `class creation`, with options to manually add students or upload a list from `Excel`. Student accounts are created and managed by teachers; thus unregistered students automatically get an account.  
    ![create class](./src/components/Asset/readme/demo_createclass.gif)
+
 6. Teacher interface has a `badge redemption` feature; students without badges can't redeem.
    ![redeem badge](./src/components/Asset/readme/demo_redeembadge.gif)
