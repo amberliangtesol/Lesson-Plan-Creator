@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://lesson-plan-creator.web.app/" style="margin-bottom:30px; display:block;">
+  <a href="https://lesson-plan-creator.web.app/" style="margin-bottom:30px; margin-top:30px; display:block;">
     <img src="./src/components/Asset/logo.png" alt="Logo" width="200px">
   </a>
 
