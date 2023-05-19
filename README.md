@@ -38,15 +38,15 @@ For you to better understanding of project, we provide the following test accoun
 
 **Teacher User**
 
-- Username: `amber22467@gmail.com`
-- Password: `amber22467`
+- Username: `teacher@gmail.com`
+- Password: `teacher`
 
   This is a test account with teacher permissions. Upon the first entry to the website, there will be a user guide on the homepage and the class creation page. Teachers can create and edit classes, add and modify courses, view student scores, validate student badges, and modify personal information.
 
 **Student User**
 
-- Username: `amber@gmail.com`
-- Password: `amber@gmail.com`
+- Username: `student@gmail.com`
+- Password: `student@gmail.com`
 
   This is a test account with student permissions. Students can click into the course to take classes, experience the class game mode, view badge records, and modify personal information.
 
