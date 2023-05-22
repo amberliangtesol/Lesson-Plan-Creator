@@ -125,7 +125,7 @@ function CreateCourse() {
         modal.success("請輸入課程名稱");
         return;
       }
-      if (!classChoose) {
+      if (classChoose.length === 0) {
         modal.success("請設定班級");
         return;
       }

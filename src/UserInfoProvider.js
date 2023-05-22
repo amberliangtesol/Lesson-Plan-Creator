@@ -20,7 +20,7 @@ const UserInfoProvider = ({ children }) => {
     setIsLoading(true);
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      console.log("usecontext_user", user);
+      // console.log("usecontext_user", user);
       if (user) {
         const data = {
           name: user.name || "",

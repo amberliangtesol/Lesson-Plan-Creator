@@ -115,7 +115,7 @@ function EditCourse() {
           setEndTimestamp(lessonData.end_date);
           setClassChoose(lessonData.classes);
         }
-        console.log("lessonData.classes", lessonData.classes);
+        // console.log("lessonData.classes", lessonData.classes);
       }
     };
 
@@ -124,7 +124,7 @@ function EditCourse() {
 
   useEffect(() => {
     const fetchSortedUnits = async () => {
-      console.log(`lessons/${lessonId}/units`);
+      // console.log(`lessons/${lessonId}/units`);
       const unitsCollectionRef = collection(db, `lessons/${lessonId}/units`);
       const unitsQuery = query(unitsCollectionRef, orderBy("timestamp", "asc"));
       const querySnapshot = await getDocs(unitsQuery);
@@ -158,7 +158,7 @@ function EditCourse() {
         classes: classChoose,
       });
       navigate(`/edit-unit/${lessonId}`);
-      console.log("Document updated with ID: ", lessonId);
+      // console.log("Document updated with ID: ", lessonId);
     } catch (e) {
       console.error("Error updating document: ", e);
     }
